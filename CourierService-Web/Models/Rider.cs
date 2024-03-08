@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Courier_Service_V1.Models
+namespace CourierService_Web.Models
 {
     public class Rider
     {

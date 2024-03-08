@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Courier_Service_V1.Models
+namespace CourierService_Web.Models
 {
     public class Parcel
     {

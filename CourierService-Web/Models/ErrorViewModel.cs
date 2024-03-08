@@ -1,4 +1,4 @@
-namespace Courier_Service_V1.Models
+namespace CourierService_Web.Models
 {
     public class ErrorViewModel
     {
