@@ -99,7 +99,7 @@ namespace CourierService_Web.Controllers
                 .ToList();
             ViewBag.TodayParcelList = todayParcelList;
 
-            //parcel status based on parcel id
+          
 
 
 
