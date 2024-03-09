@@ -424,51 +424,147 @@ namespace CourierService_Web.Controllers
         }
 
 
-        //delete query
-        public IActionResult DeleteQuery(string? id)
+        //edit merchant
+        public IActionResult EditMerchant(string? id)
         {
-            if (!IsAdminLoggedIn() || Request.Cookies["AdminEmail"] != "flyerbd@gmail.com")
+
+            if (!IsAdminLoggedIn())
             {
                 return RedirectToAction("Login", "Home");
             }
+
             if (id == null)
             {
                 return NotFound();
             }
-            var contact = _context.Contacts.Find(id);
-            if (contact == null)
+            var merchant = _context.Merchants.Find(id);
+            if (merchant == null)
             {
                 return NotFound();
             }
-            _context.Contacts.Remove(contact);
-            _context.SaveChanges();
-            TempData["error"] = "Query Deleted Successfully";
-            return RedirectToAction("Queries");
+            return View(merchant);
         }
 
-        //delete admin
-        public IActionResult DeleteAdmin(string? id)
+        [HttpPost]
+        public IActionResult EditMerchant(Merchant merchant, IFormFile? file)
         {
+
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            if (merchant == null)
+            {
+                return NotFound();
+            }
+            if (ModelState.IsValid)
+            {
+                //handle image
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+                if (file != null)
+                {
+                    //handle if prevoius image exist
+                    if (merchant.ImageUrl != null)
+                    {
+
+                        string imagePath = Path.Combine(wwwRootPath, merchant.ImageUrl.TrimStart('\\'));
+                        if (System.IO.File.Exists(imagePath))
+                        {
+                            System.IO.File.Delete(imagePath);
+                        }
+                        //delete from aws s3
+                        string[] split = merchant.ImageUrl.Split("/");
+                        string key = "Merchant/" + split[split.Length - 1];
+                        var s3Client = new AmazonS3Client("AKIAU6GDYMTHTIZML6UG", "9Mjr5N26gAtUX6aOyGBNy688zMgP9Dt46ndJOIh/", RegionEndpoint.USEast1);
+                        var fileTransferUtility = new TransferUtility(s3Client);
+                        fileTransferUtility.S3Client.DeleteObjectAsync("courierbuckets3", key);
+
+
+                    }
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    string MerchantPath = Path.Combine(wwwRootPath, @"Images\Merchant");
+                    using (var FileSteam = new FileStream(Path.Combine(MerchantPath, fileName), FileMode.Create))
+                    {
+                        file.CopyTo(FileSteam);
+                    }
+
+                    //upload to aws s3
+                    var news3Client = new AmazonS3Client("AKIAU6GDYMTHTIZML6UG", "9Mjr5N26gAtUX6aOyGBNy688zMgP9Dt46ndJOIh/", RegionEndpoint.USEast1);
+                    var updatedfileTransferUtility = new TransferUtility(news3Client);
+                    var uploadRequest = new TransferUtilityUploadRequest
+                    {
+                        FilePath = MerchantPath + "\\" + fileName,
+                        BucketName = "courierbuckets3",
+                        Key = "Merchant/" + fileName,
+                        CannedACL = S3CannedACL.PublicRead
+                    };
+                    updatedfileTransferUtility.Upload(uploadRequest);
+                    //after upload delete from local storage
+                    System.IO.File.Delete(MerchantPath + "\\" + fileName);
+                    merchant.ImageUrl = "https://courierbuckets3.s3.amazonaws.com/Merchant/" + fileName;
+                }
+
+
+                _context.Merchants.Update(merchant);
+                _context.SaveChanges();
+                TempData["success"] = "Merchant Updated Successfully";
+                return RedirectToAction("Merchant");
+            }
+            else
+            {
+                return View(merchant);
+            }
+        }
+
+
+        public IActionResult DeleteMerchant(string? id)
+        {
+
             if (!IsAdminLoggedIn() || Request.Cookies["AdminEmail"] != "flyerbd@gmail.com")
             {
                 return RedirectToAction("Login", "Home");
             }
+
             if (id == null)
             {
                 return NotFound();
             }
-            var admin = _context.Admins.Find(id);
-            if (admin == null)
+
+            // Find all parcels associated with the rider
+            var parcels = _context.Parcels.Where(p => p.MerchantId == id).ToList();
+
+            // Set RiderId to null for all associated parcels
+            foreach (var parcel in parcels)
+            {
+                parcel.MerchantId = null;
+            }
+
+            // Save changes to update the parcels
+            _context.SaveChanges();
+
+            var merchant = _context.Merchants.Find(id);
+            if (merchant == null)
             {
                 return NotFound();
             }
-            _context.Admins.Remove(admin);
+
+            //delete from aws s3
+            if (merchant.ImageUrl != null)
+            {
+                string[] split = merchant.ImageUrl.Split("/");
+                string key = "Merchant/" + split[split.Length - 1];
+                var s3Client = new AmazonS3Client("AKIAU6GDYMTHTIZML6UG", "9Mjr5N26gAtUX6aOyGBNy688zMgP9Dt46ndJOIh/", RegionEndpoint.USEast1);
+                var fileTransferUtility = new TransferUtility(s3Client);
+                fileTransferUtility.S3Client.DeleteObjectAsync("courierbuckets3", key);
+            }
+
+
+            _context.Merchants.Remove(merchant);
             _context.SaveChanges();
-            TempData["error"] = "Admin Deleted Successfully";
-            return RedirectToAction("ApplicationUser");
+            TempData["error"] = "Merchant Deleted Successfully";
+            return RedirectToAction("Merchant");
         }
-
-
 
         public IActionResult Parcel()
         {
@@ -483,6 +579,19 @@ namespace CourierService_Web.Controllers
                 return NotFound();
             }
             return View(parcels);
+        }
+
+        public IActionResult DeleteParcel(string? Id)
+        {
+            var parcel = _context.Parcels.Find(Id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+            _context.Parcels.Remove(parcel);
+            _context.SaveChanges();
+            TempData["error"] = "Parcel Deleted Successfully";
+            return RedirectToAction("Parcel");
         }
 
 
@@ -530,18 +639,7 @@ namespace CourierService_Web.Controllers
 
         }
 
-        public IActionResult DeleteParcel(string? Id)
-        {
-            var parcel = _context.Parcels.Find(Id);
-            if (parcel == null)
-            {
-                return NotFound();
-            }
-            _context.Parcels.Remove(parcel);
-            _context.SaveChanges();
-            TempData["error"] = "Parcel Deleted Successfully";
-            return RedirectToAction("Parcel");
-        }
+       
 
         public IActionResult ApplicationUser()
         {
@@ -557,6 +655,53 @@ namespace CourierService_Web.Controllers
             return View(users);
 
         }
+        
+        
+        //delete admin
+        public IActionResult DeleteAdmin(string? id)
+        {
+            if (!IsAdminLoggedIn() || Request.Cookies["AdminEmail"] != "flyerbd@gmail.com")
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var admin = _context.Admins.Find(id);
+            if (admin == null)
+            {
+                return NotFound();
+            }
+            _context.Admins.Remove(admin);
+            _context.SaveChanges();
+            TempData["error"] = "Admin Deleted Successfully";
+            return RedirectToAction("ApplicationUser");
+        }
+
+        //delete query
+        public IActionResult DeleteQuery(string? id)
+        {
+            if (!IsAdminLoggedIn() || Request.Cookies["AdminEmail"] != "flyerbd@gmail.com")
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var contact = _context.Contacts.Find(id);
+            if (contact == null)
+            {
+                return NotFound();
+            }
+            _context.Contacts.Remove(contact);
+            _context.SaveChanges();
+            TempData["error"] = "Query Deleted Successfully";
+            return RedirectToAction("Queries");
+        }
+
+        
 
     }
 }
