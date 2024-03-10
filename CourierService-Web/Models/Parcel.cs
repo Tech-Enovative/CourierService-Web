@@ -63,6 +63,11 @@ namespace CourierService_Web.Models
         public string? RiderId { get; set; }
         public Rider? Rider { get; set; }
 
+        [ForeignKey("HubId")]
+        public string? HubId { get; set; }
+
+        public Hub Hub { get; set; }
+
 
         public List<ReturnParcel>? ReturnParcel { get; set; }
 

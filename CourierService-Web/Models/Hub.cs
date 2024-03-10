@@ -29,5 +29,14 @@ namespace CourierService_Web.Models
         public string? AdminId { get; set; }
         public Admin Admin { get; set; }
         
+        public List<Rider>? Riders { get; set; }
+
+        public List<Parcel>? parcels { get; set; }
+
+        public List<DeliveredParcel>? DeliveredParcels { get; set; }
+
+        public List<ExchangeParcel>? ExchangeParcels { get; set; }
+
+        public List<ReturnParcel>? ReturnParcels { get; set; }
     }
 }

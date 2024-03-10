@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CourierService_Web.Models
 {
@@ -52,5 +53,15 @@ namespace CourierService_Web.Models
         
 
         public List<Parcel>? Parcels { get; set; }
+
+        public List<DeliveredParcel>? DeliveredParcels { get; set; }
+
+        public List<ReturnParcel>? ReturnParcels { get; set; }
+
+        public List<ExchangeParcel>? ExchangeParcels { get; set; }
+
+        [ForeignKey("HubId")]
+        public string HubId { get; set; }
+        public Hub Hub { get; set; }
     }
 }
