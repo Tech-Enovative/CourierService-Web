@@ -62,5 +62,19 @@ namespace CourierService_Web.Models
         [ForeignKey("RiderId")]
         public string? RiderId { get; set; }
         public Rider? Rider { get; set; }
+
+
+        public List<ReturnParcel>? ReturnParcel { get; set; }
+
+        [ForeignKey("DeliveryId")]
+        public string? DeliveryId { get; set; }
+        public DeliveredParcel? DeliveryParcel { get; set; }
+
+        public List<ExchangeParcel>? ExchangeParcel { get; set; }
+
+        [ForeignKey("CancelId")]
+        public string? CancelId { get; set; }
+        public CancelParcel? CancelParcel { get; set; }
+
     }
 }
