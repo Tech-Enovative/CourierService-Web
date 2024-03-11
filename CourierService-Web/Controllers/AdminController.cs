@@ -856,13 +856,91 @@ namespace CourierService_Web.Controllers
             }
             if (ModelState.IsValid)
             {
-                //admin id
+                //check name already exist
+                var name = _context.Hubs.FirstOrDefault(a => a.Name == hub.Name);
+                if (name != null)
+                {
+                    TempData["error"] = "Hub Name Already Exists";
+                    return View(hub);
+                }
+                //check email already exist
+                var email = _context.Hubs.FirstOrDefault(a => a.Email == hub.Email);
+                if (email != null)
+                {
+                    TempData["error"] = "Email Already Exists";
+                    return View(hub);
+                }
                 hub.AdminId = Request.Cookies["AdminId"];
                 hub.CreatedBy = Request.Cookies["AdminEmail"];
                 _context.Hubs.Add(hub);
                 _context.SaveChanges();
                 TempData["success"] = "Hub Created Successfully";
                 return RedirectToAction("Index");
+            }
+            else
+            {
+                return View(hub);
+            }
+        }
+
+        //delete hub
+        public IActionResult DeleteHub(string? id)
+        {
+            if (!IsAdminLoggedIn() || Request.Cookies["AdminEmail"] != "flyerbd@gmail.com")
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var hub = _context.Hubs.Find(id);
+            if (hub == null)
+            {
+                return NotFound();
+            }
+            _context.Hubs.Remove(hub);
+            _context.SaveChanges();
+            TempData["error"] = "Hub Deleted Successfully";
+            return RedirectToAction("Hub");
+        }
+
+        //edit hub
+        public IActionResult EditHub(string? id)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var hub = _context.Hubs.Find(id);
+            if (hub == null)
+            {
+                return NotFound();
+            }
+            return View(hub);
+        }
+
+        [HttpPost]
+        public IActionResult EditHub(Hub hub)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (hub == null)
+            {
+                return NotFound();
+            }
+            if (ModelState.IsValid)
+            {
+                _context.Hubs.Update(hub);
+                _context.SaveChanges();
+                TempData["success"] = "Hub Updated Successfully";
+                return RedirectToAction("Hub");
             }
             else
             {
