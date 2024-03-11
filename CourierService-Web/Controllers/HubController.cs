@@ -43,5 +43,21 @@ namespace CourierService_Web.Controllers
             }
             return View(parcels);
         }
+
+        //Profile
+        public IActionResult Profile()
+        {
+            if (!IsHubLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var hubId = Request.Cookies["HubId"];
+            var hub = _context.Hubs.FirstOrDefault(h => h.Id == hubId);
+            if (hub == null)
+            {
+                return NotFound();
+            }
+            return View(hub);
+        }
     }
 }
