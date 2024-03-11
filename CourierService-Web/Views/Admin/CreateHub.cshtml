@@ -1,5 +1,77 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model CourierService_Web.Models.Hub
+
 @{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    string AdminId = Context.Request.Cookies["AdminId"];
+
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row mt-5 justify-content-center align-content-center">
+                <div class="col-lg-6">
+                    <div>
+                        <h4 class="header-title">Create a New Hub</h4>
+
+                        <form method="post" enctype="multipart/form-data">
+                            //pass admin id
+                            <input type="hidden" asp-for="AdminId" name="AdminId" value="@AdminId" />
+                            <div class="form-group">
+                                <label asp-for="Name" for="Name">Name<span class="text-danger">*</span></label>
+                                <input asp-for="Name" type="text" name="Name" parsley-trigger="change" required
+                                       placeholder="Enter Name" class="form-control" id="Name">
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Area" for="Area">Area<span class="text-danger">*</span></label>
+                                <input asp-for="Area" type="text" name="Area" parsley-trigger="change" required
+                                       placeholder="Enter Area" class="form-control" id="Area">
+                                <span asp-validation-for="Area" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Address" for="Address">Address<span class="text-danger">*</span></label>
+                                <input asp-for="Address" type="text" name="Address" parsley-trigger="change" required
+                                       placeholder="Enter Address" class="form-control" id="Address">
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="PhoneNumber" for="PhoneNumber">Phone Number<span class="text-danger">*</span></label>
+                                <input asp-for="PhoneNumber" type="text" name="PhoneNumber" parsley-trigger="change" required
+                                       placeholder="Enter Phone Number" class="form-control" id="PhoneNumber">
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Email" for="Email">Email<span class="text-danger">*</span></label>
+                                <input asp-for="Email" type="email" name="Email" parsley-trigger="change" required
+                                       placeholder="Enter Email" class="form-control" id="Email">
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Password" for="Password">Password<span class="text-danger">*</span></label>
+                                <input asp-for="Password" type="password" name="Password" parsley-trigger="change" required
+                                       placeholder="Enter Password" class="form-control" id="Password">
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                            <div class="form-group text-right mb-0">
+                                <button asp-controller="Admin" asp-action="CreateHub" class="btn btn-primary waves-effect waves-light mr-1" type="submit">
+                                    Create Hub
+                                </button>
+                                <button type="reset" class="btn btn-secondary waves-effect">
+                                    Reset
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
 }

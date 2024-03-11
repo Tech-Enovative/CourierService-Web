@@ -27,7 +27,7 @@ namespace CourierService_Web.Models
 
         [ForeignKey("AdminId")]
         public string? AdminId { get; set; }
-        public Admin Admin { get; set; }
+        public Admin? Admin { get; set; }
         
         public List<Rider>? Riders { get; set; }
 

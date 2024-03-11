@@ -856,6 +856,9 @@ namespace CourierService_Web.Controllers
             }
             if (ModelState.IsValid)
             {
+                //admin id
+                hub.AdminId = Request.Cookies["AdminId"];
+                hub.CreatedBy = Request.Cookies["AdminEmail"];
                 _context.Hubs.Add(hub);
                 _context.SaveChanges();
                 TempData["success"] = "Hub Created Successfully";
