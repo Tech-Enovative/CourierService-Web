@@ -67,5 +67,7 @@ namespace CourierService_Web.Models
         public string? Tin { get; set; }
 
         public List<Parcel>? Parcels { get; set; }
+
+        public List<DeliveredParcel>? DeliveredParcels { get; set; }
     }
 }

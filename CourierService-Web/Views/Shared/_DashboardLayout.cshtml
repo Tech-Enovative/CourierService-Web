@@ -1,0 +1,325 @@
+﻿﻿@{
+    string RiderId = Context.Request.Cookies["RiderId"];
+    string AdminId = Context.Request.Cookies["AdminId"];
+    string MerchantId = Context.Request.Cookies["MerchantId"];
+    string AdminEmail = Context.Request.Cookies["AdminEmail"];
+    string RiderEmail = Context.Request.Cookies["RiderEmail"];
+    string MerchantEmail = Context.Request.Cookies["MerchantEmail"];
+
+
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Flyer Express Bd" name="description" />
+    <meta content="Coderthemes" name="author" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="https://i.ibb.co/nrbyqDb/cropped-20240212-042330-0000-1.webp?fbclid=IwAR1NZ_esF6HEjndt-7mpQEAgvTV_ptZlr3n0COhZFFAu4DzeOkLipq7P0ik">
+
+    <!-- App css -->
+    <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="bootstrap-stylesheet" />
+    <link href="~/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-stylesheet" />
+    <link href="//cdn.datatables.net/2.0.0/css/dataTables.dataTables.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+
+</head>
+<body>
+    <!-- Begin page -->
+    <div id="wrapper">
+
+
+        <!-- Topbar Start -->
+        <div class="navbar-custom">
+            <ul class="list-unstyled topnav-menu float-right mb-0">
+
+
+
+                <li class="dropdown notification-list">
+                    <a class="nav-link dropdown-toggle nav-user mr-0 waves-effect waves-light" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                        @if (@AdminEmail != null)
+                        {
+                            <img src="https://www.shutterstock.com/image-photo/businessman-icon-vector-available-600nw-80214796.jpg" alt="user-image" class="rounded-circle">
+                            <span class="d-none d-sm-inline-block ml-1 text-white font-weight-medium">@AdminEmail</span>
+                        }
+                        @if (@RiderEmail != null)
+                        {
+                            <img src="https://roparcel.com/assets/images/riders-about-1.jpg" alt="user-image" class="rounded-circle">
+                            <span class="d-none d-sm-inline-block ml-1 text-white font-weight-medium">@RiderEmail</span>
+                        }
+                        @if (@MerchantEmail != null)
+                        {
+                            <img src="https://www.shutterstock.com/image-photo/businessman-icon-vector-available-600nw-80214796.jpg" alt="user-image" class="rounded-circle">
+                            <span class="d-none d-sm-inline-block ml-1 text-white font-weight-medium">@MerchantEmail</span>
+                        }
+
+
+
+
+
+                    </a>
+
+                </li>
+
+
+
+            </ul>
+
+            <!-- LOGO -->
+            <div class="logo-box">
+                <a asp-controller="Home" asp-action="Home" class="logo text-center logo-dark">
+                    <span class="logo-lg">
+                        <img src="https://i.ibb.co/nrbyqDb/cropped-20240212-042330-0000-1.webp?fbclid=IwAR1NZ_esF6HEjndt-7mpQEAgvTV_ptZlr3n0COhZFFAu4DzeOkLipq7P0ik" alt="" height="110">
+
+                    </span>
+                    <span class="logo-sm">
+                        <!-- <span class="logo-lg-text-dark">U</span> -->
+                        <img src="https://i.ibb.co/nrbyqDb/cropped-20240212-042330-0000-1.webp?fbclid=IwAR1NZ_esF6HEjndt-7mpQEAgvTV_ptZlr3n0COhZFFAu4DzeOkLipq7P0ik" alt="" height="24">
+                    </span>
+                </a>
+
+                <a asp-controller="Home" asp-action="Home" class="logo text-center logo-light">
+                    <span class="logo-lg">
+                        <img src="https://i.ibb.co/nrbyqDb/cropped-20240212-042330-0000-1.webp?fbclid=IwAR1NZ_esF6HEjndt-7mpQEAgvTV_ptZlr3n0COhZFFAu4DzeOkLipq7P0ik" alt="" height="22">
+                        <!-- <span class="logo-lg-text-dark">Uplon</span> -->
+                    </span>
+                    <span asp-controller="Home" asp-action="Home" class="logo-sm">
+                        <!-- <span class="logo-lg-text-dark">U</span> -->
+                        <img src="https://i.ibb.co/nrbyqDb/cropped-20240212-042330-0000-1.webp?fbclid=IwAR1NZ_esF6HEjndt-7mpQEAgvTV_ptZlr3n0COhZFFAu4DzeOkLipq7P0ik" alt="" height="24">
+                    </span>
+                </a>
+            </div>
+
+            <ul class="list-unstyled topnav-menu topnav-menu-left m-0">
+                <li>
+                    <button class="button-menu-mobile waves-effect waves-light">
+                        <i class="mdi mdi-menu"></i>
+                    </button>
+                </li>
+
+
+
+
+
+            </ul>
+        </div>
+        <!-- end Topbar -->
+        <!-- ========== Left Sidebar Start ========== -->
+        <div class="left-side-menu">
+
+            <div class="slimscroll-menu">
+
+                <!--- Sidemenu -->
+                <div id="sidebar-menu">
+
+
+                    <ul class="metismenu" id="side-menu">
+                        <li>
+                            <a asp-controller="Home" asp-action="Home">
+                                <i class="mdi mdi-home"></i>
+                                <span> Home </span>
+                            </a>
+                        </li>
+                        @if (!string.IsNullOrEmpty(AdminId))
+                        {
+                            <li>
+                                <a asp-controller="Home" asp-action="Index">
+                                    <i class="mdi mdi-view-dashboard"></i>
+                                    <span> Dashboard </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Home" asp-action="Rider">
+                                    <i class="mdi mdi-bicycle"></i>
+                                    <span> Rider </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Home" asp-action="Merchant">
+                                    <i class="mdi mdi-human-male"></i>
+                                    <span> Merchant </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Home" asp-action="Parcel">
+                                    <i class="fas fa-box-open"></i>
+                                    <span> Parcel </span>
+                                </a>
+                            </li>
+                            @if (AdminEmail == "flyerbd@gmail.com")
+                            {
+                                <li>
+                                    <a asp-controller="Home" asp-action="ApplicationUser">
+                                        <i class="fas fa-cube"></i>
+                                        <span> Application User </span>
+                                    </a>
+                                </li>
+                            }
+
+
+                            <li>
+                                <a asp-controller="Home" asp-action="Queries">
+                                    <i class="fas fa-question-circle"></i>
+                                    <span> Queries </span>
+                                </a>
+                            </li>
+
+
+                            <li>
+                                <a asp-controller="Home" asp-action="ChangePassword">
+                                    <i class="fas fa-lock"></i>
+                                    <span> Change Password </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Home" asp-action="Logout">
+                                    <i class="mdi mdi-logout"></i>
+                                    <span> Logout </span>
+                                </a>
+                            </li>
+                        }
+
+                        @if (!string.IsNullOrEmpty(MerchantId))
+                        {
+                            <li>
+                                <a asp-controller="Merchant" asp-action="Index">
+                                    <i class="mdi mdi-view-dashboard"></i>
+                                    <span> Dashboard </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Merchant" asp-action="Profile">
+                                    <i class="ion ion-md-person "></i>
+                                    <span> Profile </span>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a asp-controller="Merchant" asp-action="Parcels">
+                                    <i class="fas fa-box-open"></i>
+                                    <span> All Parcel </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Merchant" asp-action="AddNewParcel">
+                                    <i class="fas fa-box-open"></i>
+                                    <span> Add New Parcel </span>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a asp-controller="Merchant" asp-action="ChangePassword">
+                                    <i class="fas fa-lock"></i>
+                                    <span> Change Password </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Home" asp-action="Logout">
+                                    <i class="mdi mdi-logout"></i>
+                                    <span> Logout </span>
+                                </a>
+                            </li>
+                        }
+
+                        @if (!string.IsNullOrEmpty(RiderId))
+                        {
+                            <li>
+                                <a asp-controller="Rider" asp-action="Index">
+                                    <i class="mdi mdi-view-dashboard"></i>
+                                    <span> Dashboard </span>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a asp-controller="Rider" asp-action="Profile">
+                                    <i class="ion ion-md-person "></i>
+                                    <span> Profile </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Rider" asp-action="AllParcel">
+                                    <i class="fas fa-box-open"></i>
+                                    <span> All Parcels </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Rider" asp-action="ChangePassword">
+                                    <i class="fas fa-lock"></i>
+                                    <span> Change Password </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Home" asp-action="Logout">
+                                    <i class="mdi mdi-logout"></i>
+                                    <span> Logout </span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+
+
+
+
+
+
+
+                </div>
+                <!-- End Sidebar -->
+
+                <div class="clearfix"></div>
+
+            </div>
+            <!-- Sidebar -left -->
+
+        </div>
+        <!-- Left Sidebar End -->
+
+
+
+    </div>
+    <!-- END wrapper -->
+
+
+    <div class="">
+        <main role="main" class="">
+            <partial name="_Notification" />
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- Footer Start -->
+    <footer class="footer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    2024 &copy; <a target="_blank" href="https://techenovative.com/">TechEnovative</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- end Footer -->
+    <!-- Vendor js -->
+    <script src="~/assets/js/vendor.min.js"></script>
+
+    <!--Morris Chart-->
+    <script src="~/assets/libs/morris-js/morris.min.js"></script>
+    <script src="~/assets/libs/raphael/raphael.min.js"></script>
+
+    <!-- Dashboard init js-->
+    <script src="~/assets/js/pages/dashboard.init.js"></script>
+
+    <!-- App js -->
+    <script src="~/assets/js/app.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="//cdn.datatables.net/2.0.0/js/dataTables.min.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
