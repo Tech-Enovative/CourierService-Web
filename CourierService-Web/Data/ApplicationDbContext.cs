@@ -63,13 +63,13 @@ namespace CourierService_Web.Data
 
             //relationship between rider and return parcel
             modelBuilder.Entity<ReturnParcel>()
-                .HasOne(r => r.RiderId)
+                .HasOne(r => r.Rider)
                 .WithMany(r => r.ReturnParcels)
                 .HasForeignKey(r => r.RiderId);
 
             //relationship between rider and exchange parcel
             modelBuilder.Entity<ExchangeParcel>()
-                .HasOne(e => e.RiderId)
+                .HasOne(e => e.Rider)
                 .WithMany(r => r.ExchangeParcels)
                 .HasForeignKey(e => e.RiderId);
 
