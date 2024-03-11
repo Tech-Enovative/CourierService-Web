@@ -41,7 +41,16 @@ namespace CourierService_Web.Controllers
                 TempData["success"] = "You are logged in as Merchant";
                 return RedirectToAction("Index", "Merchant");
             }
-            return View();
+            else if (Request.Cookies["HubId"] !=null)
+            {
+                TempData["success"] = "You are logged in as Hub";
+                return RedirectToAction("Index", "Hub");
+            }
+            else
+            {
+                return View();
+            }
+           
         }
 
         [HttpPost]
@@ -116,11 +125,31 @@ namespace CourierService_Web.Controllers
                 Response.Cookies.Append("MerchantEmail", merchant.Email, options);
                 return RedirectToAction("Index", "Merchant");
             }
+
+            //for hub login
+            var hub = _context.Hubs.FirstOrDefault(a => a.Email == email && a.Password == password);
+            if (hub != null)
+            {
+                TempData["success"] = "Login Successful";
+                if (IsRememberME == "on")
+                {
+                    options.Expires = DateTime.Now.AddDays(7);
+                }
+                else
+                {
+                    options.Expires = DateTime.Now.AddDays(1);
+                }
+                Response.Cookies.Append("HubId", hub.Id, options);
+                Response.Cookies.Append("HubEmail", hub.Email, options);
+                return RedirectToAction("Index", "Hub");
+            }
             else
             {
                 TempData["error"] = "Invalid Email or Password";
                 return View();
             }
+
+
 
         }
 
@@ -133,8 +162,10 @@ namespace CourierService_Web.Controllers
             Response.Cookies.Delete("RiderEmail");
             Response.Cookies.Delete("MerchantId");
             Response.Cookies.Delete("MerchantEmail");
+            Response.Cookies.Delete("HubId");
+            Response.Cookies.Delete("HubEmail");
             TempData["success"] = "Logout Successfully";
-            return RedirectToAction("Home", "Home");
+            return RedirectToAction("Login", "Home");
 
         }
 

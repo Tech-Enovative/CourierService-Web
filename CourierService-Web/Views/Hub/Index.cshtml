@@ -1,0 +1,91 @@
+﻿@{
+    ViewData["Title"] = "Hub Dashboard";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+@{
+    string HubEmail = Context.Request.Cookies["HubEmail"];
+}
+
+<!-- Start Page Content here -->
+
+<div class="content-page">
+    <div class="content">
+
+        <!-- Start Content-->
+        <div class="container-fluid">
+
+            <!-- start page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box">
+                        <div class="page-title-right">
+                            <ol class="breadcrumb m-0">
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+                            </ol>
+                        </div>
+                        <h4 class="page-title">Hub Dashboard</h4>
+                    </div>
+                </div>
+            </div>
+            <!-- end page title -->
+            <!-- Card boxes -->
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-xl-3">
+                    <div class="card-box tilebox-one bg-info d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Total Parcels</h6>
+                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TotalParcels</span></h3>
+                        </div>
+                        <i class="fas fa-boxes fa-3x text-black"></i>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-xl-3">
+                    <div class="card-box tilebox-one bg-warning d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Pending Parcels</h6>
+                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.PendingParcels</span></h3>
+                        </div>
+                        <i class="fas fa-clipboard-list fa-3x text-black"></i>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-xl-3">
+                    <div class="card-box tilebox-one bg-success d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Delivered Parcels</h6>
+                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.DeliveredParcels</span></h3>
+                        </div>
+                        <i class="fas fa-truck fa-3x text-black"></i>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-xl-3">
+                    <div class="card-box tilebox-one bg-primary d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Total Revenue</h6>
+                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TotalRevenue</span></h3>
+                        </div>
+                        <i class="fas fa-dollar-sign fa-3x text-black"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- End card boxes -->
+            <!-- Parcel details table -->
+            
+
+
+
+
+
+
+
+            <!-- End Parcel details table -->
+
+        </div> <!-- End container-fluid -->
+
+    </div> <!-- End content -->
+
+</div>
+<!-- End Page content -->

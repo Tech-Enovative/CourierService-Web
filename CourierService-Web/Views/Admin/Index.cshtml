@@ -36,24 +36,43 @@
 
             <div class="row justify-content-center">
                 <div class="col-md-6 col-xl-3">
-                    <div class="card-box tilebox-one bg-pink">
-                        <h6 class="text-black font-weight-bold text-uppercase mt-0">Riders</h6>
-                        <h3 class="my-3" data-plugin="counterup">@ViewBag.RiderCount</h3>
+                    <div class="card-box tilebox-one bg-pink d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Riders</h6>
+                            <h3 class="my-3" data-plugin="counterup">@ViewBag.RiderCount</h3>
+                        </div>
+                        <i class="fas fa-motorcycle fa-3x text-black"></i>
                     </div>
                 </div>
 
                 <div class="col-md-6 col-xl-3">
-                    <div class="card-box tilebox-one bg-success">
-                        <h6 class="text-black font-weight-bold text-uppercase mt-0">Merchant</h6>
-                        <h3 class="my-3"><span data-plugin="counterup">@ViewBag.MerchantCount</span></h3>
+                    <div class="card-box tilebox-one bg-success d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Merchant</h6>
+                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.MerchantCount</span></h3>
+                        </div>
+                        <i class="fas fa-store fa-3x text-black"></i>
                     </div>
                 </div>
 
-                <div class="col-md-6 col-xl-3">
-                    <div class="card-box tilebox-one bg-info">
-                        <h6 class="text-black font-weight-bold text-uppercase mt-0">Total Parcel</h6>
-                        <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TotalParcel</span></h3>
+                @* <div class="col-md-6 col-xl-3">
+                    <div class="card-box tilebox-one bg-info d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Total Parcel</h6>
+                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TotalParcel</span></h3>
+                        </div>
+                        <i class="fas fa-boxes fa-3x text-black"></i>
                     </div>
+                </div> *@
+                <div class="col-md-6 col-xl-3">
+                    <div class="card-box tilebox-one bg-info d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Hub</h6>
+                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.HubCount</span></h3>
+                        </div>
+                        <i class="fas fa-warehouse fa-3x text-black"></i>
+                    </div>
+
                 </div>
             </div>
             <hr />

@@ -32,6 +32,10 @@ namespace CourierService_Web.Controllers
             var merchantCount = _context.Merchants.Count();
             ViewBag.MerchantCount = merchantCount;
 
+            //hub count
+            var hubCount = _context.Hubs.Count();
+            ViewBag.HubCount = hubCount;
+
             //pickup count
             var pickupCount = _context.Parcels.Where(p => p.Status == "Pickup Request").Count();
             ViewBag.PickupCount = pickupCount;
