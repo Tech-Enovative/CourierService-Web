@@ -115,6 +115,71 @@ namespace CourierService_Web.Data
                 .WithMany(m => m.DeliveredParcels)
                 .HasForeignKey(d => d.MerchantId);
 
+            //seed admin data
+            modelBuilder.Entity<Admin>().HasData(
+                               new Admin
+                               {
+                                   Id = "A-123",
+                                   Name = "Admin",
+                                   Email = "flyerbd@gmail.com",
+                                   Password = "1111"
+
+                               });
+
+            //seed merchant data
+            modelBuilder.Entity<Merchant>().HasData(
+                               new Merchant
+                               {
+                                   Id = "M-123",
+                                   Name = "Merchant",
+                                   Email = "merchant@gmail.com",
+                                   Password = "1111",
+                                   ConfirmPassword = "1111",
+                                   ContactNumber = "01837730317",
+                                   CompanyName = "Merchant Company",
+                                   FullAddress = "Dhaka, Bangladesh",
+
+                                   
+
+
+                               });
+
+            //seed hub data
+            modelBuilder.Entity<Hub>().HasData(
+                                              new Hub
+                                              {
+                                                  Id = "H-123",
+                                                  Name = "Hub",
+                                                  Email = "hub@gmail.com",
+                                                  Password = "1111",
+                                                  PhoneNumber = "01837730317",
+                                                  Area = "Dhaka",
+                                                  Address = "Dhaka, Bangladesh",
+                                                  Status = 1,
+                                                  CreatedAt = DateTime.Now,
+                                                  CreatedBy = "Admin",
+                                                  AdminId = "A-123"
+
+                                              });
+
+            //seed rider data
+            modelBuilder.Entity<Rider>().HasData(
+                                                             new Rider
+                                                             {
+                                                                 Id = "R-123",
+                                                                 Name = "Rider",
+                                                                 Email = "rider@gmail.com",
+                                                                 Password = "1111",
+                                                                 ContactNumber = "01837730317",
+                                                                 Area = "Dhaka",
+                                                                 Salary = 10000,
+                                                                 NID = "0123456789",
+                                                                 District = "Dhaka",
+                                                                 FullAddress = "Dhaka, Bangladesh",
+                                                                 HubId = "H-123"
+
+                                                             });
+
         }
 
         

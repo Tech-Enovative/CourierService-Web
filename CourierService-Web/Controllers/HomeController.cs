@@ -29,7 +29,7 @@ namespace CourierService_Web.Controllers
             if (Request.Cookies["AdminId"] != null)
             {
                 TempData["success"] = "You are logged in as Admin";
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Admin");
             }
             else if (Request.Cookies["RiderId"] != null)
             {
@@ -66,7 +66,7 @@ namespace CourierService_Web.Controllers
                 }
                 Response.Cookies.Append("AdminId", admin.Id, options);
                 Response.Cookies.Append("AdminEmail", admin.Email, options);
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Admin");
             }
 
 

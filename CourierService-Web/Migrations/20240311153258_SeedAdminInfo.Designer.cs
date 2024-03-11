@@ -4,6 +4,7 @@ using CourierService_Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CourierService_Web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240311153258_SeedAdminInfo")]
+    partial class SeedAdminInfo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -187,22 +190,6 @@ namespace CourierService_Web.Migrations
                     b.HasIndex("AdminId");
 
                     b.ToTable("Hubs");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "H-123",
-                            Address = "Dhaka, Bangladesh",
-                            AdminId = "A-123",
-                            Area = "Dhaka",
-                            CreatedAt = new DateTime(2024, 3, 11, 22, 26, 51, 906, DateTimeKind.Local).AddTicks(4475),
-                            CreatedBy = "Admin",
-                            Email = "hub@gmail.com",
-                            Name = "Hub",
-                            Password = "1111",
-                            PhoneNumber = "01837730317",
-                            Status = 1
-                        });
                 });
 
             modelBuilder.Entity("CourierService_Web.Models.Merchant", b =>
@@ -273,19 +260,6 @@ namespace CourierService_Web.Migrations
                     b.HasIndex("HubId");
 
                     b.ToTable("Merchants");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "M-123",
-                            CompanyName = "Merchant Company",
-                            ConfirmPassword = "1111",
-                            ContactNumber = "01837730317",
-                            Email = "merchant@gmail.com",
-                            FullAddress = "Dhaka, Bangladesh",
-                            Name = "Merchant",
-                            Password = "1111"
-                        });
                 });
 
             modelBuilder.Entity("CourierService_Web.Models.Parcel", b =>
@@ -444,6 +418,7 @@ namespace CourierService_Web.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HubId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ImageUrl")
@@ -476,25 +451,6 @@ namespace CourierService_Web.Migrations
                     b.HasIndex("HubId");
 
                     b.ToTable("Riders");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "R-123",
-                            Area = "Dhaka",
-                            ContactNumber = "01837730317",
-                            CreatedAt = new DateTime(2024, 3, 11, 22, 26, 51, 906, DateTimeKind.Local).AddTicks(4516),
-                            District = "Dhaka",
-                            Email = "rider@gmail.com",
-                            FullAddress = "Dhaka, Bangladesh",
-                            HubId = "H-123",
-                            NID = "0123456789",
-                            Name = "Rider",
-                            Password = "1111",
-                            Salary = 10000,
-                            State = "Available",
-                            Status = 1
-                        });
                 });
 
             modelBuilder.Entity("CourierService_Web.Models.DeliveredParcel", b =>
@@ -609,7 +565,9 @@ namespace CourierService_Web.Migrations
                 {
                     b.HasOne("CourierService_Web.Models.Hub", "Hub")
                         .WithMany("Riders")
-                        .HasForeignKey("HubId");
+                        .HasForeignKey("HubId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Hub");
                 });

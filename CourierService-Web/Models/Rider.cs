@@ -61,7 +61,7 @@ namespace CourierService_Web.Models
         public List<ExchangeParcel>? ExchangeParcels { get; set; }
 
         [ForeignKey("HubId")]
-        public string HubId { get; set; }
-        public Hub Hub { get; set; }
+        public string? HubId { get; set; }
+        public Hub? Hub { get; set; }
     }
 }

@@ -1,0 +1,82 @@
+﻿@model IEnumerable<Admin>
+
+@{
+    ViewData["Title"] = "Application User";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card-box">
+                        <h4 class="header-title text-success"> Our Admins : @Model.Count()</h4>
+
+                        <a asp-controller="Admin" asp-action="AddAdmin" class="btn btn-primary waves-effect waves-light float-right">
+                            <i class="fas fa-plus-circle"></i>
+                            Add Admin
+                        </a>
+                        @{
+                            int count = 1;
+                        }
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>SL</th>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                       <th>Delete</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var admin in Model)
+                                    {
+                                        <tr>
+                                            <td>@count</td>
+                                            <th scope="row">@admin.Id</th>
+                                            <td>@admin.Name</td>
+                                            <td>@admin.Email</td>
+                                            <td>
+                                                <!-- Button trigger modal -->
+                                                <button class="btn btn-sm btn-danger waves-effect waves-light" data-toggle="modal" data-target="#myModal_@admin.Id">
+                                                    <i class="fas fa-trash"></i>
+                                                    Delete
+                                                </button>
+                                                <!-- Modal -->
+                                                <div id="myModal_@admin.Id" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="myModalLabel">Delete Admin</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <h5 class="font-16">Are you sure you want to delete?</h5>
+                                                                <!-- Display parcel details here if needed -->
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-light waves-effect" data-dismiss="modal">Close</button>
+                                                                <a asp-route-id="@admin.Id" asp-action="DeleteAdmin" class="btn btn-danger">
+                                                                    <i class="fas fa-trash"></i>
+                                                                    Delete
+                                                                </a>
+                                                            </div>
+                                                        </div><!-- /.modal-content -->
+                                                    </div><!-- /.modal-dialog -->
+                                                </div><!-- /.modal -->
+                                            </td>
+                                        </tr>
+                                        count++;
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

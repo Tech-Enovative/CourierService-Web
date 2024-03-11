@@ -4,6 +4,7 @@ using CourierService_Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CourierService_Web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240311160236_SeedRiderData")]
+    partial class SeedRiderData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -195,7 +198,7 @@ namespace CourierService_Web.Migrations
                             Address = "Dhaka, Bangladesh",
                             AdminId = "A-123",
                             Area = "Dhaka",
-                            CreatedAt = new DateTime(2024, 3, 11, 22, 26, 51, 906, DateTimeKind.Local).AddTicks(4475),
+                            CreatedAt = new DateTime(2024, 3, 11, 22, 2, 35, 577, DateTimeKind.Local).AddTicks(3986),
                             CreatedBy = "Admin",
                             Email = "hub@gmail.com",
                             Name = "Hub",
@@ -444,6 +447,7 @@ namespace CourierService_Web.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HubId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ImageUrl")
@@ -483,7 +487,7 @@ namespace CourierService_Web.Migrations
                             Id = "R-123",
                             Area = "Dhaka",
                             ContactNumber = "01837730317",
-                            CreatedAt = new DateTime(2024, 3, 11, 22, 26, 51, 906, DateTimeKind.Local).AddTicks(4516),
+                            CreatedAt = new DateTime(2024, 3, 11, 22, 2, 35, 577, DateTimeKind.Local).AddTicks(4051),
                             District = "Dhaka",
                             Email = "rider@gmail.com",
                             FullAddress = "Dhaka, Bangladesh",
@@ -609,7 +613,9 @@ namespace CourierService_Web.Migrations
                 {
                     b.HasOne("CourierService_Web.Models.Hub", "Hub")
                         .WithMany("Riders")
-                        .HasForeignKey("HubId");
+                        .HasForeignKey("HubId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Hub");
                 });

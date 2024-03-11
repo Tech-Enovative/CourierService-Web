@@ -129,25 +129,25 @@
                         @if (!string.IsNullOrEmpty(AdminId))
                         {
                             <li>
-                                <a asp-controller="Home" asp-action="Index">
+                                <a asp-controller="Admin" asp-action="Index">
                                     <i class="mdi mdi-view-dashboard"></i>
                                     <span> Dashboard </span>
                                 </a>
                             </li>
                             <li>
-                                <a asp-controller="Home" asp-action="Rider">
+                                <a asp-controller="Admin" asp-action="Rider">
                                     <i class="mdi mdi-bicycle"></i>
                                     <span> Rider </span>
                                 </a>
                             </li>
                             <li>
-                                <a asp-controller="Home" asp-action="Merchant">
+                                <a asp-controller="Admin" asp-action="Merchant">
                                     <i class="mdi mdi-human-male"></i>
                                     <span> Merchant </span>
                                 </a>
                             </li>
                             <li>
-                                <a asp-controller="Home" asp-action="Parcel">
+                                <a asp-controller="Admin" asp-action="Parcel">
                                     <i class="fas fa-box-open"></i>
                                     <span> Parcel </span>
                                 </a>
@@ -155,16 +155,22 @@
                             @if (AdminEmail == "flyerbd@gmail.com")
                             {
                                 <li>
-                                    <a asp-controller="Home" asp-action="ApplicationUser">
+                                    <a asp-controller="Admin" asp-action="ApplicationUser">
                                         <i class="fas fa-cube"></i>
                                         <span> Application User </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a asp-controller="Admin" asp-action="Hub">
+                                        <i class="mdi mdi-warehouse"></i>
+                                        <span> Hub </span>
                                     </a>
                                 </li>
                             }
 
 
                             <li>
-                                <a asp-controller="Home" asp-action="Queries">
+                                <a asp-controller="Admin" asp-action="Queries">
                                     <i class="fas fa-question-circle"></i>
                                     <span> Queries </span>
                                 </a>
@@ -172,13 +178,13 @@
 
 
                             <li>
-                                <a asp-controller="Home" asp-action="ChangePassword">
+                                <a asp-controller="Admin" asp-action="ChangePassword">
                                     <i class="fas fa-lock"></i>
                                     <span> Change Password </span>
                                 </a>
                             </li>
                             <li>
-                                <a asp-controller="Home" asp-action="Logout">
+                                <a asp-controller="Admin" asp-action="Logout">
                                     <i class="mdi mdi-logout"></i>
                                     <span> Logout </span>
                                 </a>

@@ -126,6 +126,32 @@ namespace CourierService_Web.Controllers
             return View();
         }
 
+        public IActionResult AddAdmin()
+        {
+
+            if (!IsAdminLoggedIn() || Request.Cookies["AdminEmail"] != "flyerbd@gmail.com")
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            return View();
+        }
+
+        public IActionResult Merchant()
+        {
+
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            var merchants = _context.Merchants.ToList();
+            if (merchants == null)
+            {
+                return NotFound();
+            }
+            return View(merchants);
+        }
+
 
         public IActionResult Rider()
         {
@@ -216,7 +242,81 @@ namespace CourierService_Web.Controllers
         }
 
 
+        public IActionResult AddMerchant()
+        {
 
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            return View();
+        }
+
+
+        [HttpPost]
+        public IActionResult AddMerchant(Merchant merchant, IFormFile? file)
+        {
+
+
+
+            if (merchant == null)
+            {
+                return NotFound();
+            }
+            if (ModelState.IsValid)
+            {
+                //check if merchant already exists
+                var merchantExists = _context.Merchants.Where(u => u.Email == merchant.Email).FirstOrDefault();
+                if (merchantExists != null)
+                {
+                    TempData["error"] = "Merchant Email Already Exists";
+                    return View(merchant);
+                }
+
+                //handle image
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+                if (file != null)
+                {
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    string MerchantPath = Path.Combine(wwwRootPath, @"Images\Merchant");
+                    using (var FileSteam = new FileStream(Path.Combine(MerchantPath, fileName), FileMode.Create))
+                    {
+                        file.CopyTo(FileSteam);
+                    }
+
+                    //upload to aws s3
+                    var s3Client = new AmazonS3Client("AKIAU6GDYMTHTIZML6UG", "9Mjr5N26gAtUX6aOyGBNy688zMgP9Dt46ndJOIh/", RegionEndpoint.USEast1);
+                    var fileTransferUtility = new TransferUtility(s3Client);
+                    var uploadRequest = new TransferUtilityUploadRequest
+                    {
+                        FilePath = MerchantPath + "\\" + fileName,
+                        BucketName = "courierbuckets3",
+                        Key = "Merchant/" + fileName,
+                        CannedACL = S3CannedACL.PublicRead
+                    };
+                    fileTransferUtility.Upload(uploadRequest);
+                    //after upload delete from local storage
+                    System.IO.File.Delete(MerchantPath + "\\" + fileName);
+                    merchant.ImageUrl = "https://courierbuckets3.s3.amazonaws.com/Merchant/" + fileName;
+
+
+                    //merchant.ImageUrl = @"\Images\Merchant\" + fileName;
+                }
+                else
+                {
+                    merchant.ImageUrl = "";
+                }
+
+                _context.Merchants.Add(merchant);
+                _context.SaveChanges();
+                TempData["success"] = "Merchant Added Successfully";
+                return RedirectToAction("Merchant");
+            }
+            else
+            {
+                return View(merchant);
+            }
+        }
 
         public IActionResult DeleteRider(string? id)
         {
@@ -679,6 +779,21 @@ namespace CourierService_Web.Controllers
             return RedirectToAction("ApplicationUser");
         }
 
+
+        public IActionResult Queries()
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var contacts = _context.Contacts.ToList();
+            if (contacts == null)
+            {
+                return NotFound();
+            }
+            return View(contacts);
+        }
+
         //delete query
         public IActionResult DeleteQuery(string? id)
         {
@@ -699,6 +814,57 @@ namespace CourierService_Web.Controllers
             _context.SaveChanges();
             TempData["error"] = "Query Deleted Successfully";
             return RedirectToAction("Queries");
+        }
+
+        //hub
+
+        public IActionResult Hub()
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var hubs = _context.Hubs.ToList();
+            if (hubs == null)
+            {
+                return NotFound();
+            }
+            return View(hubs);
+        }
+
+
+        //create hub
+        public IActionResult CreateHub()
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult CreateHub(Hub hub)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (hub == null)
+            {
+                return NotFound();
+            }
+            if (ModelState.IsValid)
+            {
+                _context.Hubs.Add(hub);
+                _context.SaveChanges();
+                TempData["success"] = "Hub Created Successfully";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return View(hub);
+            }
         }
 
         

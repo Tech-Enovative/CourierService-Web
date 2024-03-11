@@ -1,0 +1,126 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Become a Merchant";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+@model Merchant
+<main id="main">
+
+    <!-- ======= Breadcrumbs ======= -->
+    <div class="breadcrumbs">
+        <div class="page-header d-flex align-items-center" style="background-image: url('assets/img/page-header.jpg');">
+            <div class="container position-relative">
+                <div class="row d-flex justify-content-center">
+                    <div class="col-lg-6 text-center">
+                        <h2>Become A Merchant</h2>
+                        <p>Join our platform and become a merchant to unlock a world of opportunities. Enjoy the benefits of reaching a wider audience, increasing your sales, and expanding your business. Let us help you grow and succeed in today's competitive market.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav>
+            <div class="container">
+                <ol>
+                    <li><a asp-action="Home">Home</a></li>
+                    <li>Become A Merchant</li>
+                </ol>
+            </div>
+        </nav>
+    </div><!-- End Breadcrumbs -->
+    <!-- ======= Get a Quote Section ======= -->
+    <section id="get-a-quote" class="get-a-quote">
+        <div class="container" data-aos="fade-up">
+
+            <div class="row g-5">
+
+                <div class="col-lg-5 quote-bg" style="background-image: url(assets/img/quote-bg.jpg);"></div>
+
+                <div class="col-lg-7">
+                    <form method="post" enctype="multipart/form-data">
+                        <h3>Register a Merchant</h3>
+                        <p>Fill out the form below to register a new merchant.</p>
+                        <div class="row gy-4">
+
+                            <div class="col-md-6">
+                                <input asp-for="CompanyName" type="text" name="CompanyName" parsley-trigger="change" required
+                                       placeholder="Enter company name" class="form-control" id="CompanyName">
+                                <span asp-validation-for="CompanyName" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <input asp-for="Name" type="text" name="Name" parsley-trigger="change" required
+                                       placeholder="Enter owner's name" class="form-control" id="Name">
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-12">
+                                <input asp-for="FullAddress" type="text" name="FullAddress" parsley-trigger="change" required
+                                       placeholder="Enter full address" class="form-control" id="FullAddress">
+                                <span asp-validation-for="FullAddress" class="text-danger"></span>
+                            </div>
+
+
+                            <div class="col-md-12">
+                                <input asp-for="ContactNumber" type="text" name="ContactNumber" parsley-trigger="change" required
+                                       placeholder="Enter contact number" class="form-control" id="ContactNumber">
+                                <span asp-validation-for="ContactNumber" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-12">
+                                <input asp-for="FacebookUrl" type="text" name="FacebookUrl" parsley-trigger="change"
+                                       placeholder="Enter Facebook URL (Optional)" class="form-control" id="FacebookUrl">
+                                <span asp-validation-for="FacebookUrl" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-12">
+                                <input asp-for="Website" type="text" name="Website" parsley-trigger="change"
+                                       placeholder="Enter website URL (Optional)" class="form-control" id="Website">
+                                <span asp-validation-for="Website" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-12">
+                                <input asp-for="Email" type="email" name="Email" parsley-trigger="change" required
+                                       placeholder="Enter email" class="form-control" id="Email">
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-12">
+                                <input asp-for="Password" type="password" name="Password" parsley-trigger="change" required
+                                       placeholder="Enter password" class="form-control" id="Password">
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                             <div class="col-md-12">
+                                <input asp-for="ConfirmPassword" type="password" name="ConfirmPassword" parsley-trigger="change" required
+                                       placeholder="Enter Confirm password" class="form-control" id="ConfirmPassword">
+                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            </div>
+
+                            
+
+                            <div class="col-md-12 text-center">
+                                <button class="btn btn-primary" asp-controller="Admin" asp-action="RegisterMerchant" type="submit">Register</button>
+                                <br />
+                              <span>Already have an account?</span>
+                              <a asp-action="Login" class="text-primary">Login</a>
+                             
+                               
+                            </div>
+
+                        </div>
+                    </form>
+
+                </div><!-- End Quote Form -->
+
+            </div>
+
+        </div>
+    </section><!-- End Get a Quote Section -->
+
+</main><!-- End #main -->
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}
