@@ -38,5 +38,7 @@ namespace CourierService_Web.Models
         public List<ExchangeParcel>? ExchangeParcels { get; set; }
 
         public List<ReturnParcel>? ReturnParcels { get; set; }
+        public List<Merchant>? Merchants { get; set; }
+
     }
 }

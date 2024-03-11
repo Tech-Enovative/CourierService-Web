@@ -77,9 +77,9 @@ namespace CourierService_Web.Models
 
         public List<ExchangeParcel>? ExchangeParcel { get; set; }
 
-        [ForeignKey("CancelId")]
-        public string? CancelId { get; set; }
-        public CancelParcel? CancelParcel { get; set; }
+        //[ForeignKey("CancelId")]
+        //public string? CancelId { get; set; }
+        //public CancelParcel? CancelParcel { get; set; }
 
     }
 }

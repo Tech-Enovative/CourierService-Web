@@ -1,14 +1,22 @@
-﻿namespace CourierService_Web.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace CourierService_Web.Models
 {
     public class ReturnParcel
     {
         public string Id { get; set; } = "R-" + Guid.NewGuid().ToString().Substring(0, 4);
-        public Parcel ParcelId { get; set; }
+
+        public string? ParcelId { get; set; }
+        public Parcel? Parcel { get; set; }
         public DateTime ReturnDate { get; set; } = DateTime.Now;
 
-        public Rider RiderId { get; set; }
+        [ForeignKey("RiderId")]
+        public string? RiderId { get; set; }
+        public Rider Rider { get; set; }
 
-        public Hub HubId { get; set; }
+        [ForeignKey("HubId")]
+        public string? HubId { get; set; }
+        public Hub Hub { get; set; }
 
     }
 }

@@ -31,21 +31,21 @@ namespace CourierService_Web.Data
             base.OnModelCreating(modelBuilder);
 
 
-           //relationship between parcel and delivered parcel
-           //modelBuilder.Entity<DeliveredParcel>()
-           //     .HasOne(d => d.ParcelId)
-           //     .WithOne(p => p.DeliveryParcel)
-           //     .HasForeignKey<DeliveredParcel>(d => d.ParcelId);
+            //relationship between parcel and delivered parcel
+            modelBuilder.Entity<DeliveredParcel>()
+                 .HasOne(d => d.Parcel)
+                 .WithOne(p => p.DeliveryParcel)
+                 .HasForeignKey<Parcel>(d => d.DeliveryId);
 
             //relationship between parcel and return parcel
             modelBuilder.Entity<ReturnParcel>()
-                .HasOne(r => r.ParcelId)
+                .HasOne(r => r.Parcel)
                 .WithMany(p => p.ReturnParcel)
                 .HasForeignKey(q => q.ParcelId);
 
             //relationship between parcel and exchange parcel
             modelBuilder.Entity<ExchangeParcel>()
-                .HasOne(e => e.ParcelId)
+                .HasOne(e => e.Parcel)
                 .WithMany(p => p.ExchangeParcel)
                 .HasForeignKey(q => q.ParcelId);
 
@@ -56,10 +56,10 @@ namespace CourierService_Web.Data
             //     .HasForeignKey<CancelParcel>(c => c.ParcelId); 
 
             //relationship between rider and delivered parcel
-            //modelBuilder.Entity<DeliveredParcel>()
-            //    .HasOne(d => d.RiderId)
-            //    .WithMany(r => r.DeliveredParcels)
-            //    .HasForeignKey(d => d.RiderId);
+            modelBuilder.Entity<DeliveredParcel>()
+                .HasOne(d => d.Rider)
+                .WithMany(r => r.DeliveredParcels)
+                .HasForeignKey(d => d.RiderId);
 
             //relationship between rider and return parcel
             modelBuilder.Entity<ReturnParcel>()
@@ -80,20 +80,20 @@ namespace CourierService_Web.Data
                 .HasForeignKey(p => p.HubId);
 
             //relationship between hub and delivered parcel
-            //modelBuilder.Entity<DeliveredParcel>()
-            //    .HasOne(d => d.HubId)
-            //    .WithMany(h => h.DeliveredParcels)
-            //    .HasForeignKey(d => d.HubId);
+            modelBuilder.Entity<DeliveredParcel>()
+                .HasOne(d => d.Hub)
+                .WithMany(h => h.DeliveredParcels)
+                .HasForeignKey(d => d.HubId);
 
             //relationship between hub and return parcel
             modelBuilder.Entity<ReturnParcel>()
-                .HasOne(r => r.HubId)
+                .HasOne(r => r.Hub)
                 .WithMany(h => h.ReturnParcels)
                 .HasForeignKey(r => r.HubId);
 
             //relationship between hub and exchange parcel
             modelBuilder.Entity<ExchangeParcel>()
-                .HasOne(e => e.HubId)
+                .HasOne(e => e.Hub)
                 .WithMany(h => h.ExchangeParcels)
                 .HasForeignKey(e => e.HubId);
 
