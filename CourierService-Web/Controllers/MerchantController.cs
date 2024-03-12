@@ -60,8 +60,8 @@ namespace CourierService_Web.Controllers
             // Today Delivered Parcel
             ViewBag.TodayDelivered = _context.Parcels
                 .Count(x => x.MerchantId == merchantId &&
-                            x.DeliveryDate >= todayStart &&
-                            x.DeliveryDate < tomorrowStart);
+                            x.DeliveryParcel.DeliveryDate >= todayStart &&
+                            x.DeliveryParcel.DeliveryDate < tomorrowStart);
 
             // Today Cancelled Parcel
             ViewBag.TodayCancelled = _context.Parcels
@@ -79,6 +79,13 @@ namespace CourierService_Web.Controllers
 
             //today on transit parcel
             ViewBag.TodayTransit = _context.Parcels.Count(x => x.MerchantId == merchantId && x.Status == "Transit");
+
+            //parcel in hub
+            ViewBag.ParcelInHub = _context.Parcels.Count(x => x.MerchantId == merchantId && x.Status == "Parcel In Hub");
+
+            //parcel on the way
+            ViewBag.ParcelOnTheWay = _context.Parcels.Count(x => x.MerchantId == merchantId && x.Status == "Parcel On The Way");
+
 
             //all parcel list for today
             ViewBag.TodayParcelList = _context.Parcels
