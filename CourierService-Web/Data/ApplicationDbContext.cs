@@ -115,6 +115,13 @@ namespace CourierService_Web.Data
                 .WithMany(m => m.DeliveredParcels)
                 .HasForeignKey(d => d.MerchantId);
 
+            //relation between merchant and complain
+            modelBuilder.Entity<Complain>()
+                .HasOne(m => m.Merchant)
+                .WithMany(m => m.complains)
+                .HasForeignKey(m => m.MerchantId);
+
+
             //seed admin data
             modelBuilder.Entity<Admin>().HasData(
                                new Admin
