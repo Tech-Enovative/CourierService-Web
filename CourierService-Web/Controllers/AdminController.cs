@@ -130,6 +130,21 @@ namespace CourierService_Web.Controllers
             return View();
         }
 
+        //complains
+        public IActionResult Complain()
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var complains = _context.Complain.Include(u => u.Merchant).ToList();
+            if (complains == null)
+            {
+                return NotFound();
+            }
+            return View(complains);
+        }
+
         public IActionResult AddAdmin()
         {
 
