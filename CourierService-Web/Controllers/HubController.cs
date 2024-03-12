@@ -88,6 +88,31 @@ namespace CourierService_Web.Controllers
 
             return View(parcel);
         }
+
+        public IActionResult AssignDeliveryRider(string id)
+        {
+
+            if (!IsHubLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            // Find the parcel by ID
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+
+            // Get a list of available riders
+            var riders = _context.Riders.Where(u => u.State == "Available");
+
+            // Pass the list of riders to the view
+            ViewBag.Riders = riders;
+
+
+            return View(parcel);
+        }
         [HttpPost]
         public IActionResult AssignParcel(string id, string riderId)
         {
@@ -120,6 +145,42 @@ namespace CourierService_Web.Controllers
             // Save changes to the database
             _context.SaveChanges();
             TempData["success"] = "Parcel Assigned Successfully";
+            // Redirect to the parcel details page or any other desired page
+            return RedirectToAction("Parcel", "Hub");
+        }
+
+        [HttpPost]
+        public IActionResult AssignDeliveryRider(string id, string riderId)
+        {
+            if (!IsHubLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+
+            // Find the parcel by ID
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+
+            // Find the rider by ID
+            var rider = _context.Riders.Find(riderId);
+            if (rider == null)
+            {
+                return NotFound();
+            }
+
+            // Assign the rider to the parcel
+            parcel.Rider = rider;
+            parcel.Status = "Assigned For Delivery";
+            //parcel.DispatchDate = DateTime.Now.Date;
+
+
+            // Save changes to the database
+            _context.SaveChanges();
+            TempData["success"] = "Assigned Successfully";
             // Redirect to the parcel details page or any other desired page
             return RedirectToAction("Parcel", "Hub");
         }

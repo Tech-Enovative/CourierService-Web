@@ -186,7 +186,15 @@
 
                                                         </a>
                                                     }
-                                                    <span class="badge badge-success text-medium">Rider Assigned</span>
+
+                                                    else if (parcel.Status == "Parcel In Hub")
+                                                    {
+                                                        <a asp-action="AssignDeliveryRider" asp-route-id="@parcel.Id" asp-controller="Hub" class="btn btn-sm btn-info">
+                                                            <i class="fas fa-plus-circle"></i> Assign Delivery Rider
+
+                                                        </a>
+                                                    }
+                                                    @* <span class="badge badge-success text-medium">Pickup Rider Assigned</span> *@
                                                     @*  <a asp-route-id="@parcel.Id" asp-controller="Home" asp-action="DeleteRider" class="btn btn-danger">
                                             <i class="fas fa-trash"></i>
 
