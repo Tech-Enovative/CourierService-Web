@@ -4,6 +4,7 @@ using CourierService_Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CourierService_Web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240312192709_NewMigArea")]
+    partial class NewMigArea
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -189,10 +192,6 @@ namespace CourierService_Web.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("District")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -224,10 +223,9 @@ namespace CourierService_Web.Migrations
                             Id = "H-123",
                             Address = "Dhaka, Bangladesh",
                             AdminId = "A-123",
-                            Area = "Mirpur",
-                            CreatedAt = new DateTime(2024, 3, 13, 3, 13, 53, 57, DateTimeKind.Local).AddTicks(4598),
+                            Area = "Dhaka",
+                            CreatedAt = new DateTime(2024, 3, 13, 1, 27, 6, 732, DateTimeKind.Local).AddTicks(3915),
                             CreatedBy = "Admin",
-                            District = "Dhaka",
                             Email = "hub@gmail.com",
                             Name = "Hub",
                             Password = "1111",
@@ -317,7 +315,7 @@ namespace CourierService_Web.Migrations
                             CompanyName = "Merchant Company",
                             ConfirmPassword = "1111",
                             ContactNumber = "01837730317",
-                            CreatedAt = new DateTime(2024, 3, 13, 3, 13, 53, 57, DateTimeKind.Local).AddTicks(4534),
+                            CreatedAt = new DateTime(2024, 3, 13, 1, 27, 6, 732, DateTimeKind.Local).AddTicks(3824),
                             Email = "merchant@gmail.com",
                             FullAddress = "Dhaka, Bangladesh",
                             Name = "Merchant",
@@ -520,7 +518,7 @@ namespace CourierService_Web.Migrations
                             Id = "R-123",
                             Area = "Dhaka",
                             ContactNumber = "01837730317",
-                            CreatedAt = new DateTime(2024, 3, 13, 3, 13, 53, 57, DateTimeKind.Local).AddTicks(4652),
+                            CreatedAt = new DateTime(2024, 3, 13, 1, 27, 6, 732, DateTimeKind.Local).AddTicks(3983),
                             District = "Dhaka",
                             Email = "rider@gmail.com",
                             FullAddress = "Dhaka, Bangladesh",

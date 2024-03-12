@@ -147,6 +147,7 @@ namespace CourierService_Web.Data
                                    ContactNumber = "01837730317",
                                    CompanyName = "Merchant Company",
                                    FullAddress = "Dhaka, Bangladesh",
+                                   Area = "Mirpur"
 
                                    
 
@@ -162,12 +163,13 @@ namespace CourierService_Web.Data
                                                   Email = "hub@gmail.com",
                                                   Password = "1111",
                                                   PhoneNumber = "01837730317",
-                                                  Area = "Dhaka",
+                                                  Area = "Mirpur",
                                                   Address = "Dhaka, Bangladesh",
                                                   Status = 1,
                                                   CreatedAt = DateTime.Now,
                                                   CreatedBy = "Admin",
-                                                  AdminId = "A-123"
+                                                  AdminId = "A-123",
+                                                  District = "Dhaka"
 
                                               });
 

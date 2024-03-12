@@ -235,8 +235,15 @@ namespace CourierService_Web.Controllers
             }
             //parcel with hub information
             ViewBag.HubList = _context.Hubs.ToList();
-
+            var merchantId = HttpContext.Request.Cookies["MerchantId"];
+           //merchant area
+           var merchant = _context.Merchants.Find(merchantId);
+            ViewBag.MerchantArea = merchant.Area;
+            //merhcant full address
+            ViewBag.MerchantFullAddress = merchant.FullAddress;
             return View();
+
+            
         }
         [HttpPost]
         public IActionResult AddParcel(Parcel parcel)

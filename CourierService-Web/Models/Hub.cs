@@ -9,6 +9,9 @@ namespace CourierService_Web.Models
         public string Id { get; set; } = "H-" + Guid.NewGuid().ToString().Substring(0, 4);
         [Required(ErrorMessage = "Name is required.")]
         public string Name { get; set; }
+        
+        [Required(ErrorMessage = "District is required.")]
+        public string District { get; set; }
         [Required(ErrorMessage = "Area is required.")]
         public string Area { get; set; }
         [Required(ErrorMessage = "Address is required.")]

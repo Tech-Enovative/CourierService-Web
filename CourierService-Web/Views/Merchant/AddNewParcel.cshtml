@@ -12,6 +12,7 @@
 
 
 }
+
 <style>
     
     input[readonly] {
@@ -45,17 +46,33 @@
                                     <select name="HubId" class="form-control" id="">
                                     @foreach (var hub in ViewBag.HubList)
                                     {
-                                        <option value="@hub.Id">@hub.Name</option>
+                                        //check area
+                                        if (hub.Area == ViewBag.MerchantArea)
+                                        {
+                                            <option value="@hub.Id" >@hub.Name</option>
+
+                                        }
+                                        @* else if(hub.Area != ViewBag.MerchantArea)
+                                        {
+                                            <option value="@hub.Id" disabled>@hub.Name</option>
+                                        } *@
                                     }
+
                                     </select>
                                    </div>
                             
                             <div class="form-group">
                                 <label asp-for="PickupLocation" for="PickupLocation">Pickup Location<span class="text-danger">*</span></label>
+                                <select name="PickupOption" id="PickupOption" class="form-control">
+                                    <option value="Self">Self</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                               
                                 <input asp-for="PickupLocation" type="text" name="PickupLocation" parsley-trigger="change" required
                                        placeholder="Enter Pickup Location" class="form-control" id="PickupLocation">
                                 <span asp-validation-for="PickupLocation" class="text-danger"></span>
                             </div>
+
                             <div class="form-group">
                                 <label asp-for="ReceiverName" for="ReceiverName">Receiver Name<span class="text-danger">*</span></label>
                                 <input asp-for="ReceiverName" type="text" name="ReceiverName" parsley-trigger="change" required
@@ -226,6 +243,32 @@
         deliveryTypeSelect.addEventListener("change", calculateDeliveryCharge);
         productPriceInput.addEventListener("change", calculateDeliveryCharge);
         productQuantityInput.addEventListener("change", calculateDeliveryCharge);
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var pickupOptionSelect = document.getElementById("PickupOption");
+        var pickupLocationInput = document.getElementById("PickupLocation");
+
+        function togglePickupLocationInput() {
+            if (pickupOptionSelect.value === "Self") {
+                // Set the value of the input field to the merchant's full address from ViewBag
+                pickupLocationInput.value = '@ViewBag.MerchantFullAddress';
+                pickupLocationInput.setAttribute('readonly', true); // Make the input readonly
+                pickupLocationInput.style.display = "block";
+            } else {
+                pickupLocationInput.removeAttribute('readonly'); // Remove the readonly attribute
+                pickupLocationInput.style.display = "block";
+            }
+        }
+
+
+
+        // Call the function initially
+        togglePickupLocationInput();
+
+        // Call the function whenever pickup option changes
+        pickupOptionSelect.addEventListener("change", togglePickupLocationInput);
     });
 </script>
 

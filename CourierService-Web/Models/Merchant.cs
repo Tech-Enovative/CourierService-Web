@@ -27,7 +27,7 @@ namespace CourierService_Web.Models
         
         public string? District { get; set; }
 
-        
+        [Required(ErrorMessage = "Area is required.")]
         public string? Area { get; set; }
 
         [Required(ErrorMessage = "Contact number is required.")]
