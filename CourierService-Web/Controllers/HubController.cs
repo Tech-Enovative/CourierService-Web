@@ -28,6 +28,23 @@ namespace CourierService_Web.Controllers
             var deliveredParcelCount = _context.Parcels.Where(p => p.HubId == hubId && p.DeliveryParcel.Id != null).Count();
             ViewBag.DeliveredParcelCount = deliveredParcelCount;
 
+           
+
+            DateTime todayStart = DateTime.Today;
+            DateTime tomorrowStart = todayStart.AddDays(1);
+            //all parcel list for today
+            var todayParcelList = _context.Parcels
+                .Where(p => p.PickupRequestDate >= todayStart && p.PickupRequestDate < tomorrowStart).Include(u => u.Merchant).Include(u => u.Rider)
+                .ToList();
+            ViewBag.TodayParcelList = todayParcelList;
+
+            //all parcel list for today count
+            var todayParcelCount = todayParcelList.Count;
+            ViewBag.TodayParcelCount = todayParcelCount;
+
+
+
+
         }
 
         //ishublogged in
