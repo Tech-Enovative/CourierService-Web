@@ -292,6 +292,21 @@ namespace CourierService_Web.Controllers
                     return View(merchant);
                 }
 
+                //name already exists
+                var name = _context.Merchants.FirstOrDefault(a => a.Name == merchant.Name);
+                if (name != null)
+                {
+                    TempData["error"] = "Merchant Name Already Exists";
+                    return View(merchant);
+                }
+
+                //password and confirm password check
+                if (merchant.Password != merchant.ConfirmPassword)
+                {
+                    TempData["error"] = "Password and Confirm Password does not match";
+                    return View(merchant);
+                }
+
                 //handle image
                 string wwwRootPath = _webHostEnvironment.WebRootPath;
                 if (file != null)

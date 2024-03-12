@@ -62,7 +62,9 @@ namespace CourierService_Web.Models
         
         public string? TradeLicense { get; set; }
 
-       
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+
         //tin should be 12 digit
         [RegularExpression(@"^[0-9]{12}$", ErrorMessage = "Please enter a valid TIN.")]
         public string? Tin { get; set; }
