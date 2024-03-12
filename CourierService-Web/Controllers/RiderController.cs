@@ -57,7 +57,7 @@ namespace CourierService_Web.Controllers
             ViewBag.ParcelList = _context.Parcels.Where(x => x.RiderId == riderId).ToList();
 
             //all parcel list for today by rider
-            ViewBag.AllParcelList = _context.Parcels.Where(x => x.RiderId == riderId && x.DispatchDate >= todayStart && x.DispatchDate < tomorrowStart).Include(u => u.Merchant).ToList();
+            ViewBag.AllParcelList = _context.Parcels.Where(x => x.RiderId == riderId && x.DispatchDate >= todayStart && x.DispatchDate < tomorrowStart).Include(u => u.Merchant).Include(h=>h.Hub).ToList();
 
 
             //ViewBag.AllParcelList = _context.Parcels.Where(z => z.RiderId == riderId && y=> y.DispatchDate >= todayStart && x.DispatchDate < tomorrowStart).Include(u => u.Merchant).ToList();
@@ -93,12 +93,12 @@ namespace CourierService_Web.Controllers
         public IActionResult Index()
         {
 
-            //if (!IsRiderLoggedIn())
-            //{
+            if (!IsRiderLoggedIn())
+            {
 
-            //    return RedirectToAction("Login", "Home");
-            //}
-            //UpdateLayout();
+                return RedirectToAction("Login", "Home");
+            }
+            UpdateLayout();
             return View();
         }
 
@@ -218,8 +218,8 @@ namespace CourierService_Web.Controllers
             return View(parcel);
         }
 
-        //status change to Transit
-        public IActionResult Transit(string id)
+        //status change to PickedUp
+        public IActionResult PickedUp(string id)
         {
             if (!IsRiderLoggedIn())
             {
@@ -229,10 +229,10 @@ namespace CourierService_Web.Controllers
 
             var riderId = HttpContext.Request.Cookies["RiderId"];
             var parcel = _context.Parcels.Find(id);
-            parcel.Status = "Transit";
+            parcel.Status = "Picked Up";
             //find rider by riderId
             var rider = _context.Riders.Find(riderId);
-            rider.State = "Busy";
+            //rider.State = "Busy";
             _context.Parcels.Update(parcel);
             _context.Riders.Update(rider);
             _context.SaveChanges();
@@ -253,6 +253,29 @@ namespace CourierService_Web.Controllers
             var rider = _context.Riders.Find(riderId);
             var parcel = _context.Parcels.Find(id);
             parcel.Status = "Delivered";
+            parcel.DeliveryDate = DateTime.Now.Date;
+            rider.State = "Available";
+            _context.Parcels.Update(parcel);
+            _context.Riders.Update(rider);
+            _context.SaveChanges();
+            return RedirectToAction("AllParcel");
+        }
+
+
+        //status change to Parcel In Hub
+        public IActionResult ParcelInHub(string id)
+        {
+            if (!IsRiderLoggedIn())
+            {
+
+                return RedirectToAction("Login", "Home");
+            }
+
+            var riderId = HttpContext.Request.Cookies["RiderId"];
+            //find rider by riderId
+            var rider = _context.Riders.Find(riderId);
+            var parcel = _context.Parcels.Find(id);
+            parcel.Status = "Parcel In Hub";
             parcel.DeliveryDate = DateTime.Now.Date;
             rider.State = "Available";
             _context.Parcels.Update(parcel);

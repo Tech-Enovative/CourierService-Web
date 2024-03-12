@@ -112,6 +112,7 @@
                                     <tr>
                                         <th>SL</th>
                                         <th>ID</th>
+                                        <th>Hub</th>
                                         <th>Merchant</th>
                                         <th>Pickup Location</th>
                                         <th>Date</th>
@@ -126,11 +127,23 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @* @foreach (var parcel in ViewBag.AllParcelList)
+                                    @foreach (var parcel in ViewBag.AllParcelList)
                                     {
                                         <tr>
                                             <td>@sl</td>
                                             <td>@parcel.Id</td>
+                                            @if (parcel.HubId == null)
+                                            {
+                                                <td><span class="badge badge-danger text-medium">Not Assigned</span></td>
+                                            }
+                                            else
+                                            {
+
+                                                <td>
+                                                    <strong>Name:</strong> @parcel.Hub.Name <br />
+                                                    <strong>Phone:</strong> @parcel.Hub.PhoneNumber
+                                                </td>
+                                            }
                                             @if (parcel.MerchantId == null)
                                             {
                                                 <td><span class="badge badge-danger text-medium">Not Available</span></td>
@@ -167,9 +180,9 @@
                                                 {
                                                     <span class="badge badge-success font-weight-bold">@parcel.Status</span>
                                                 }
-                                                else if (parcel.Status == "Dispatch")
+                                                else if (parcel.Status == "Assigned A Rider For Pickup")
                                                 {
-                                                    <span class="badge badge-success font-weight-bold">@parcel.Status</span>
+                                                    <span class="badge badge-success font-weight-bold">Assigned For Pickup</span>
                                                 }
                                                 else if (parcel.Status == "Transit")
                                                 {
@@ -197,10 +210,10 @@
                                             <td>
                                                 @if (parcel.RiderId != null)
                                                 {
-                                                    @if (parcel.Status == "Dispatched")
+                                                    @if (parcel.Status == "Assigned A Rider For Pickup")
                                                     {
-                                                        <a asp-route-id="@parcel.Id" asp-controller="Rider" asp-action="Transit" class="btn btn-sm btn-success">
-                                                            <i class="fas fa-truck"></i> On Transit
+                                                        <a asp-route-id="@parcel.Id" asp-controller="Rider" asp-action="PickedUp" class="btn btn-sm btn-success">
+                                                            <i class="fas fa-truck"></i> Picked Up
                                                         </a>
                                                     }
                                                     @if (parcel.Status == "Transit")
@@ -231,7 +244,7 @@
 
                                         </tr>
                                         sl++;
-                                    } *@
+                                    }
                                 </tbody>
                             </table>
                         </div>
