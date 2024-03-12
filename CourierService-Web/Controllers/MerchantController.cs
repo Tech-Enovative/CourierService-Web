@@ -226,6 +226,9 @@ namespace CourierService_Web.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
+            //parcel with hub information
+            ViewBag.HubList = _context.Hubs.ToList();
+
             return View();
         }
         [HttpPost]

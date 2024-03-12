@@ -1,5 +1,6 @@
 ﻿@model Parcel
 
+
 @{
     ViewData["Title"] = "Add Parcel";
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
@@ -37,12 +38,24 @@
                             
                             <input asp-for="MerchantId" type="hidden" name="MerchantId" value="@MerchantId" />
                             
-                            <div class="form-group">
+                            
+                              
+                                  <div class="form-group mt-3">
+                                    <label for="HubId">Select Hub<span class="text-danger">*</span></label>
+                                    <select name="HubId" class="form-control" id="">
+                                    @foreach (var hub in ViewBag.HubList)
+                                    {
+                                        <option value="@hub.Id">@hub.Name</option>
+                                    }
+                                    </select>
+                                   </div>
+                            
+                            @* <div class="form-group">
                                 <label asp-for="PickupLocation" for="PickupLocation">Pickup Location<span class="text-danger">*</span></label>
                                 <input asp-for="PickupLocation" type="text" name="PickupLocation" parsley-trigger="change" required
                                        placeholder="Enter Pickup Location" class="form-control" id="PickupLocation">
                                 <span asp-validation-for="PickupLocation" class="text-danger"></span>
-                            </div>
+                            </div> *@
                             <div class="form-group">
                                 <label asp-for="ReceiverName" for="ReceiverName">Receiver Name<span class="text-danger">*</span></label>
                                 <input asp-for="ReceiverName" type="text" name="ReceiverName" parsley-trigger="change" required
