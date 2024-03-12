@@ -238,6 +238,25 @@ namespace CourierService_Web.Controllers
             _context.SaveChanges();
             return RedirectToAction("AllParcel");
         }
+        public IActionResult ParcelOntheWay(string id)
+        {
+            if (!IsRiderLoggedIn())
+            {
+
+                return RedirectToAction("Login", "Home");
+            }
+
+            var riderId = HttpContext.Request.Cookies["RiderId"];
+            var parcel = _context.Parcels.Find(id);
+            parcel.Status = "Parcel On The Way";
+            //find rider by riderId
+            var rider = _context.Riders.Find(riderId);
+            rider.State = "Busy";
+            _context.Parcels.Update(parcel);
+            _context.Riders.Update(rider);
+            _context.SaveChanges();
+            return RedirectToAction("AllParcel");
+        }
 
         //status change to Delivered
         public IActionResult Delivered(string id)

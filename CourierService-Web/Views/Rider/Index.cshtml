@@ -184,7 +184,7 @@
                                                 {
                                                     <span class="badge badge-success font-weight-bold">Assigned For Pickup</span>
                                                 }
-                                                else if (parcel.Status == "Transit")
+                                                else if (parcel.Status == "Assigned For Delivery")
                                                 {
                                                     <span class="badge badge-info text-medium">@parcel.Status</span>
                                                 }
@@ -216,13 +216,19 @@
                                                             <i class="fas fa-truck"></i> Picked Up
                                                         </a>
                                                     }
-                                                    @if (parcel.Status == "Transit")
+                                                    @if (parcel.Status == "Assigned For Delivery")
+                                                    {
+                                                        <a asp-route-id="@parcel.Id" asp-controller="Rider" asp-action="ParcelOntheWay" class="btn btn-sm btn-success">
+                                                            <i class="fas fa-truck"></i> Parcel On the Way
+                                                        </a>
+                                                    }
+                                                    @if (parcel.Status == "Parcel On The Way")
                                                     {
                                                         <a asp-route-id="@parcel.Id" asp-controller="Rider" asp-action="Delivered" class="btn btn-sm btn-success">
                                                             <i class="fas fa-check"></i> Delivered
                                                         </a>
                                                         <a asp-route-id="@parcel.Id" asp-controller="Rider" asp-action="Cancel" class="btn btn-sm btn-danger">
-                                                            <i class="fas fa-times"></i> Cancel
+                                                            <i class="fas fa-times"></i> Exchange
                                                         </a>
                                                         <a asp-route-id="@parcel.Id" asp-controller="Rider" asp-action="Return" class="btn btn-sm btn-warning mt-2">
                                                             <i class="fas fa-undo"></i> Return
