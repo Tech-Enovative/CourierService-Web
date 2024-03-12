@@ -271,6 +271,14 @@ namespace CourierService_Web.Controllers
             //find rider by riderId
             var rider = _context.Riders.Find(riderId);
             var parcel = _context.Parcels.Find(id);
+            parcel.DeliveryParcel = new DeliveredParcel
+            {
+                ParcelId = parcel.Id,
+                RiderId = riderId,
+                DeliveryDate = DateTime.Now.Date,
+                HubId = parcel.HubId,
+                MerchantId = parcel.MerchantId
+            };
             parcel.Status = "Delivered";
             parcel.DeliveryDate = DateTime.Now.Date;
             rider.State = "Available";
