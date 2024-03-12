@@ -1,0 +1,92 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@{
+    
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+@model List<Complain>
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card-box">
+                        <h4 class="header-title text-primary">Complains  @* @Model.Count() *@</h4>
+                        <a asp-controller="Merchant" asp-action="AddComplain" class="btn btn-primary mb-4 waves-effect waves-light float-right">
+                            <i class="fas fa-plus-circle"></i>
+                            Create Complain
+                        </a>
+                        <div class="table-responsive" style="overflow-x: auto;">
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>SL</th>
+                                        <th>Subject</th>
+                                        <th>Description</th>
+                                        <th>Date</th>
+                                        <th>Delete</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int count = 1;
+                                    }
+                                    @foreach (var complain in Model.OrderByDescending(d=>d.Date))
+                                    {
+                                        <tr>
+                                            <td>@count</td>
+                                            <td>@complain.Subject</td>
+                                            <td>@complain.Description</td>
+                                            <td>@(complain.Date.ToShortDateString())</td>
+                                            
+                                            <td>
+
+                                                
+                                                    <!-- Button trigger modal -->
+                                                    <button class="btn btn-sm btn-danger waves-effect waves-light" data-toggle="modal" data-target="#myModal_@complain.Id">
+                                                        <i class="fas fa-trash"></i>
+                                                        Delete
+                                                    </button>
+                                                    <!-- Modal -->
+                                                    <div id="myModal_@complain.Id" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="myModalLabel">Delete</h5>
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <h5 class="font-16">Are you sure you want to delete?</h5>
+                                                                    <!-- Display parcel details here if needed -->
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-light waves-effect" data-dismiss="modal">Close</button>
+                                                                    <a asp-route-id="@complain.Id" asp-action="DeleteQuery" class="btn btn-danger">
+                                                                        <i class="fas fa-trash"></i>
+                                                                        Delete
+                                                                    </a>
+                                                                </div>
+                                                            </div><!-- /.modal-content -->
+                                                        </div><!-- /.modal-dialog -->
+                                                    </div>
+
+                                                    <!-- /.modal -->
+                                                
+
+                                            </td>
+                                        </tr>
+                                        count++;
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

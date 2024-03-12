@@ -321,5 +321,46 @@ namespace CourierService_Web.Controllers
             }
 
         }
+
+        //complain
+        public IActionResult Complain()
+        {
+            if (!IsMerchantLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var merchantId = HttpContext.Request.Cookies["MerchantId"];
+            var complains = _context.Complain.Where(x => x.MerchantId == merchantId).ToList();
+            return View(complains);
+        }
+
+        public IActionResult AddComplain()
+        {
+            if (!IsMerchantLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            return View();
+        }
+        [HttpPost]
+        public IActionResult AddComplain(Complain complain)
+        {
+            if (!IsMerchantLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (!ModelState.IsValid)
+            {
+                return View(complain);
+            }
+            var merchantId = HttpContext.Request.Cookies["MerchantId"];
+            complain.MerchantId = merchantId;
+            complain.Date = DateTime.Now;
+            _context.Complain.Add(complain);
+            _context.SaveChanges();
+            TempData["success"] = "Complain Added Successfully";
+            return RedirectToAction("Complain");
+        }
     }
 }

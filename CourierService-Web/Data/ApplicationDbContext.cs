@@ -22,6 +22,8 @@ namespace CourierService_Web.Data
         public DbSet<ExchangeParcel> ExchangeParcels { get; set; }
         public DbSet<ReturnParcel> ReturnParcels { get; set; }
 
+        public DbSet<Complain> Complain { get; set; }  
+
 
 
 
