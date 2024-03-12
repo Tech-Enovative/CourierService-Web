@@ -82,7 +82,7 @@ namespace CourierService_Web.Controllers
 
             //all parcel list for today
             ViewBag.TodayParcelList = _context.Parcels
-                .Where(x => x.MerchantId == merchantId && x.PickupRequestDate >= todayStart && x.PickupRequestDate < tomorrowStart).Include(x => x.Rider).ToList();
+                .Where(x => x.MerchantId == merchantId && x.PickupRequestDate >= todayStart && x.PickupRequestDate < tomorrowStart).Include(x => x.Rider).Include(h=>h.Hub).ToList();
 
             //count of all parcel for today
             ViewBag.TodayTotalParcel = _context.Parcels
@@ -257,7 +257,7 @@ namespace CourierService_Web.Controllers
                 return RedirectToAction("Login", "Home");
             }
             var merchantId = HttpContext.Request.Cookies["MerchantId"];
-            var parcels = _context.Parcels.Where(x => x.MerchantId == merchantId).Include(u => u.Rider).ToList();
+            var parcels = _context.Parcels.Where(x => x.MerchantId == merchantId).Include(u => u.Rider).Include(h=>h.Hub).ToList();
             return View(parcels);
         }
 

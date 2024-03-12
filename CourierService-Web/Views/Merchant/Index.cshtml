@@ -137,6 +137,7 @@
                                     <tr>
                                         <th>SL</th>
                                         <th>ID</th>
+                                        <th>Hub</th>
                                         <th>Rider</th>
                                         <th>Pickup Location</th>
                                         <th>Pickup Request Date</th>
@@ -155,6 +156,20 @@
                                         <tr>
                                             <td>@sl</td>
                                             <td>@parcel.Id</td>
+
+                                            @if (parcel.HubId == null)
+                                            {
+                                                <td><span class="badge badge-danger text-medium">Not Assigned</span></td>
+                                            }
+                                            else
+                                            {
+
+                                                <td>
+                                                    <strong>Name:</strong> @parcel.Hub.Name <br />
+                                                    <strong>Phone:</strong> @parcel.Hub.PhoneNumber
+                                                </td>
+                                            }
+
                                             @if (parcel.RiderId == null)
                                             {
                                                 <td><span class="badge badge-danger text-medium">Not Assigned</span></td>
