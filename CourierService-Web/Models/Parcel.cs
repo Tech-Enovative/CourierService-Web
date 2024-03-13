@@ -68,15 +68,18 @@ namespace CourierService_Web.Models
 
         public Hub? Hub { get; set; }
 
-
-        public List<ReturnParcel>? ReturnParcel { get; set; }
+        [ForeignKey("ReturnId")]
+       public string? ReturnId { get; set; }
+       public ReturnParcel ReturnParcel { get; set; }
 
         [ForeignKey("DeliveryId")]
         public string? DeliveryId { get; set; }
         public DeliveredParcel? DeliveryParcel { get; set; }
 
-        public List<ExchangeParcel>? ExchangeParcel { get; set; }
-
+        [ForeignKey("ExchangeId")]
+        public string? ExchangeId { get; set; }
+        public ExchangeParcel? ExchangeParcel { get; set; }
+        
         //[ForeignKey("CancelId")]
         //public string? CancelId { get; set; }
         //public CancelParcel? CancelParcel { get; set; }

@@ -44,6 +44,11 @@ namespace CourierService_Web.Models
         [Required(ErrorMessage = "Password is required.")]
         public string Password { get; set; }
 
+        [NotMapped]
+        [ValidateNever]
+        [Required(ErrorMessage = "Confirm Password is required.")]
+        public string ConfirmPassword { get; set; }
+
         [ValidateNever]
         public string? ImageUrl { get; set; }
 

@@ -42,6 +42,26 @@ namespace CourierService_Web.Controllers
             var todayParcelCount = todayParcelList.Count;
             ViewBag.TodayParcelCount = todayParcelCount;
 
+            //return parcel count according to hubId
+            var returnParcelCount = _context.ReturnParcels.Where(p => p.HubId == hubId).Count();
+            ViewBag.ReturnParcelCount = returnParcelCount;
+
+            //exchange parcel count according to hubId
+            var exchangeParcelCount = _context.ExchangeParcels.Where(p => p.HubId == hubId).Count();
+            ViewBag.ExchangeParcelCount = exchangeParcelCount;
+
+            //parcel in hub count according to hubId
+            var parcelInHubCount = _context.Parcels.Where(p => p.HubId == hubId && p.Status == "Parcel In Hub").Count();
+            ViewBag.ParcelInHubCount = parcelInHubCount;
+
+            //parcel Assigned A Rider For Pickup count according to hubId
+            var parcelAssignedRiderForPickupCount = _context.Parcels.Where(p => p.HubId == hubId && p.Status == "Assigned A Rider For Pickup").Count();
+            ViewBag.ParcelAssignedRiderForPickupCount = parcelAssignedRiderForPickupCount;
+
+            //parcel Assigned For Delivery count according to hubId
+            var parcelAssignedForDeliveryCount = _context.Parcels.Where(p => p.HubId == hubId && p.Status == "Assigned For Delivery").Count();
+            ViewBag.ParcelAssignedForDeliveryCount = parcelAssignedForDeliveryCount;
+
 
 
 
@@ -79,6 +99,22 @@ namespace CourierService_Web.Controllers
             return View(parcels);
         }
 
+        //Return parcel
+        public IActionResult ReturnParcel()
+        {
+            if (!IsHubLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            //return parcel according to hubId
+            var hubId = Request.Cookies["HubId"];
+            var returnParcels = _context.ReturnParcels.Where(p => p.HubId == hubId).Include(u => u.Merchant).Include(u => u.Rider).Include(p=>p.Parcel).ToList();
+            if (returnParcels == null)
+            {
+                return NotFound();
+            }
+            return View(returnParcels);
+        }
 
         //assign a parcel
         public IActionResult AssignParcel(string id)

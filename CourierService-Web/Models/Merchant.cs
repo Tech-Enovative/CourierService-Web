@@ -50,7 +50,10 @@ namespace CourierService_Web.Models
 
         [Required(ErrorMessage = "Password is required.")]
         public string Password { get; set; }
+        
         [Required(ErrorMessage = "Confirm Password is required.")]
+        [NotMapped]
+        [ValidateNever]
         public string ConfirmPassword { get; set; }
 
         

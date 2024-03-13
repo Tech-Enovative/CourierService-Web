@@ -15,5 +15,9 @@ namespace CourierService_Web.Models
         [ForeignKey("HubId")]
         public string? HubId { get; set; }
         public Hub Hub { get; set; }
+
+        [ForeignKey("MerchantId")]
+        public string? MerchantId { get; set; }
+        public Merchant? Merchant { get; set; }
     }
 }

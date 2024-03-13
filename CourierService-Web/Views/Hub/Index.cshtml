@@ -62,12 +62,52 @@
                 </div>
 
                 <div class="col-md-6 col-xl-3">
+                    <div class="card-box tilebox-one bg-warning d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Return Parcel</h6>
+                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.ReturnParcelCount</span></h3>
+                        </div>
+                        <i class="fas fa-undo fa-3x text-black"></i>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-xl-3">
+                    <div class="card-box tilebox-one bg-success d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Parcel In Hub</h6>
+                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.ParcelInHubCount</span></h3>
+                        </div>
+                        <i class="fas fa-box fa-3x text-black"></i>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-xl-3">
                     <div class="card-box tilebox-one bg-primary d-flex align-items-center justify-content-between">
                         <div>
-                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Total Revenue</h6>
-                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TotalRevenue</span></h3>
+                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Exchange Parcel</h6>
+                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.ExchangeParcelCount</span></h3>
                         </div>
-                        <i class="fas fa-dollar-sign fa-3x text-black"></i>
+                        <i class="fas fa-exchange-alt fa-3x text-black"></i>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-xl-3">
+                    <div class="card-box tilebox-one bg-info d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Assigned For Pickup</h6>
+                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.ParcelAssignedRiderForPickupCount</span></h3>
+                        </div>
+                        <i class="fas fa-truck-loading fa-3x text-black"></i>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-xl-3">
+                    <div class="card-box tilebox-one bg-danger d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Assigned For Delivery</h6>
+                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.ParcelAssignedForDeliveryCount</span></h3>
+                        </div>
+                        <i class="fas fa-truck fa-3x text-black"></i>
                     </div>
                 </div>
             </div>
@@ -179,10 +219,19 @@
                                             {
                                                 <td><span class="badge badge-success text-medium">Received</span></td>
                                             }
+                                            else if(parcel.Status == "Delivered")
+                                            {
+                                                <td><span class="badge badge-success text-medium">@parcel.Status</span></td>
+                                            }
+                                            else if (parcel.Status == "Returned")
+                                            {
+                                                <td><span class="badge badge-success text-medium">@parcel.Status</span></td>
+                                            }
                                             else
                                             {
                                                 <td><span class="badge badge-danger text-medium">@parcel.Status</span></td>
                                             }
+                                            
 
 
 
@@ -236,7 +285,7 @@
                                             {
                                                 <td>
                                                     <a asp-action="AssignParcel" asp-route-id="@parcel.Id" asp-controller="Hub" class="btn btn-sm btn-warning">
-                                                        <i class="fas fa-plus-circle"></i> Assign Rider
+                                                        <i class="fas fa-plus-circle"></i> Assign Pickup Rider
 
                                                     </a>
 
@@ -257,6 +306,14 @@
                                                     {
                                                         <a asp-action="AssignDeliveryRider" asp-route-id="@parcel.Id" asp-controller="Hub" class="btn btn-sm btn-info">
                                                             <i class="fas fa-plus-circle"></i> Assign Delivery Rider
+
+                                                        </a>
+                                                    }
+
+                                                    else if (parcel.Status == "Returned")
+                                                    {
+                                                        <a asp-action="AssignDeliveryRider" asp-route-id="@parcel.Id" asp-controller="Hub" class="btn btn-sm btn-info">
+                                                            <i class="fas fa-plus-circle"></i> Assign Delivery Rider For Return Parcel
 
                                                         </a>
                                                     }

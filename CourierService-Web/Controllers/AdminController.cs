@@ -216,6 +216,19 @@ namespace CourierService_Web.Controllers
                     TempData["error"] = "Email Already Exists";
                     return View(rider);
                 }
+                //check name already exists
+                var name = _context.Riders.FirstOrDefault(a => a.Name == rider.Name);
+                if (name != null)
+                {
+                    TempData["error"] = "Name Already Exists";
+                    return View(rider);
+                }
+                //check password and confirm password
+                if (rider.Password != rider.ConfirmPassword)
+                {
+                    TempData["error"] = "Password and Confirm Password does not match";
+                    return View(rider);
+                }
                 //handle image
                 string wwwRootPath = _webHostEnvironment.WebRootPath;
                 if (file != null)

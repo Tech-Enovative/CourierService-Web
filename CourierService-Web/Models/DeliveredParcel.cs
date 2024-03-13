@@ -20,6 +20,6 @@ namespace CourierService_Web.Models
 
         [ForeignKey("MerchantId")]
         public string? MerchantId { get; set; }
-        public Merchant Merchant { get; set; }
+        public Merchant? Merchant { get; set; }
     }
 }

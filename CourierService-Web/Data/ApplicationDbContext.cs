@@ -42,14 +42,14 @@ namespace CourierService_Web.Data
             //relationship between parcel and return parcel
             modelBuilder.Entity<ReturnParcel>()
                 .HasOne(r => r.Parcel)
-                .WithMany(p => p.ReturnParcel)
-                .HasForeignKey(q => q.ParcelId);
+                .WithOne(p => p.ReturnParcel)
+                .HasForeignKey<Parcel>(r => r.ReturnId);
 
             //relationship between parcel and exchange parcel
             modelBuilder.Entity<ExchangeParcel>()
                 .HasOne(e => e.Parcel)
-                .WithMany(p => p.ExchangeParcel)
-                .HasForeignKey(q => q.ParcelId);
+                .WithOne(p => p.ExchangeParcel)
+                .HasForeignKey<Parcel>(Parcel => Parcel.ExchangeId);
 
             //relationship between parcel and cancel parcel
             //modelBuilder.Entity<CancelParcel>()

@@ -214,7 +214,7 @@ namespace CourierService_Web.Controllers
             }
 
             var riderId = HttpContext.Request.Cookies["RiderId"];
-            var parcel = _context.Parcels.Where(p => p.RiderId == riderId).Include(u => u.Merchant).ToList();
+            var parcel = _context.Parcels.Where(p => p.RiderId == riderId).Include(u => u.Merchant).Include(h=>h.Hub).ToList();
             return View(parcel);
         }
 
@@ -344,6 +344,18 @@ namespace CourierService_Web.Controllers
             //find rider by riderId
             var rider = _context.Riders.Find(riderId);
             var parcel = _context.Parcels.Find(id);
+
+            parcel.ReturnParcel = new ReturnParcel
+            {
+                ParcelId = parcel.Id,
+                RiderId = riderId,
+                ReturnDate = DateTime.Now,
+                HubId = parcel.HubId,
+                MerchantId = parcel.MerchantId
+            };
+
+
+
             parcel.Status = "Returned";
             parcel.ReturnDate = DateTime.Now.Date;
             rider.State = "Available";
