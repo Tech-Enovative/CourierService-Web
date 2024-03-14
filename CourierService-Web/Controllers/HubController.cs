@@ -102,7 +102,7 @@ namespace CourierService_Web.Controllers
         //Return parcel
         
         //Status - ReturnParcelInHub
-        public IActionResult ReturnParcelInHub(string id)
+        public IActionResult ReturnParcelHub(string id)
         {
             if (!IsHubLoggedIn())
             {

@@ -95,6 +95,8 @@ namespace CourierService_Web.Controllers
             ViewBag.TodayTotalParcel = _context.Parcels
                 .Count(x => x.MerchantId == merchantId && x.PickupRequestDate >= todayStart && x.PickupRequestDate < tomorrowStart);
 
+            //return parcel count
+            ViewBag.ReturnParcelCount = _context.Parcels.Count(x => x.MerchantId == merchantId && x.ReturnId !=null);
 
 
 
@@ -133,6 +135,18 @@ namespace CourierService_Web.Controllers
             var merchant = _context.Merchants.Find(merchantId);
             return View(merchant);
 
+        }
+
+        //Return Parcel List
+        public IActionResult ReturnParcelList()
+        {
+            if (!IsMerchantLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var merchantId = HttpContext.Request.Cookies["MerchantId"];
+            var returnParcels = _context.Parcels.Where(x => x.MerchantId == merchantId && x.ReturnId !=null).Include(x => x.ReturnParcel).Include(x => x.Rider).Include(h=>h.Hub).ToList();
+            return View(returnParcels);
         }
 
         //update profile

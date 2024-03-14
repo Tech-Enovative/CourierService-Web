@@ -1,138 +1,22 @@
-﻿@{
-    ViewData["Title"] = "Dashboard";
-    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@{
+        ViewData["Title"] = "Parcels";
+        Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+
 }
-
-<!-- ============================================================== -->
-<!-- Start Page Content here -->
-<!-- ============================================================== -->
-
+@model IEnumerable<Parcel>
 <div class="content-page">
     <div class="content">
-
-        <!-- Start Content-->
         <div class="container-fluid">
-
-            <!-- start page title -->
             <div class="row">
-                <div class="col-12">
-                    <div class="page-title-box">
-                        <div class="page-title-right">
-                            <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-
-                            </ol>
-                        </div>
-                        <h4 class="page-title">Dashboard</h4>
-                    </div>
-                </div>
-            </div>
-            <!-- end page title -->
-
-
-            <div class="row justify-content-center">
-                <div class="col-md-6 col-xl-3">
-                    <div class="card-box tilebox-one bg-warning d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Pending Pickup Requests</h6>
-                            <h3 class="my-3" data-plugin="counterup">@ViewBag.TotalPickupRequest</h3>
-                        </div>
-                        <i class="fas fa-truck-loading fa-3x text-black"></i>
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-xl-3">
-                    <div class="card-box tilebox-one bg-success d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="text-black font-weight-bold text-uppercase mt-0">In Hub</h6>
-                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.ParcelInHub</span></h3>
-                        </div>
-                        <i class="fas fa-warehouse fa-3x text-black"></i>
-
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-xl-3">
-                    <div class="card-box tilebox-one bg-primary d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Delivered Today</h6>
-                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TodayDelivered</span></h3>
-                        </div>
-                        <i class="fas fa-check-circle fa-3x text-black"></i>
-                    </div>
-                </div>
-            </div>
-
-
-            <hr />
-            <!-- end row -->
-            
-
-            <div class="row justify-content-center">
-                
-                
-
-                <div class="col-md-6 col-xl-3">
-                    <div class="card-box tilebox-one bg-success d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Total Delivered</h6>
-                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TotalDelivered</span></h3>
-                        </div>
-                        <i class="fas fa-truck fa-3x text-black"></i>
-                    </div>
-
-                </div>
-
-                <div class="col-md-6 col-xl-3">
-                    <div class="card-box tilebox-one bg-red d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Parcel On The Way</h6>
-                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.ParcelOnTheWay</span></h3>
-                        </div>
-                        <i class="fas fa-shipping-fast fa-3x text-black"></i>
-
-                    </div>
-
-                </div>
-
-
-            </div>
-            <!-- end row -->
-
-            <div class="row justify-content-center">
-                <div class="col-md-6 col-xl-3">
-
-                    <div class="card-box tilebox-one bg-warning">
-
-                        <h6 class="text-black font-weight-bold  text-uppercase mt-0">Total Returned</h6>
-                        <h3 class="my-3" data-plugin="counterup">@ViewBag.ReturnParcelCount</h3>
-
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-xl-3">
-                    <div class="card-box tilebox-one bg-success">
-
-                        <h6 class="text-black font-weight-bold text-uppercase mt-0">Parcel Count</h6>
-                        <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TotalParcel</span></h3>
-
-                    </div>
-                </div>
-
-                
-
-
-            </div>
-            <!-- end row -->
-
-            <div class="row justify-content-center">
                 <div class="col-lg-12">
                     <div class="card-box">
-                        <h4 class="header-title text-success">Today's Parcel : @ViewBag.TodayTotalParcel </h4>
-                        @{
-                            int sl = 1;
-                        }
-                        <div class="table-responsive">
+                        <h4 class="header-title text-primary">Total Return Parcel : @Model.Count()</h4>
+
+                        <div class="table-responsive" style="overflow-x: auto;">
                             <table class="table mb-0">
                                 <thead>
                                     <tr>
@@ -148,17 +32,19 @@
                                         <th>Total Price</th>
                                         <th>Status</th>
                                         <th>Action</th>
-
-                                       
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var parcel in ViewBag.TodayParcelList)
+                                    @{
+                                        int sl = 1;
+                                    }
+
+                                    @foreach (var parcel in Model.OrderByDescending(u => u.PickupRequestDate))
                                     {
+
                                         <tr>
                                             <td>@sl</td>
                                             <td>@parcel.Id</td>
-
                                             @if (parcel.HubId == null)
                                             {
                                                 <td><span class="badge badge-danger text-medium">Not Assigned</span></td>
@@ -171,7 +57,6 @@
                                                     <strong>Phone:</strong> @parcel.Hub.PhoneNumber
                                                 </td>
                                             }
-
                                             @if (parcel.RiderId == null)
                                             {
                                                 <td><span class="badge badge-danger text-medium">Not Assigned</span></td>
@@ -222,9 +107,13 @@
                                             {
                                                 <td><span class="badge badge-success text-medium">@parcel.Status</span></td>
                                             }
+                                            else if (parcel.Status == "Parcel Returned To Merchant")
+                                            {
+                                                <td><span class="badge badge-info text-medium">Return Parcel Arrived</span></td>
+                                            }
                                             else
                                             {
-                                                <td><span class="badge badge-danger text-medium">@parcel.Status</span></td>
+                                                <td><span class="badge badge-info text-medium">@parcel.Status</span></td>
                                             }
 
                                             <td>
@@ -235,32 +124,22 @@
                                                     </a>
                                                 }
                                             </td>
+                                            
 
                                         </tr>
                                         sl++;
+                                        <!-- sample modal content -->
+                                       
+
+
+                                        <!-- /.modal -->
                                     }
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-
-
-
-
             </div>
-            <!-- end row -->
-
-        </div> <!-- end container-fluid -->
-
-    </div> <!-- end content -->
-
-
-
-
-
+        </div>
+    </div>
 </div>
-
-<!-- ============================================================== -->
-<!-- End Page content -->
-<!-- ============================================================== -->
