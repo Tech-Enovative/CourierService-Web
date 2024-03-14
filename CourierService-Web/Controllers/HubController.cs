@@ -115,7 +115,19 @@ namespace CourierService_Web.Controllers
             }
             return View(returnParcels);
         }
-
+        //Status - ReturnParcelInHub
+        public IActionResult ReturnParcelInHub(string id)
+        {
+            if (!IsHubLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var returnParcel = _context.Parcels.Find(id);
+            returnParcel.Status = "Return Parcel In Hub";
+            _context.Parcels.Update(returnParcel);
+            _context.SaveChanges();
+            return RedirectToAction("ReturnParcel");
+        }
         //assign a parcel
         public IActionResult AssignParcel(string id)
         {
