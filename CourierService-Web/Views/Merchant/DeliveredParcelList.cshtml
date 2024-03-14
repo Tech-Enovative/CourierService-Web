@@ -26,6 +26,7 @@
                                         <th>Rider</th>
                                         <th>Pickup Location</th>
                                         <th>Pickup Request Date</th>
+                                        <th>Delivery Date</th>
                                         <th>Receiver Information</th>
                                         <th>Product</th>
                                         <th>Delivery</th>
@@ -70,7 +71,9 @@
                                                 </td>
                                             }
                                             <td>@parcel.PickupLocation</td>
-                                            <td>@(parcel.PickupRequestDate?.Date.ToShortDateString())</td>
+                                            <td>@(parcel.PickupRequestDate?.ToString("M/d/yyyy, h:mm tt"))</td>
+                                            
+                                            <td>@(parcel.DeliveryParcel.DeliveryDate.ToString("M/d/yyyy, h:mm tt"))</td>
                                             <td>
                                                 <strong>Name:</strong> @parcel.ReceiverName<br>
                                                 <strong>Address:</strong> @parcel.ReceiverAddress<br>
