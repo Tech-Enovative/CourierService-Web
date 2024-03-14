@@ -155,6 +155,50 @@ namespace CourierService_Web.Controllers
             return View();
         }
 
+        [HttpPost]
+        public IActionResult AddAdmin(Admin admin)
+        {
+            if (!IsAdminLoggedIn() || Request.Cookies["AdminEmail"] != "flyerbd@gmail.com")
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (admin == null)
+            {
+                return NotFound();
+            }
+            //check email exists or not
+            var email = _context.Admins.FirstOrDefault(a => a.Email == admin.Email);
+            if (email != null)
+            {
+                TempData["error"] = "Email Already Exists";
+                return View(admin);
+            }
+            //check name already exists
+            var name = _context.Admins.FirstOrDefault(a => a.Name == admin.Name);
+            if (name != null)
+            {
+                TempData["error"] = "Name Already Exists";
+                return View(admin);
+            }
+            //check password and confirm password
+            if (admin.Password != admin.ConfirmPassword)
+            {
+                TempData["error"] = "Password and Confirm Password does not match";
+                return View(admin);
+            }
+            if (ModelState.IsValid)
+            {
+                _context.Admins.Add(admin);
+                _context.SaveChanges();
+                TempData["success"] = "Admin Added Successfully";
+                return RedirectToAction("ApplicationUser");
+            }
+            else
+            {
+                return View(admin);
+            }
+        }
+
         public IActionResult Merchant()
         {
 
@@ -915,6 +959,12 @@ namespace CourierService_Web.Controllers
                 if (email != null)
                 {
                     TempData["error"] = "Email Already Exists";
+                    return View(hub);
+                }
+                //check password and confirm password
+                if (hub.Password != hub.ConfirmPassword)
+                {
+                    TempData["error"] = "Password and Confirm Password does not match";
                     return View(hub);
                 }
                 hub.AdminId = Request.Cookies["AdminId"];

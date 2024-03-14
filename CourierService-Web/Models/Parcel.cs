@@ -70,7 +70,7 @@ namespace CourierService_Web.Models
 
         [ForeignKey("ReturnId")]
        public string? ReturnId { get; set; }
-       public ReturnParcel ReturnParcel { get; set; }
+       public ReturnParcel? ReturnParcel { get; set; }
 
         [ForeignKey("DeliveryId")]
         public string? DeliveryId { get; set; }

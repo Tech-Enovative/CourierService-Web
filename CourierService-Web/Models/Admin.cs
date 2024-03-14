@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CourierService_Web.Models
 {
@@ -16,5 +18,9 @@ namespace CourierService_Web.Models
 
         [Required(ErrorMessage = "Password is required.")]
         public string Password { get; set; }
+        [Required(ErrorMessage = "Confirm Password is required.")]
+        [NotMapped]
+        [ValidateNever]
+        public string ConfirmPassword { get; set; }
     }
 }

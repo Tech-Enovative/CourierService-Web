@@ -100,21 +100,7 @@ namespace CourierService_Web.Controllers
         }
 
         //Return parcel
-        public IActionResult ReturnParcel()
-        {
-            if (!IsHubLoggedIn())
-            {
-                return RedirectToAction("Login", "Home");
-            }
-            //return parcel according to hubId
-            var hubId = Request.Cookies["HubId"];
-            var returnParcels = _context.ReturnParcels.Where(p => p.HubId == hubId).Include(u => u.Merchant).Include(u => u.Rider).Include(p=>p.Parcel).ToList();
-            if (returnParcels == null)
-            {
-                return NotFound();
-            }
-            return View(returnParcels);
-        }
+        
         //Status - ReturnParcelInHub
         public IActionResult ReturnParcelInHub(string id)
         {
