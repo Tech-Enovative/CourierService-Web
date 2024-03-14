@@ -250,6 +250,31 @@ namespace CourierService_Web.Controllers
             return RedirectToAction("Parcel", "Hub");
         }
 
+        //assignRiderToMerchant
+        public IActionResult AssignRiderToMerchant(string id)
+        {
+            if (!IsHubLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            // Find the parcel by ID
+            var parcel = _context.Parcels.Where(p=>p.Id == id).Include(m=>m.Merchant).FirstOrDefault();
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+
+            // Get a list of available riders
+            var riders = _context.Riders.Where(u => u.State == "Available");
+
+            // Pass the list of riders to the view
+            ViewBag.Riders = riders;
+
+
+            return View(parcel);
+            
+        }
+
         //status change to Parcel In Hub
         public IActionResult ParcelInHub(string id)
         {
