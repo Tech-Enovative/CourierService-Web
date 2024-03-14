@@ -275,6 +275,24 @@ namespace CourierService_Web.Controllers
             return View(parcels);
         }
 
+        //change parcel status to ReturnParcelReceived
+        public IActionResult ReturnParcelReceived(string id)
+        {
+            if (!IsMerchantLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+            parcel.Status = "Return Parcel Received";
+            _context.SaveChanges();
+            TempData["success"] = "Parcel Status Changed to Return Parcel Received";
+            return RedirectToAction("Parcels");
+        }
+
         public IActionResult ChangePassword()
         {
             if (!IsMerchantLoggedIn())

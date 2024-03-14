@@ -364,6 +364,27 @@ namespace CourierService_Web.Controllers
             _context.SaveChanges();
             return RedirectToAction("AllParcel");
         }
+        //ReturnParcelToMerchant
+        public IActionResult ReturnParcelToMerchant(string id)
+        {
+            if (!IsRiderLoggedIn())
+            {
+
+                return RedirectToAction("Login", "Home");
+            }
+
+            var riderId = HttpContext.Request.Cookies["RiderId"];
+            //find rider by riderId
+            var rider = _context.Riders.Find(riderId);
+            var parcel = _context.Parcels.Find(id);
+            parcel.Status = "Parcel Returned To Merchant";
+            //parcel.ReturnDate = DateTime.Now.Date;
+            rider.State = "Available";
+            _context.Parcels.Update(parcel);
+            _context.Riders.Update(rider);
+            _context.SaveChanges();
+            return RedirectToAction("AllParcel");
+        }
 
         public IActionResult ChangePassword()
         {

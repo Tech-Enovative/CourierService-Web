@@ -274,6 +274,30 @@ namespace CourierService_Web.Controllers
             return View(parcel);
             
         }
+        [HttpPost]
+        public IActionResult AssignRiderToMerchant(string id, string riderId)
+        {
+            if (!IsHubLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+            var rider = _context.Riders.Find(riderId);
+            if (rider == null)
+            {
+                return NotFound();
+            }
+            parcel.Rider = rider;
+            parcel.Status = "Assigned For Return Parcel";
+            //parcel.DispatchDate = DateTime.Now.Date;
+            _context.SaveChanges();
+            TempData["success"] = "Assigned Rider For Return Parcel Successfully";
+            return RedirectToAction("Parcel", "Hub");
+        }
 
         //status change to Parcel In Hub
         public IActionResult ParcelInHub(string id)

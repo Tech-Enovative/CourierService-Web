@@ -31,6 +31,7 @@
                                         <th>Delivery</th>
                                         <th>Total Price</th>
                                         <th>Status</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -106,12 +107,24 @@
                                             {
                                                 <td><span class="badge badge-success text-medium">@parcel.Status</span></td>
                                             }
+                                            else if (parcel.Status == "Parcel Returned To Merchant")
+                                            {
+                                                <td><span class="badge badge-info text-medium">Return Parcel Arrived</span></td>
+                                            }
                                             else
                                             {
-                                                <td><span class="badge badge-danger text-medium">@parcel.Status</span></td>
+                                                <td><span class="badge badge-info text-medium">@parcel.Status</span></td>
                                             }
 
-
+                                            <td>
+                                                @if (parcel.Status == "Parcel Returned To Merchant")
+                                                {
+                                                    <a asp-route-id="@parcel.Id" asp-controller="Merchant" asp-action="ReturnParcelReceived" class="btn btn-sm btn-success">
+                                                        <i class="fas fa-check"></i> Return Parcel Received
+                                                    </a>
+                                                }
+                                            </td>
+                                            
 
                                         </tr>
                                         sl++;
