@@ -149,6 +149,18 @@ namespace CourierService_Web.Controllers
             return View(returnParcels);
         }
 
+        //delivered parcel list
+        public IActionResult DeliveredParcelList()
+        {
+            if (!IsMerchantLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var merchantId = HttpContext.Request.Cookies["MerchantId"];
+            var deliveredParcels = _context.Parcels.Where(x => x.MerchantId == merchantId && x.DeliveryId != null).Include(x => x.DeliveryParcel).Include(x => x.Rider).Include(h=>h.Hub).ToList();
+            return View(deliveredParcels);
+        }
+
         //update profile
         [HttpPost]
         public IActionResult UpdateProfile(Merchant merchant, IFormFile? file)

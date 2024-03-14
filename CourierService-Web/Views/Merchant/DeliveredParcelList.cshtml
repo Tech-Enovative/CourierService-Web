@@ -3,8 +3,8 @@
 *@
 
 @{
-        ViewData["Title"] = "Returned Parcels";
-        Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    ViewData["Title"] = "Delivered Parcels";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
 
 }
 @model IEnumerable<Parcel>
@@ -14,7 +14,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card-box">
-                        <h4 class="header-title text-primary">Total Return Parcel : @Model.Count()</h4>
+                        <h4 class="header-title text-primary">Total Delivered Parcel : @Model.Count()</h4>
 
                         <div class="table-responsive" style="overflow-x: auto;">
                             <table class="table mb-0">
@@ -31,7 +31,7 @@
                                         <th>Delivery</th>
                                         <th>Total Price</th>
                                         <th>Status</th>
-                                        <th>Action</th>
+                                       
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -44,7 +44,7 @@
 
                                         <tr>
                                             <td>@sl</td>
-                                            <td>@parcel.ReturnParcel.Id</td>
+                                            <td>@parcel.DeliveryParcel.Id</td>
                                             @if (parcel.HubId == null)
                                             {
                                                 <td><span class="badge badge-danger text-medium">Not Assigned</span></td>
@@ -116,22 +116,12 @@
                                                 <td><span class="badge badge-info text-medium">@parcel.Status</span></td>
                                             }
 
-                                            <td>
-                                                @if (parcel.Status == "Parcel Returned To Merchant")
-                                                {
-                                                    <a asp-route-id="@parcel.Id" asp-controller="Merchant" asp-action="ReturnParcelReceived" class="btn btn-sm btn-success">
-                                                        <i class="fas fa-check"></i> Return Parcel Received
-                                                    </a>
-                                                }
-                                            </td>
                                             
+
 
                                         </tr>
                                         sl++;
                                         <!-- sample modal content -->
-                                       
-
-
                                         <!-- /.modal -->
                                     }
                                 </tbody>
