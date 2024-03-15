@@ -163,16 +163,32 @@ namespace CourierService_Web.Controllers
         }
 
         //delivered parcel list
-        public IActionResult DeliveredParcelList()
+        public IActionResult DeliveredParcelList(DateTime? selectedDate)
         {
             if (!IsMerchantLoggedIn())
             {
                 return RedirectToAction("Login", "Home");
             }
+
             var merchantId = HttpContext.Request.Cookies["MerchantId"];
-            var deliveredParcels = _context.Parcels.Where(x => x.MerchantId == merchantId && x.DeliveryId != null).Include(x => x.DeliveryParcel).Include(x => x.Rider).Include(h=>h.Hub).ToList();
-            return View(deliveredParcels);
+            IQueryable<Parcel> deliveredParcelsQuery = _context.Parcels
+                .Where(x => x.MerchantId == merchantId && x.DeliveryId != null)
+                .Include(x => x.DeliveryParcel)
+                .Include(x => x.Rider)
+                .Include(h => h.Hub);
+
+            if (selectedDate.HasValue)
+            {
+                deliveredParcelsQuery = deliveredParcelsQuery.Where(x => x.DeliveryParcel.DeliveryDate.Date == selectedDate.Value.Date);
+                var deliveredParcels = deliveredParcelsQuery.ToList();
+                return View(deliveredParcels);
+            }
+
+           
+
+            return View(deliveredParcelsQuery);
         }
+
 
         //update profile
         [HttpPost]
