@@ -34,7 +34,7 @@
                 <div class="col-md-6 col-xl-3">
                     <div class="card-box tilebox-one bg-warning d-flex align-items-center justify-content-between">
                         <div>
-                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Assigned Parcel (Today)</h6>
+                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Assigned For Pickup (Today)</h6>
                             <h3 class="my-3" data-plugin="counterup">@ViewBag.TodayDispatched</h3>
                         </div>
                         <i class="fas fa-truck fa-3x text-black"></i>
@@ -59,20 +59,20 @@
             
 
             <div class="row justify-content-center">
-                
 
-               
 
                 <div class="col-md-6 col-xl-3">
-                    <div class="card-box tilebox-one bg-primary d-flex align-items-center justify-content-between">
+                    <div class="card-box tilebox-one bg-danger d-flex align-items-center justify-content-between">
                         <div>
-                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Total Delivery Complete</h6>
-                            <h3 class="my-3" data-plugin="counterup">@ViewBag.TotalDelivered</h3>
+                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Assigned For Delivery (Today)</h6>
+                            <h3 class="my-3" data-plugin="counterup">@ViewBag.TodayDispatched</h3>
                         </div>
-                        <i class="fas fa-check-circle fa-3x text-black"></i>
+                        <i class="fas fa-truck fa-3x text-black"></i>
                     </div>
 
                 </div>
+
+                
 
 
             </div>
@@ -83,10 +83,20 @@
 
                     <div class="card-box tilebox-one bg-warning d-flex align-items-center justify-content-between">
                         <div>
-                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Total Cancelled Parcel</h6>
+                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Total Exchanged Parcel</h6>
                             <h3 class="my-3" data-plugin="counterup">@ViewBag.TotalCancelled</h3>
                         </div>
                         <i class="fas fa-times-circle fa-3x text-black"></i>
+                    </div>
+
+                </div>
+                <div class="col-md-6 col-xl-3">
+                    <div class="card-box tilebox-one bg-primary d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Total Delivery Complete</h6>
+                            <h3 class="my-3" data-plugin="counterup">@ViewBag.TotalDelivered</h3>
+                        </div>
+                        <i class="fas fa-check-circle fa-3x text-black"></i>
                     </div>
 
                 </div>

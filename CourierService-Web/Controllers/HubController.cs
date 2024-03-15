@@ -25,7 +25,7 @@ namespace CourierService_Web.Controllers
             ViewBag.TotalParcelCount = totalParcelCount;
 
             //delivered parcel count according to hubId
-            var deliveredParcelCount = _context.Parcels.Where(p => p.HubId == hubId && p.DeliveryParcel.Id != null).Count();
+            var deliveredParcelCount = _context.Parcels.Where(p => p.HubId == hubId && p.DeliveryId != null).Count();
             ViewBag.DeliveredParcelCount = deliveredParcelCount;
 
            
@@ -376,6 +376,54 @@ namespace CourierService_Web.Controllers
                 return NotFound();
             }
             return View(hub);
+        }
+
+        //delivery parcel list
+        public IActionResult DeliveredParcelList()
+        {
+            if (!IsHubLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var hubId = Request.Cookies["HubId"];
+            var deliveryParcels = _context.Parcels.Where(p => p.HubId == hubId && p.DeliveryId !=null).Include(u => u.Merchant).Include(u => u.Rider).ToList();
+            if (deliveryParcels == null)
+            {
+                return NotFound();
+            }
+            return View(deliveryParcels);
+        }
+
+        //return parcel list
+        public IActionResult ReturnParcelList()
+        {
+            if (!IsHubLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var hubId = Request.Cookies["HubId"];
+            var returnParcels = _context.Parcels.Where(p => p.HubId == hubId && p.ReturnId !=null).Include(u => u.Merchant).Include(u => u.Rider).ToList();
+            if (returnParcels == null)
+            {
+                return NotFound();
+            }
+            return View(returnParcels);
+        }
+
+        //exchange parcel list
+        public IActionResult ExchangeParcelList()
+        {
+            if (!IsHubLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var hubId = Request.Cookies["HubId"];
+            var exchangeParcels = _context.Parcels.Where(p => p.HubId == hubId && p.ExchangeId != null).Include(u => u.Merchant).Include(u => u.Rider).ToList();
+            if (exchangeParcels == null)
+            {
+                return NotFound();
+            }
+            return View(exchangeParcels);
         }
     }
 }

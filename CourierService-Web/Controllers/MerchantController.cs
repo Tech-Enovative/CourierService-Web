@@ -35,7 +35,8 @@ namespace CourierService_Web.Controllers
             ViewBag.TotalPickupRequest = _context.Parcels.Count(x => x.MerchantId == merchantId && x.Status == "Pickup Request");
             ViewBag.TotalDispatched = _context.Parcels.Count(x => x.MerchantId == merchantId && x.Status == "Dispatched");
             ViewBag.TotalTransit = _context.Parcels.Count(x => x.MerchantId == merchantId && x.Status == "In Transit");
-            ViewBag.TotalDelivered = _context.Parcels.Count(x => x.MerchantId == merchantId && x.Status == "Delivered");
+            ViewBag.TotalDelivered = _context.Parcels.Count(x => x.MerchantId == merchantId && x.DeliveryId !=null);
+            ViewBag.TotalExchanged = _context.Parcels.Count(x => x.MerchantId == merchantId && x.ExchangeId != null);
             ViewBag.TotalCancelled = _context.Parcels.Count(x => x.MerchantId == merchantId && x.Status == "Cancelled");
             ViewBag.TotalReturned = _context.Parcels.Count(x => x.MerchantId == merchantId && x.Status == "Returned");
             ViewBag.TotalParcel = _context.Parcels.Count(x => x.MerchantId == merchantId);

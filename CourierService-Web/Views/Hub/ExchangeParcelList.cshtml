@@ -1,0 +1,145 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@{
+    ViewData["Title"] = "Exchange Parcels";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+
+}
+@model IEnumerable<Parcel>
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card-box">
+                        <h4 class="header-title text-primary">Total Exchange Parcel : @Model.Count()</h4>
+
+                        <div class="table-responsive" style="overflow-x: auto;">
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>SL</th>
+                                        <th>ID</th>
+                                        <th>Hub</th>
+                                        <th>Rider</th>
+                                        <th>Pickup Location</th>
+                                        <th>Pickup Request Date</th>
+                                        <th>Exchnage Date</th>
+                                        <th>Receiver Information</th>
+                                        <th>Product</th>
+                                        <th>Delivery</th>
+                                        <th>Total Price</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int sl = 1;
+                                    }
+
+                                    @foreach (var parcel in Model.OrderByDescending(u => u.PickupRequestDate))
+                                    {
+
+                                        <tr>
+                                            <td>@sl</td>
+                                            <td>@parcel.ExchangeParcel.Id</td>
+                                            @if (parcel.HubId == null)
+                                            {
+                                                <td><span class="badge badge-danger text-medium">Not Assigned</span></td>
+                                            }
+                                            else
+                                            {
+
+                                                <td>
+                                                    <strong>Name:</strong> @parcel.Hub.Name <br />
+                                                    <strong>Phone:</strong> @parcel.Hub.PhoneNumber
+                                                </td>
+                                            }
+                                            @if (parcel.RiderId == null)
+                                            {
+                                                <td><span class="badge badge-danger text-medium">Not Assigned</span></td>
+                                            }
+                                            else
+                                            {
+
+                                                <td>
+                                                    <strong>Name:</strong> @parcel.Rider.Name <br />
+                                                    <strong>Phone:</strong> @parcel.Rider.ContactNumber
+                                                </td>
+                                            }
+                                            <td>@parcel.PickupLocation</td>
+                                            <td>@(parcel.PickupRequestDate?.ToString("M/d/yyyy, h:mm tt"))</td>
+
+                                            <td>@(parcel.ExchangeParcel.ExchangeDate.ToString("M/d/yyyy, h:mm tt"))</td>
+                                            <td>
+                                                <strong>Name:</strong> @parcel.ReceiverName<br>
+                                                <strong>Address:</strong> @parcel.ReceiverAddress<br>
+                                                <strong>Contact:</strong> @parcel.ReceiverContactNumber
+                                            </td>
+
+                                            <td>
+                                                <strong>Name:</strong> @parcel.ProductName <br />
+                                                <strong>Weight:</strong> @parcel.ProductWeight KG <br />
+                                                <strong>Price:</strong> @parcel.ProductPrice TK <br />
+                                                <strong>Quantity:</strong> @parcel.ProductQuantity <br />
+                                            </td>
+
+                                            <td>
+                                                <strong>Type:</strong> @parcel.DeliveryType <br />
+                                                <strong>Charge:</strong> @parcel.DeliveryCharge TK <br />
+                                            </td>
+                                            <td>@parcel.TotalPrice TK</td>
+
+
+                                            @if (parcel.Status == "Pickup Request")
+                                            {
+                                                <td><span class="badge badge-success font-weight-bold">@parcel.Status</span></td>
+                                            }
+                                            else if (parcel.Status == "Dispatched")
+                                            {
+                                                <td><span class="badge badge-warning font-weight-bold">@parcel.Status</span></td>
+                                            }
+                                            else if (parcel.Status == "Transit")
+                                            {
+                                                <td><span class="badge badge-info text-medium">@parcel.Status</span></td>
+                                            }
+                                            else if (parcel.Status == "Delivered")
+                                            {
+                                                <td><span class="badge badge-success text-medium">@parcel.Status</span></td>
+                                            }
+                                            else if (parcel.Status == "Parcel Returned To Merchant")
+                                            {
+                                                <td><span class="badge badge-info text-medium">Return Parcel Arrived</span></td>
+                                            }
+                                            else
+                                            {
+                                                <td><span class="badge badge-info text-medium">@parcel.Status</span></td>
+                                            }
+
+                                            <td>
+                                                @if(parcel.Status =="Exchanged Parcel Returned Merchant")
+                                                {
+                                                <a asp-route-id="@parcel.Id" asp-controller="Merchant" asp-action="ExchangeParcelReceived" class="btn btn-sm btn-success">
+                                                    <i class="fas fa-check"></i> Exchange Parcel Received
+                                                </a>
+                                                }
+                                            </td>
+
+
+                                        </tr>
+                                        sl++;
+                                        <!-- sample modal content -->
+                                        <!-- /.modal -->
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

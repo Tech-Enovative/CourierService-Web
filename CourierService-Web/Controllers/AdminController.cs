@@ -81,9 +81,52 @@ namespace CourierService_Web.Controllers
 
             // Today Delivered
             var todayDelivered = _context.Parcels
-                .Where(p => p.DeliveryDate >= todayStart && p.DeliveryDate < tomorrowStart)
+                .Where(p => p.DeliveryParcel.DeliveryDate >= todayStart && p.DeliveryParcel.DeliveryDate < tomorrowStart)
                 .Count();
             ViewBag.TodayDelivered = todayDelivered;
+
+            //parcel assigned for pickup
+            var assignedForPickup = _context.Parcels
+                .Where(p => p.Status == "Assigned A Rider For Pickup")
+                .Count();
+            ViewBag.AssignedForPickup = assignedForPickup;
+
+            //parcel in hub
+            var inHub = _context.Parcels
+                .Where(p => p.Status == "Parcel In Hub")
+                .Count();
+            ViewBag.InHub = inHub;
+
+            //parcel On The Way
+            var onTheWay = _context.Parcels
+                .Where(p => p.Status == "Parcel On The Way")
+                .Count();
+            ViewBag.OnTheWay = onTheWay;
+
+            //Assigned For Delivery
+            var assignedForDelivery = _context.Parcels
+                .Where(p => p.Status == "Assigned A Rider For Delivery")
+                .Count();
+            ViewBag.AssignedForDelivery = assignedForDelivery;
+
+            //total delivery
+            var totalDelivery = _context.Parcels
+                .Where(p => p.DeliveryId !=null)
+                .Count();
+            ViewBag.TotalDelivery = totalDelivery;
+
+            //total exchange
+            var totalExchange = _context.Parcels
+                .Where(p => p.ExchangeId != null)
+                .Count();
+            ViewBag.TotalExchange = totalExchange;
+
+            //total return
+            var totalReturn = _context.Parcels
+                .Where(p => p.ReturnId != null)
+                .Count();
+            ViewBag.TotalReturn = totalReturn;
+
 
             // Today Cancelled
             var todayCancelled = _context.Parcels
@@ -120,6 +163,52 @@ namespace CourierService_Web.Controllers
                 return false;
             }
         }
+
+        //Return Parcel List
+        public IActionResult ReturnParcelList()
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var parcels = _context.Parcels.Where(p => p.ReturnId !=null).Include(u => u.Merchant).Include(u => u.Rider).ToList();
+            if (parcels == null)
+            {
+                return NotFound();
+            }
+            return View(parcels);
+        }
+
+        //Exchange Parcel List
+        public IActionResult ExchangeParcelList()
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var parcels = _context.Parcels.Where(p => p.ExchangeId != null).Include(u => u.Merchant).Include(u => u.Rider).ToList();
+            if (parcels == null)
+            {
+                return NotFound();
+            }
+            return View(parcels);
+        }
+
+        //Delivered Parcel List
+        public IActionResult DeliveredParcelList()
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var parcels = _context.Parcels.Where(p => p.DeliveryId !=null).Include(u => u.Merchant).Include(u => u.Rider).ToList();
+            if (parcels == null)
+            {
+                return NotFound();
+            }
+            return View(parcels);
+        }
+
         public IActionResult Index()
         {
             if (!IsAdminLoggedIn())

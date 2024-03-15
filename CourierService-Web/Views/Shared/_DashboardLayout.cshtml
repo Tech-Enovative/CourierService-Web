@@ -154,11 +154,36 @@
                                 </a>
                             </li>
                             <li>
+                                <a asp-controller="Admin" asp-action="Hub">
+                                    <i class="mdi mdi-warehouse"></i>
+                                    <span> Hub </span>
+                                </a>
+                            </li>
+                            <li>
                                 <a asp-controller="Admin" asp-action="Parcel">
                                     <i class="fas fa-box-open"></i>
                                     <span> Parcel </span>
                                 </a>
                             </li>
+                            <li>
+                                <a asp-controller="Admin" asp-action="DeliveredParcelList">
+                                    <i class="fas fa-truck"></i>
+                                    <span> Delivered Parcel </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Admin" asp-action="ReturnParcelList">
+                                    <i class="fas fa-reply"></i>
+                                    <span> Return Parcel </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Admin" asp-action="ExchangeParcelList">
+                                    <i class="fas fa-exchange-alt"></i>
+                                    <span> Exchange Parcel </span>
+                                </a>
+                            </li>
+                           
                             @if (AdminEmail == "flyerbd@gmail.com")
                             {
                                 <li>
@@ -167,12 +192,7 @@
                                         <span> Application User </span>
                                     </a>
                                 </li>
-                                <li>
-                                    <a asp-controller="Admin" asp-action="Hub">
-                                        <i class="mdi mdi-warehouse"></i>
-                                        <span> Hub </span>
-                                    </a>
-                                </li>
+                                
                             }
                             <li>
                                 <a asp-controller="Admin" asp-action="Complain">
@@ -328,9 +348,21 @@
                             </li>
 
                             <li>
-                                <a asp-controller="Hub" asp-action="ReturnParcel">
+                                <a asp-controller="Hub" asp-action="DeliveredParcelList">
+                                    <i class="fas fa-truck"></i>
+                                    <span> Delivered Parcel </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Hub" asp-action="ReturnParcelList">
                                     <i class="fas fa-reply"></i>
                                     <span> Return Parcel </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Hub" asp-action="ExchangeParcelList">
+                                    <i class="fas fa-exchange-alt"></i>
+                                    <span> Exchange Parcel </span>
                                 </a>
                             </li>
 
