@@ -3,8 +3,8 @@
 *@
 
 @{
-        ViewData["Title"] = "Parcels";
-        Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    ViewData["Title"] = "Exchange Parcels";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
 
 }
 @model IEnumerable<Parcel>
@@ -14,7 +14,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card-box">
-                        <h4 class="header-title text-primary">Total Parcel : @Model.Count()</h4>
+                        <h4 class="header-title text-primary">Total Return Parcel : @Model.Count()</h4>
 
                         <div class="table-responsive" style="overflow-x: auto;">
                             <table class="table mb-0">
@@ -26,6 +26,7 @@
                                         <th>Rider</th>
                                         <th>Pickup Location</th>
                                         <th>Pickup Request Date</th>
+                                        <th>Exchnage Date</th>
                                         <th>Receiver Information</th>
                                         <th>Product</th>
                                         <th>Delivery</th>
@@ -44,7 +45,7 @@
 
                                         <tr>
                                             <td>@sl</td>
-                                            <td>@parcel.Id</td>
+                                            <td>@parcel.ExchangeParcel.Id</td>
                                             @if (parcel.HubId == null)
                                             {
                                                 <td><span class="badge badge-danger text-medium">Not Assigned</span></td>
@@ -71,6 +72,8 @@
                                             }
                                             <td>@parcel.PickupLocation</td>
                                             <td>@(parcel.PickupRequestDate?.ToString("M/d/yyyy, h:mm tt"))</td>
+
+                                            <td>@(parcel.ExchangeParcel.ExchangeDate.ToString("M/d/yyyy, h:mm tt"))</td>
                                             <td>
                                                 <strong>Name:</strong> @parcel.ReceiverName<br>
                                                 <strong>Address:</strong> @parcel.ReceiverAddress<br>
@@ -111,31 +114,24 @@
                                             {
                                                 <td><span class="badge badge-info text-medium">Return Parcel Arrived</span></td>
                                             }
-                                            else if (parcel.Status == "Exchanged Parcel Returned Merchant")
-                                            {
-                                                <td><span class="badge badge-success text-medium">Exchange Parcel Arrived</span></td>
-                                            }
                                             else
                                             {
                                                 <td><span class="badge badge-info text-medium">@parcel.Status</span></td>
                                             }
 
                                             <td>
-                                                @if (parcel.Status == "Parcel Returned To Merchant")
+                                                @if(parcel.Status =="Exchanged Parcel Returned Merchant")
                                                 {
-                                                    <a asp-route-id="@parcel.Id" asp-controller="Merchant" asp-action="ReturnParcelReceived" class="btn btn-sm btn-success">
-                                                        <i class="fas fa-check"></i> Return Parcel Received
-                                                    </a>
+                                                <a asp-route-id="@parcel.Id" asp-controller="Merchant" asp-action="ExchangeParcelReceived" class="btn btn-sm btn-success">
+                                                    <i class="fas fa-check"></i> Exchange Parcel Received
+                                                </a>
                                                 }
                                             </td>
-                                            
+
 
                                         </tr>
                                         sl++;
                                         <!-- sample modal content -->
-                                       
-
-
                                         <!-- /.modal -->
                                     }
                                 </tbody>

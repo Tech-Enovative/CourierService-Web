@@ -114,6 +114,20 @@ namespace CourierService_Web.Controllers
             _context.SaveChanges();
             return RedirectToAction("ReturnParcel");
         }
+
+        //status - ExchangeParcelHub
+        public IActionResult ExchangeParcelHub(string id)
+        {
+            if (!IsHubLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var exchangeParcel = _context.Parcels.Find(id);
+            exchangeParcel.Status = "Exchange Parcel In Hub";
+            _context.Parcels.Update(exchangeParcel);
+            _context.SaveChanges();
+            return RedirectToAction("ExchangeParcel");
+        }
         //assign a parcel
         public IActionResult AssignParcel(string id)
         {
@@ -284,6 +298,47 @@ namespace CourierService_Web.Controllers
             TempData["success"] = "Assigned Rider For Return Parcel Successfully";
             return RedirectToAction("Parcel", "Hub");
         }
+
+        //RiderForExchnage
+        public IActionResult RiderForExchange(string id)
+        {
+            if (!IsHubLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var parcel = _context.Parcels.Where(p => p.Id == id).Include(m => m.Merchant).FirstOrDefault();
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+            var riders = _context.Riders.Where(u => u.State == "Available");
+            ViewBag.Riders = riders;
+            return View(parcel);
+        }
+        [HttpPost]
+        public IActionResult RiderForExchange(string id, string riderId)
+        {
+            if (!IsHubLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+            var rider = _context.Riders.Find(riderId);
+            if (rider == null)
+            {
+                return NotFound();
+            }
+            parcel.Rider = rider;
+            parcel.Status = "Assigned For Exchange Parcel";
+            _context.SaveChanges();
+            TempData["success"] = "Assigned Rider For Exchange Parcel Successfully";
+            return RedirectToAction("Parcel", "Hub");
+        }
+
 
         //status change to Parcel In Hub
         public IActionResult ParcelInHub(string id)

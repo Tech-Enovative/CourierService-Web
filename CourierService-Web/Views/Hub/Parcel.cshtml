@@ -74,7 +74,7 @@
                                                 </td>
                                             }
                                             <td>@parcel.PickupLocation</td>
-                                            <td>@(parcel.PickupRequestDate?.Date.ToShortDateString())</td>
+                                            <td>@(parcel.PickupRequestDate?.ToString("M/d/yyyy, h:mm tt"))</td>
                                             <td>
                                                 <strong>Name:</strong> @parcel.ReceiverName<br>
                                                 <strong>Address:</strong> @parcel.ReceiverAddress<br>
@@ -216,6 +216,20 @@
                                                     {
                                                         <a asp-action="AssignRiderToMerchant" asp-route-id="@parcel.Id" asp-controller="Hub" class="btn btn-sm btn-success">
                                                             <i class="fas fa-plus-circle"></i> Assign Rider To Merchant
+
+                                                        </a>
+                                                    }
+                                                    else if(parcel.Status == "Exchanged")
+                                                    {
+                                                        <a asp-action="ExchangeParcelHub" asp-route-id="@parcel.Id" class="btn btn-sm btn-info">
+                                                            <i class="fas fa-plus-circle"></i> Exchanged Parcel In Hub
+
+                                                        </a>
+                                                    }
+                                                    else if (parcel.Status == "Exchange Parcel In Hub")
+                                                    {
+                                                        <a asp-action="RiderForExchange" asp-route-id="@parcel.Id" asp-controller="Hub" class="btn btn-sm btn-success">
+                                                            <i class="fas fa-plus-circle"></i> Rider For Exchange
 
                                                         </a>
                                                     }

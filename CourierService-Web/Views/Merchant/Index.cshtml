@@ -207,7 +207,7 @@
                                                 </td>
                                             }
                                             <td>@parcel.PickupLocation</td>
-                                            <td>@(parcel.PickupRequestDate?.Date.ToShortDateString())</td>
+                                            <td>@(parcel.PickupRequestDate?.ToString("M/d/yyyy, h:mm tt"))</td>
                                             <td>
                                                 <strong>Name:</strong> @parcel.ReceiverName<br>
                                                 <strong>Address:</strong> @parcel.ReceiverAddress<br>
@@ -256,6 +256,13 @@
                                                         <i class="fas fa-check"></i> Return Parcel Received
                                                     </a>
                                                 }
+                                                else if(parcel.Status =="Exchanged Parcel Returned Merchant")
+                                                {
+                                                    <a asp-route-id="@parcel.Id" asp-controller="Merchant" asp-action="ExchangeParcelReceived" class="btn btn-sm btn-success">
+                                                        <i class="fas fa-check"></i> Exchange Parcel Received
+                                                    </a>
+                                                }
+                                                
                                             </td>
 
                                         </tr>

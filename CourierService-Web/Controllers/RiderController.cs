@@ -386,6 +386,58 @@ namespace CourierService_Web.Controllers
             return RedirectToAction("AllParcel");
         }
 
+        //ExchangeParcelToMerchant
+        public IActionResult ExchangeParcelToMerchant(string id)
+        {
+            if (!IsRiderLoggedIn())
+            {
+
+                return RedirectToAction("Login", "Home");
+            }
+
+            var riderId = HttpContext.Request.Cookies["RiderId"];
+            //find rider by riderId
+            var rider = _context.Riders.Find(riderId);
+            var parcel = _context.Parcels.Find(id);
+            parcel.Status = "Exchanged Parcel Returned Merchant";
+            //parcel.ReturnDate = DateTime.Now.Date;
+            rider.State = "Available";
+            _context.Parcels.Update(parcel);
+            _context.Riders.Update(rider);
+            _context.SaveChanges();
+            return RedirectToAction("AllParcel");
+        }
+
+        //parcel status change to Exchange
+        public IActionResult Exchange(string id)
+        {
+            if (!IsRiderLoggedIn())
+            {
+
+                return RedirectToAction("Login", "Home");
+            }
+
+            var riderId = HttpContext.Request.Cookies["RiderId"];
+            //find rider by riderId
+            var rider = _context.Riders.Find(riderId);
+            var parcel = _context.Parcels.Find(id);
+
+            parcel.ExchangeParcel = new ExchangeParcel
+            {
+                ParcelId = parcel.Id,
+                RiderId = riderId,
+                ExchangeDate = DateTime.Now,
+                HubId = parcel.HubId,
+                MerchantId = parcel.MerchantId
+            };
+            parcel.Status = "Exchanged";
+            rider.State = "Available";
+            _context.Parcels.Update(parcel);
+            _context.Riders.Update(rider);
+            _context.SaveChanges();
+            return RedirectToAction("AllParcel");
+        }
+
         public IActionResult ChangePassword()
         {
             if (!IsRiderLoggedIn())

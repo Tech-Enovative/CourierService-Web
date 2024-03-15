@@ -149,6 +149,18 @@ namespace CourierService_Web.Controllers
             return View(returnParcels);
         }
 
+        //Exchange Parcel List
+        public IActionResult ExchangeParcelList()
+        {
+            if (!IsMerchantLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var merchantId = HttpContext.Request.Cookies["MerchantId"];
+            var exchangeParcels = _context.Parcels.Where(x => x.MerchantId == merchantId && x.ExchangeId != null).Include(x => x.ExchangeParcel).Include(x => x.Rider).Include(h=>h.Hub).ToList();
+            return View(exchangeParcels);
+        }
+
         //delivered parcel list
         public IActionResult DeliveredParcelList()
         {
@@ -316,6 +328,23 @@ namespace CourierService_Web.Controllers
             parcel.Status = "Return Parcel Received";
             _context.SaveChanges();
             TempData["success"] = "Parcel Status Changed to Return Parcel Received";
+            return RedirectToAction("Parcels");
+        }
+        //ExchangeParcelReceived
+        public IActionResult ExchangeParcelReceived(string id)
+        {
+            if (!IsMerchantLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+            parcel.Status = "Exchange Parcel Received";
+            _context.SaveChanges();
+            TempData["success"] = "Exchange Parcel Received";
             return RedirectToAction("Parcels");
         }
 
