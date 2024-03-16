@@ -98,6 +98,21 @@ namespace CourierService_Web.Controllers
 
             //return parcel count
             ViewBag.ReturnParcelCount = _context.Parcels.Count(x => x.MerchantId == merchantId && x.ReturnId !=null);
+            //if paymentStatus paid then merchant can see the amount only for today according to delivered parcel date
+            ViewBag.TodayPayment = _context.Parcels.Where(x => x.MerchantId == merchantId && x.PaymentStatus == "Paid" && x.DeliveryParcel.DeliveryDate >= todayStart && x.DeliveryParcel.DeliveryDate < tomorrowStart).Sum(x => x.TotalPrice);
+
+           //calculate total delivery charge for today if payment status is paid
+           ViewBag.TodayDeliveryCharge = _context.Parcels.Where(x => x.MerchantId == merchantId && x.PaymentStatus == "Paid" && x.DeliveryParcel.DeliveryDate >= todayStart && x.DeliveryParcel.DeliveryDate < tomorrowStart).Sum(x => x.DeliveryCharge);
+            //FIND total quantity of product for today if payment status is paid
+            var totalQuantity = _context.Parcels.Where(x => x.MerchantId == merchantId && x.PaymentStatus == "Paid" && x.DeliveryParcel.DeliveryDate >= todayStart && x.DeliveryParcel.DeliveryDate < tomorrowStart).Sum(x => x.ProductQuantity);
+
+            //calculate total product price for today if payment status is paid & also with quantity
+            var totalProductPrice = _context.Parcels.Where(x => x.MerchantId == merchantId && x.PaymentStatus == "Paid" && x.DeliveryParcel.DeliveryDate >= todayStart && x.DeliveryParcel.DeliveryDate < tomorrowStart).Sum(x => x.ProductPrice * totalQuantity);
+            ViewBag.TodayProductPrice = totalProductPrice;
+
+            //ViewBag.TodayProductPrice = _context.Parcels.Where(x => x.MerchantId == merchantId && x.PaymentStatus == "Paid" && x.DeliveryParcel.DeliveryDate >= todayStart && x.DeliveryParcel.DeliveryDate < tomorrowStart).Sum(x => x.ProductPrice);
+
+            
 
 
 

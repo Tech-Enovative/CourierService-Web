@@ -34,7 +34,7 @@ namespace CourierService_Web.Controllers
             DateTime tomorrowStart = todayStart.AddDays(1);
             //all parcel list for today
             var todayParcelList = _context.Parcels
-                .Where(p => p.PickupRequestDate >= todayStart && p.PickupRequestDate < tomorrowStart).Include(u => u.Merchant).Include(u => u.Rider)
+                .Where(p => p.HubId == hubId && p.PickupRequestDate >= todayStart && p.PickupRequestDate < tomorrowStart).Include(u => u.Merchant).Include(u => u.Rider)
                 .ToList();
             ViewBag.TodayParcelList = todayParcelList;
 
@@ -91,7 +91,8 @@ namespace CourierService_Web.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
-            var parcels = _context.Parcels.Include(u => u.Merchant).Include(u => u.Rider).ToList();
+            var hubId = Request.Cookies["HubId"];
+            var parcels = _context.Parcels.Where(p=>p.HubId == hubId).Include(u => u.Merchant).Include(u => u.Rider).ToList();
             if (parcels == null)
             {
                 return NotFound();

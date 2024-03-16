@@ -456,6 +456,7 @@ namespace CourierService_Web.Controllers
             }
             //update payment status to paid
             parcel.PaymentStatus = "Paid";
+            parcel.AddPayment(parcel.TotalPrice);
             _context.Parcels.Update(parcel);
             _context.SaveChanges();
             return RedirectToAction("AllParcel");
