@@ -23,7 +23,7 @@ namespace CourierService_Web.Data
         public DbSet<ReturnParcel> ReturnParcels { get; set; }
 
         public DbSet<Complain> Complain { get; set; }  
-
+        public DbSet<Payment> Payments { get; set; }
 
 
 
@@ -122,6 +122,12 @@ namespace CourierService_Web.Data
                 .HasOne(m => m.Merchant)
                 .WithMany(m => m.complains)
                 .HasForeignKey(m => m.MerchantId);
+
+            //relationship between payment and parcel
+            modelBuilder.Entity<Payment>()
+                .HasOne(p => p.Parcel)
+                .WithMany(p => p.Payments)
+                .HasForeignKey(p => p.ParcelId);
 
 
             //seed admin data

@@ -79,8 +79,15 @@ namespace CourierService_Web.Models
         [ForeignKey("ExchangeId")]
         public string? ExchangeId { get; set; }
         public ExchangeParcel? ExchangeParcel { get; set; }
-        
-        
+
+        public List<Payment> Payments { get; set; } = new List<Payment>();
+
+        // Method to add payment
+        public void AddPayment(int amount)
+        {
+            Payments.Add(new Payment { Amount = amount });
+        }
+
 
     }
 }
