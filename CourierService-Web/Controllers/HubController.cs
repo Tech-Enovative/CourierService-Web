@@ -426,5 +426,85 @@ namespace CourierService_Web.Controllers
             }
             return View(exchangeParcels);
         }
+
+        public IActionResult PaymentInHand(string? id)
+        {
+            if (!IsHubLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+
+            parcel.PaymentInHand = "PaymentInHand";
+            _context.Parcels.Update(parcel);
+            _context.SaveChanges();
+
+            TempData["success"] = "Payment In Hand";
+            return RedirectToAction("Parcel");
+        }
+
+        public IActionResult PaymentNotInHand(string? id)
+        {
+            if (!IsHubLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+
+            parcel.PaymentInHand = "PaymentNotInHand";
+            TempData["success"] = "Payment Not In Hand";
+            _context.Parcels.Update(parcel);
+            _context.SaveChanges();
+
+            TempData["success"] = "Payment Payment In Hand";
+            return RedirectToAction("Parcel");
+        }
+
+        //PaymentMerchant
+        public IActionResult PaymentMerchant(string? id)
+        {
+            if (!IsHubLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+
+            parcel.PaymentStatus = "Paid To Merchant";
+            _context.Parcels.Update(parcel);
+            _context.SaveChanges();
+
+            TempData["success"] = "Payment Merchant";
+            return RedirectToAction("Parcel");
+        }
     }
 }

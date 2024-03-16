@@ -136,6 +136,10 @@
                                                 {
                                                     <span class="badge badge-success text-medium">@parcel.PaymentStatus</span>
                                                 }
+                                                else if(parcel.PaymentStatus =="Paid To Merchant")
+                                                {
+                                                    <span class="badge badge-success text-medium">@parcel.PaymentStatus</span>
+                                                }
                                                 else
                                                 {
                                                     <span class="badge badge-danger text-medium">Pending</span>
@@ -156,6 +160,11 @@
                                                 else if (parcel.PaymentStatus == "Paid" && parcel.PaymentInHand == "PaymentInHand")
                                                 {
                                                     <span class="badge badge-warning text-medium">In Hand</span>
+                                                    <br />
+                                                    <a asp-route-id="@parcel.Id" asp-action="PaymentMerchant" class="btn btn-xs btn-success">
+                                                        <i class="fas fa-check"></i>
+                                                        Payment Merchant
+                                                    </a>
                                                 }
                                                 else if (parcel.PaymentStatus == "Paid" && parcel.PaymentInHand == "PaymentNotInHand")
                                                 {

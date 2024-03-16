@@ -203,6 +203,7 @@
                                         <th>Delivery</th>
                                         <th>Total Price</th>
                                         <th>Status</th>
+                                        <th>Payment</th>
                                         <th>Action</th>
 
                                        
@@ -283,6 +284,15 @@
                                                 <td><span class="badge badge-danger text-medium">@parcel.Status</span></td>
                                             }
 
+                                            @if (parcel.PaymentStatus == "Paid To Merchant")
+                                            {
+                                                <td><span class="badge badge-success text-medium">Payment Received</span></td>
+                                            }
+                                            else
+                                            {
+                                                <td><span class="badge badge-info text-medium">Pending</span></td>
+                                            }
+
                                             <td>
                                                 @if (parcel.Status == "Parcel Returned To Merchant")
                                                 {
@@ -298,6 +308,7 @@
                                                 }
                                                 
                                             </td>
+
 
                                         </tr>
                                         sl++;
