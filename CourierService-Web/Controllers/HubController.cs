@@ -387,7 +387,7 @@ namespace CourierService_Web.Controllers
                 return RedirectToAction("Login", "Home");
             }
             var hubId = Request.Cookies["HubId"];
-            var deliveryParcels = _context.Parcels.Where(p => p.HubId == hubId && p.DeliveryId !=null).Include(u => u.Merchant).Include(u => u.Rider).ToList();
+            var deliveryParcels = _context.Parcels.Where(p => p.HubId == hubId && p.DeliveryId !=null).Include(u => u.Merchant).Include(u => u.Rider).Include(d=>d.DeliveryParcel).Include(h=>h.Hub).ToList();
             if (deliveryParcels == null)
             {
                 return NotFound();
