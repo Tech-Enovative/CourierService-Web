@@ -40,25 +40,7 @@ namespace CourierService_Web.Controllers
             var pickupCount = _context.Parcels.Where(p => p.Status == "Pickup Request").Count();
             ViewBag.PickupCount = pickupCount;
 
-            //dispatch count
-            var dispatchCount = _context.Parcels.Where(p => p.Status == "Dispatched").Count();
-            ViewBag.DispatchCount = dispatchCount;
-
-            //Transit Count
-            var transitCount = _context.Parcels.Where(p => p.Status == "Transit").Count();
-            ViewBag.TransitCount = transitCount;
-
-            //delivered count
-            var deliveredCount = _context.Parcels.Where(p => p.Status == "Delivered").Count();
-            ViewBag.DeliveredCount = deliveredCount;
-
-            //cancelled count
-            var cancelledCount = _context.Parcels.Where(p => p.Status == "Cancelled").Count();
-            ViewBag.CancelledCount = cancelledCount;
-
-            //return count
-            var returnCount = _context.Parcels.Where(p => p.Status == "Returned").Count();
-            ViewBag.ReturnCount = returnCount;
+            
 
             //total parcel
             var totalParcel = _context.Parcels.Count();
@@ -73,12 +55,7 @@ namespace CourierService_Web.Controllers
 
             ViewBag.TodayPickupRequest = todayPickupRequest;
 
-            //Today Dispatched
-            var todayDispatched = _context.Parcels
-            .Where(p => p.DispatchDate >= todayStart && p.DispatchDate < tomorrowStart)
-            .Count();
-            ViewBag.TodayDispatched = todayDispatched;
-
+           
             // Today Delivered
             var todayDelivered = _context.Parcels
                 .Where(p => p.DeliveryParcel.DeliveryDate >= todayStart && p.DeliveryParcel.DeliveryDate < tomorrowStart)
@@ -165,48 +142,77 @@ namespace CourierService_Web.Controllers
         }
 
         //Return Parcel List
-        public IActionResult ReturnParcelList()
+        public IActionResult ReturnParcelList(DateTime? selectedDate)
         {
             if (!IsAdminLoggedIn())
             {
                 return RedirectToAction("Login", "Home");
             }
-            var parcels = _context.Parcels.Where(p => p.ReturnId !=null).Include(u => u.Merchant).Include(u => u.Rider).ToList();
-            if (parcels == null)
+            
+            IQueryable<Parcel> returnParcelsQuery = _context.Parcels
+                .Where(x =>x.ReturnId != null)
+                .Include(x => x.ReturnParcel)
+                .Include(x => x.Rider)
+                .Include(h => h.Hub);
+
+            if (!selectedDate.HasValue)
             {
-                return NotFound();
+                selectedDate = DateTime.Today;
             }
-            return View(parcels);
+            returnParcelsQuery = returnParcelsQuery.Where(x => x.ReturnParcel.ReturnDate.Date == selectedDate.Value.Date);
+            var returnParcels = returnParcelsQuery.ToList();
+
+            return View(returnParcels);
         }
 
         //Exchange Parcel List
-        public IActionResult ExchangeParcelList()
+        public IActionResult ExchangeParcelList(DateTime? selectedDate)
         {
             if (!IsAdminLoggedIn())
             {
                 return RedirectToAction("Login", "Home");
             }
-            var parcels = _context.Parcels.Where(p => p.ExchangeId != null).Include(u => u.Merchant).Include(u => u.Rider).ToList();
-            if (parcels == null)
+            IQueryable<Parcel> exchangeParcelsQuery = _context.Parcels
+                .Where(x => x.ExchangeId != null)
+                .Include(x => x.ExchangeParcel)
+                .Include(x => x.Rider)
+                .Include(h => h.Hub);
+            if(!selectedDate.HasValue)
             {
-                return NotFound();
+                selectedDate = DateTime.Today;
             }
-            return View(parcels);
+            exchangeParcelsQuery = exchangeParcelsQuery.Where(x => x.ExchangeParcel.ExchangeDate.Date == selectedDate.Value.Date);
+            var exchangeParcels = exchangeParcelsQuery.ToList();
+
+            return View(exchangeParcels);
         }
 
         //Delivered Parcel List
-        public IActionResult DeliveredParcelList()
+        public IActionResult DeliveredParcelList(DateTime? selectedDate)
         {
             if (!IsAdminLoggedIn())
             {
                 return RedirectToAction("Login", "Home");
             }
-            var parcels = _context.Parcels.Where(p => p.DeliveryId !=null).Include(u => u.Merchant).Include(u => u.Rider).ToList();
-            if (parcels == null)
+            IQueryable<Parcel> parcelsQuery = _context.Parcels.Where(p=>p.DeliveryId !=null)
+                .Include(m => m.Merchant)
+                .Include(u => u.Rider)
+                .Include(d=>d.DeliveryParcel)
+                .Include(h => h.Hub);
+
+            if (!selectedDate.HasValue)
             {
-                return NotFound();
+                selectedDate = DateTime.Today;
             }
-            return View(parcels);
+
+            parcelsQuery = parcelsQuery.Where(x => x.DeliveryDate.Value.Date == selectedDate.Value.Date);
+
+            var parcels = parcelsQuery.ToList();
+
+            
+
+
+            return View(parcelsQuery);
         }
 
         public IActionResult Index()
@@ -846,20 +852,33 @@ namespace CourierService_Web.Controllers
             return RedirectToAction("Merchant");
         }
 
-        public IActionResult Parcel()
+        public IActionResult Parcel(DateTime? selectedDate)
         {
             if (!IsAdminLoggedIn())
             {
                 return RedirectToAction("Login", "Home");
             }
 
-            var parcels = _context.Parcels.Include(u => u.Merchant).Include(u => u.Rider).ToList();
-            if (parcels == null)
+            IQueryable<Parcel> parcelsQuery = _context.Parcels
+                .Include(m => m.Merchant)
+                .Include(u => u.Rider)
+                .Include(h => h.Hub);
+
+            if (!selectedDate.HasValue)
             {
-                return NotFound();
+                selectedDate = DateTime.Today;
             }
-            return View(parcels);
+
+            parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date == selectedDate.Value.Date);
+
+            var parcels = parcelsQuery.ToList();
+
+            ViewBag.SelectedDate = selectedDate ?? DateTime.Today;
+
+
+            return View(parcelsQuery);
         }
+
 
         public IActionResult DeleteParcel(string? Id)
         {

@@ -400,6 +400,7 @@ namespace CourierService_Web.Controllers
                 .Where(x => x.MerchantId == merchantId)
                 .Include(u => u.Rider)
                 .Include(h => h.Hub);
+
             if (!selectedDate.HasValue)
             {
                 selectedDate = DateTime.Today;
