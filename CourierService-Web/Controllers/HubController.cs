@@ -506,5 +506,32 @@ namespace CourierService_Web.Controllers
             TempData["success"] = "Payment Merchant";
             return RedirectToAction("Parcel");
         }
+
+        //PaymentDeliveryCharge
+        public IActionResult PaymentDeliveryCharge(string? id)
+        {
+            if (!IsHubLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+
+            parcel.PaymentStatus = "Paid Delivery Charge To Merchant";
+            _context.Parcels.Update(parcel);
+            _context.SaveChanges();
+
+            TempData["success"] = "Payment Delivery Charge";
+            return RedirectToAction("Parcel");
+        }
     }
 }

@@ -109,9 +109,13 @@
                                                 }
                                             </td>
                                             <td>
-                                                @if (parcel.PaymentStatus == "Paid")
+                                                @if (parcel.PaymentInHand == "PaymentInHand")
                                                 {
-                                                    <span class="badge badge-success text-medium">@parcel.PaymentStatus</span>
+                                                    <span class="badge badge-success text-medium">Payment Received By Hub</span>
+                                                }
+                                                else if (parcel.PaymentStatus == "Paid Delivery Charge To Merchant")
+                                                {
+                                                    <span class ="badge badge-info text-medium">Delivery Charge Received</span>
                                                 }
                                                 else
                                                 {
@@ -157,10 +161,16 @@
                                                             <i class="fas fa-check"></i> Exchange Parcel
                                                         </a>
                                                     }
-                                                    @if (parcel.Status == "Delivered" && parcel.PaymentStatus != "Paid")
+                                                    @if (parcel.Status == "Delivered" && parcel.PaymentInHand != "PaymentInHand")
                                                     {
                                                         <a asp-route-id="@parcel.Id" asp-controller="Rider" asp-action="Payment" class="btn btn-sm btn-success">
                                                             Payment Done
+                                                        </a>
+                                                    }
+                                                    @if ((parcel.Status == "Exchanged" || parcel.Status == "Returned") && parcel.PaymentStatus != "Paid Delivery Charge")
+                                                    {
+                                                        <a asp-route-id="@parcel.Id" asp-controller="Rider" asp-action="PaymentDeliveryCharge" class="btn btn-sm btn-success">
+                                                            <i class="fas fa-check"></i> Collect Delivery Charge
                                                         </a>
                                                     }
 

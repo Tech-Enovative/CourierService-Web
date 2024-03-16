@@ -140,6 +140,14 @@
                                                 {
                                                     <span class="badge badge-success text-medium">@parcel.PaymentStatus</span>
                                                 }
+                                                else if (parcel.PaymentStatus == "Paid Delivery Charge")
+                                                {
+                                                    <span class="badge badge-info text-medium">@parcel.PaymentStatus</span>
+                                                }
+                                                else if (parcel.PaymentStatus == "Paid Delivery Charge To Merchant")
+                                                {
+                                                    <span class="badge badge-info text-medium">@parcel.PaymentStatus</span>
+                                                }
                                                 else
                                                 {
                                                     <span class="badge badge-danger text-medium">Pending</span>
@@ -173,15 +181,13 @@
                                                     <a asp-route-id="@parcel.Id" asp-action="PaymentInHand" class="btn btn-xs btn-success"><i class="fas fa-check"></i>Payment In Hand</a>
                                                 }
 
-
-                                                @* @if(parcel.PaymentStatus =="Paid")
-                                            {
-                                            <a asp-route-id="@parcel.Id" asp-action="PaymentInHand" class="btn btn-xs btn-success"><i class="fas fa-check"></i>Payment In Hand</a>
-                                            <span class="badge badge-danger text-medium">Not In Hand</span>
-                                            }
-                                            else{
-                                            <span class="badge badge-info text-medium">In Hand</span>
-                                            } *@
+                                                
+                                                else if (parcel.PaymentStatus == "Paid Delivery Charge")
+                                                {
+                                                    <a asp-route-id="@parcel.Id" asp-action="PaymentDeliveryCharge" class="btn btn-xs btn-success"><i class="fas fa-check"></i>Pay Delivery Charge</a>
+                                                }
+                                                
+                                               
 
                                             </td>
                                             @if (parcel.RiderId == null)
@@ -215,7 +221,7 @@
 
                                                     else if (parcel.Status == "Returned")
                                                     {
-                                                        <a asp-action="ReturnParcelHub" asp-route-id="@parcel.Id" class="btn btn-sm btn-danger">
+                                                        <a asp-action="ReturnParcelHub" asp-controller="Hub" asp-route-id="@parcel.Id" class="btn btn-sm btn-danger">
                                                             <i class="fas fa-plus-circle"></i> Returned Parcel In Hub
 
                                                         </a>
@@ -228,7 +234,7 @@
 
                                                         </a>
                                                     }
-                                                    else if(parcel.Status == "Exchanged")
+                                                    else if (parcel.Status == "Exchanged" && parcel.PaymentStatus == "Paid Delivery Charge")
                                                     {
                                                         <a asp-action="ExchangeParcelHub" asp-route-id="@parcel.Id" class="btn btn-sm btn-info">
                                                             <i class="fas fa-plus-circle"></i> Exchanged Parcel In Hub

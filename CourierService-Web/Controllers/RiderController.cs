@@ -463,6 +463,23 @@ namespace CourierService_Web.Controllers
 
         }
 
+        //paymentDeliveryCharge
+        public IActionResult PaymentDeliveryCharge(string? id)
+        {
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+            //update payment status to paid
+            parcel.PaymentStatus = "Paid Delivery Charge";
+            parcel.AddPayment(parcel.DeliveryCharge);
+            _context.Parcels.Update(parcel);
+            _context.SaveChanges();
+            return RedirectToAction("AllParcel");
+
+        }
+
 
 
         [HttpPost]

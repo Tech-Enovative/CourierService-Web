@@ -99,20 +99,47 @@ namespace CourierService_Web.Controllers
             //return parcel count
             ViewBag.ReturnParcelCount = _context.Parcels.Count(x => x.MerchantId == merchantId && x.ReturnId !=null);
             //if paymentStatus paid then merchant can see the amount only for today according to delivered parcel date
-            ViewBag.TodayPayment = _context.Parcels.Where(x => x.MerchantId == merchantId && x.PaymentStatus == "Paid To Merchant" && x.DeliveryParcel.DeliveryDate >= todayStart && x.DeliveryParcel.DeliveryDate < tomorrowStart).Sum(x => x.TotalPrice);
-
-           //calculate total delivery charge for today if payment status is paid
-           ViewBag.TodayDeliveryCharge = _context.Parcels.Where(x => x.MerchantId == merchantId && x.PaymentStatus == "Paid To Merchant" && x.DeliveryParcel.DeliveryDate >= todayStart && x.DeliveryParcel.DeliveryDate < tomorrowStart).Sum(x => x.DeliveryCharge);
             
+
+            var todayDeliveryCharge = _context.Parcels
+    .Where(x => x.MerchantId == merchantId &&
+                (x.PaymentStatus == "Paid To Merchant" || x.PaymentStatus == "Paid Delivery Charge To Merchant") &&
+                (x.DeliveryParcel.DeliveryDate >= todayStart && x.DeliveryParcel.DeliveryDate < tomorrowStart) ||
+                (x.ExchangeParcel.ExchangeDate >= todayStart && x.ExchangeParcel.ExchangeDate < tomorrowStart) ||
+                (x.ReturnParcel.ReturnDate >= todayStart && x.ReturnParcel.ReturnDate < tomorrowStart)
+                
+                )
+    .Sum(x => x.DeliveryCharge);
+
+            ViewBag.TodayDeliveryCharge = todayDeliveryCharge;
+
+
+            var todayExchangeReturnCharge = _context.Parcels
+    .Where(x => x.MerchantId == merchantId &&
+                (x.PaymentStatus == "Paid Delivery Charge To Merchant") &&
+                (x.ExchangeParcel.ExchangeDate >= todayStart && x.ExchangeParcel.ExchangeDate < tomorrowStart) ||
+                (x.ReturnParcel.ReturnDate >= todayStart && x.ReturnParcel.ReturnDate < tomorrowStart)
+
+                )
+    .Sum(x => x.DeliveryCharge);
+
+           
+
+
+
+
+            //ViewBag.TodayDeliveryCharge = _context.Parcels.Where(x => x.MerchantId == merchantId && x.PaymentStatus == "Paid To Merchant" || x.PaymentStatus == "Paid Delivery Charge To Merchant" && x.DeliveryParcel.DeliveryDate >= todayStart && x.DeliveryParcel.DeliveryDate < tomorrowStart).Sum(x => x.DeliveryCharge);
+
 
             //calculate total product price for today if payment status is paid & also with quantity
             var totalProductPrice = _context.Parcels.Where(x => x.MerchantId == merchantId && x.PaymentStatus == "Paid To Merchant" && x.DeliveryParcel.DeliveryDate >= todayStart && x.DeliveryParcel.DeliveryDate < tomorrowStart).Sum(x => x.ProductPrice * x.ProductQuantity);
             ViewBag.TodayProductPrice = totalProductPrice;
 
             //ViewBag.TodayProductPrice = _context.Parcels.Where(x => x.MerchantId == merchantId && x.PaymentStatus == "Paid" && x.DeliveryParcel.DeliveryDate >= todayStart && x.DeliveryParcel.DeliveryDate < tomorrowStart).Sum(x => x.ProductPrice);
+            ViewBag.TodayPayment = totalProductPrice + todayDeliveryCharge;
 
 
-            
+
 
 
         }
