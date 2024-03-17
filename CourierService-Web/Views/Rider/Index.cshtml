@@ -84,7 +84,7 @@
                     <div class="card-box tilebox-one bg-warning d-flex align-items-center justify-content-between">
                         <div>
                             <h6 class="text-black font-weight-bold text-uppercase mt-0">Total Exchanged Parcel</h6>
-                            <h3 class="my-3" data-plugin="counterup">@ViewBag.TotalCancelled</h3>
+                            <h3 class="my-3" data-plugin="counterup">@ViewBag.TotalExchanged</h3>
                         </div>
                         <i class="fas fa-times-circle fa-3x text-black"></i>
                     </div>
@@ -109,6 +109,20 @@
                         </div>
                         <i class="fas fa-undo fa-3x text-black"></i>
                     </div>
+
+                </div>
+                <div class="col-md-6 col-xl-3">
+
+                    <div class="card-box tilebox-one bg-success d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Parcel Count</h6>
+                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TotalParcel</span></h3>
+                        </div>
+                        <i class="fas fa-box fa-3x text-black"></i>
+                    </div>
+
+
+
 
                 </div>
 

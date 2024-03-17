@@ -34,8 +34,8 @@ namespace CourierService_Web.Controllers
 
             ViewBag.TotalDispatched = _context.Parcels.Count(x => x.RiderId == riderId && x.Status == "Dispatched");
             ViewBag.TotalDelivered = _context.Parcels.Count(x => x.RiderId == riderId && x.Status == "Delivered");
-            ViewBag.TotalCancelled = _context.Parcels.Count(x => x.RiderId == riderId && x.Status == "Cancelled");
-            ViewBag.TotalReturned = _context.Parcels.Count(x => x.RiderId == riderId && x.Status == "Returned");
+            ViewBag.TotalExchanged = _context.Parcels.Count(x => x.RiderId == riderId && x.ExchangeId !=null);
+            ViewBag.TotalReturned = _context.Parcels.Count(x => x.RiderId == riderId && x.ReturnId !=null);
             ViewBag.TotalParcel = _context.Parcels.Count(x => x.RiderId == riderId);
 
             // Today Dispatched Parcel
@@ -198,6 +198,7 @@ namespace CourierService_Web.Controllers
 
                 _context.Riders.Update(riderToUpdate);
                 _context.SaveChanges();
+                TempData["success"] = "Profile Updated Successfully";
                 return RedirectToAction("Profile");
             }
 
@@ -517,7 +518,7 @@ namespace CourierService_Web.Controllers
                     rider.Password = resetPassword.NewPassword;
                     _context.SaveChanges();
                     TempData["success"] = "Password Changed Successfully";
-                    return RedirectToAction("Login", "Home");
+                    return RedirectToAction("Index");
                 }
 
                 else if (rider.Password != resetPassword.OldPassword)
