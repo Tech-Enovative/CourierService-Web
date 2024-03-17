@@ -923,7 +923,7 @@ namespace CourierService_Web.Controllers
                     admin.Password = resetPassword.NewPassword;
                     _context.SaveChanges();
                     TempData["success"] = "Password Changed Successfully";
-                    return RedirectToAction("Login");
+                    return RedirectToAction("Index");
                 }
                 else
                 {
@@ -1004,15 +1004,15 @@ namespace CourierService_Web.Controllers
             {
                 return NotFound();
             }
-            var contact = _context.Contacts.Find(id);
+            var contact = _context.Complain.Find(id);
             if (contact == null)
             {
                 return NotFound();
             }
-            _context.Contacts.Remove(contact);
+            _context.Complain.Remove(contact);
             _context.SaveChanges();
-            TempData["error"] = "Query Deleted Successfully";
-            return RedirectToAction("Queries");
+            TempData["error"] = "Complain Deleted Successfully";
+            return RedirectToAction("Complain");
         }
 
         //hub

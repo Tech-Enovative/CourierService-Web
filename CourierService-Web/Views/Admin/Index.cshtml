@@ -218,7 +218,7 @@
             </div>
         </div> *@
 
-        <div class="row">
+       @*  <div class="row">
             <div class="col-lg-12">
                 <div class="card-box">
                     
@@ -235,15 +235,10 @@
                                     <th>Pickup Location</th>
                                     <th>Pickup Request Date</th>
                                     <th>Receiver Information</th>
-                                    @*  <th>Receiver Name</th>
-                                    <th>Address</th>
-                                    <th>Contact</th> *@
+                                    
 
                                     <th>Product</th>
-                                    @* <th>Product Name</th>
-                                    <th>Product Weight</th>
-                                    <th>Product Price</th>
-                                    <th>Product Quantity</th> *@
+                                    
                                     <th>Delivery</th>
 
                                     <th>Total Price</th>
@@ -358,14 +353,6 @@
                                             }
 
 
-                                            @* @if(parcel.PaymentStatus =="Paid")
-                                        {
-                                        <a asp-route-id="@parcel.Id" asp-action="PaymentInHand" class="btn btn-xs btn-success"><i class="fas fa-check"></i>Payment In Hand</a>
-                                        <span class="badge badge-danger text-medium">Not In Hand</span>
-                                        }
-                                        else{
-                                        <span class="badge badge-info text-medium">In Hand</span>
-                                        } *@
 
                                         </td>
                                         @if (parcel.RiderId == null)
@@ -383,10 +370,7 @@
                                             <td>
 
                                                 <span class="badge badge-success text-medium">Rider Assigned</span>
-                                                @*  <a asp-route-id="@parcel.Id" asp-controller="Home" asp-action="DeleteRider" class="btn btn-danger">
-                                        <i class="fas fa-trash"></i>
-
-                                        </a> *@
+                                               
                                             </td>
                                         }
                                         @if(AdminEmail == "flyerbd@gmail.com")
@@ -440,7 +424,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> *@
 
 
         </div> <!-- end container-fluid -->

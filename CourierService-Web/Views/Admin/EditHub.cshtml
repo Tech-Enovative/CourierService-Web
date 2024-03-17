@@ -25,9 +25,13 @@
                                 <span asp-validation-for="Name" class="text-danger"></span>
                             </div>
                             <div class="form-group">
-                                <label asp-for="Area" for="Area">Area<span class="text-danger">*</span></label>
-                                <input asp-for="Area" type="text" name="Area" parsley-trigger="change" required
-                                       placeholder="Enter Area" class="form-control" id="Area">
+                                <label asp-for="District">District</label>
+                                <input asp-for="District" class="form-control" />
+                                <span asp-validation-for="District" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Area">Area</label>
+                                <input asp-for="Area" class="form-control" />
                                 <span asp-validation-for="Area" class="text-danger"></span>
                             </div>
                             <div class="form-group">
@@ -70,3 +74,7 @@
         <partial name="_ValidationScriptsPartial" />
     }
 }
+
+
+
+
