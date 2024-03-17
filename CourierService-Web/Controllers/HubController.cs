@@ -48,7 +48,7 @@ namespace CourierService_Web.Controllers
             ViewBag.ReturnParcelCount = returnParcelCount;
 
             //exchange parcel count according to hubId
-            var exchangeParcelCount = _context.ExchangeParcels.Where(p => p.HubId == hubId).Count();
+            var exchangeParcelCount = _context.Parcels.Where(p => p.HubId == hubId && p.ExchangeId !=null).Count();
             ViewBag.ExchangeParcelCount = exchangeParcelCount;
 
             //parcel in hub count according to hubId
