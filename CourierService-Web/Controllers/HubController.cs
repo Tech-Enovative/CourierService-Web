@@ -1,4 +1,5 @@
 ﻿using CourierService_Web.Data;
+using CourierService_Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -85,19 +86,29 @@ namespace CourierService_Web.Controllers
             return View();
         }
 
-        public IActionResult Parcel()
+        public IActionResult Parcel(DateTime? selectedDate)
         {
             if (!IsHubLoggedIn())
             {
                 return RedirectToAction("Login", "Home");
             }
             var hubId = Request.Cookies["HubId"];
-            var parcels = _context.Parcels.Where(p=>p.HubId == hubId).Include(u => u.Merchant).Include(u => u.Rider).ToList();
-            if (parcels == null)
+            IQueryable<Parcel> parcelsQuery = _context.Parcels
+                .Where(x => x.HubId == hubId)
+                .Include(u => u.Rider)
+                .Include(m=>m.Merchant)
+                .Include(h => h.Hub);
+
+            if (!selectedDate.HasValue)
             {
-                return NotFound();
+                selectedDate = DateTime.Today;
             }
-            return View(parcels);
+
+            parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date == selectedDate.Value.Date);
+
+            var parcels = parcelsQuery.ToList();
+
+            return View(parcelsQuery);
         }
 
         //Return parcel
@@ -380,50 +391,72 @@ namespace CourierService_Web.Controllers
         }
 
         //delivery parcel list
-        public IActionResult DeliveredParcelList()
+        public IActionResult DeliveredParcelList(DateTime? selectedDate)
         {
             if (!IsHubLoggedIn())
             {
                 return RedirectToAction("Login", "Home");
             }
             var hubId = Request.Cookies["HubId"];
-            var deliveryParcels = _context.Parcels.Where(p => p.HubId == hubId && p.DeliveryId !=null).Include(u => u.Merchant).Include(u => u.Rider).Include(d=>d.DeliveryParcel).Include(h=>h.Hub).ToList();
-            if (deliveryParcels == null)
+            IQueryable<Parcel> deliveredParcelsQuery = _context.Parcels
+                .Where(x => x.HubId == hubId && x.DeliveryId != null)
+                .Include(x => x.DeliveryParcel)
+                .Include(x => x.Rider)
+                .Include(h => h.Hub);
+
+            if (!selectedDate.HasValue)
             {
-                return NotFound();
+                selectedDate = DateTime.Today;
             }
-            return View(deliveryParcels);
+
+            deliveredParcelsQuery = deliveredParcelsQuery.Where(x => x.DeliveryParcel.DeliveryDate.Date == selectedDate.Value.Date);
+            var deliveredParcels = deliveredParcelsQuery.ToList();
+            return View(deliveredParcels);
         }
 
         //return parcel list
-        public IActionResult ReturnParcelList()
+        public IActionResult ReturnParcelList(DateTime? selectedDate)
         {
             if (!IsHubLoggedIn())
             {
                 return RedirectToAction("Login", "Home");
             }
             var hubId = Request.Cookies["HubId"];
-            var returnParcels = _context.Parcels.Where(p => p.HubId == hubId && p.ReturnId !=null).Include(u => u.Merchant).Include(u => u.Rider).ToList();
-            if (returnParcels == null)
+            IQueryable<Parcel> returnParcelsQuery = _context.Parcels
+                .Where(x => x.HubId == hubId && x.ReturnId != null)
+                .Include(x => x.ReturnParcel)
+                .Include(x => x.Rider)
+                .Include(h => h.Hub);
+
+            if (!selectedDate.HasValue)
             {
-                return NotFound();
+                selectedDate = DateTime.Today;
             }
+            returnParcelsQuery = returnParcelsQuery.Where(x => x.ReturnParcel.ReturnDate.Date == selectedDate.Value.Date);
+            var returnParcels = returnParcelsQuery.ToList();
+
             return View(returnParcels);
         }
 
         //exchange parcel list
-        public IActionResult ExchangeParcelList()
+        public IActionResult ExchangeParcelList(DateTime? selectedDate)
         {
             if (!IsHubLoggedIn())
             {
                 return RedirectToAction("Login", "Home");
             }
             var hubId = Request.Cookies["HubId"];
-            var exchangeParcels = _context.Parcels.Where(p => p.HubId == hubId && p.ExchangeId != null).Include(u => u.Merchant).Include(u => u.Rider).ToList();
-            if (exchangeParcels == null)
+            IQueryable<Parcel> exchangeParcelsQuery = _context.Parcels
+                .Where(x => x.HubId == hubId && x.ExchangeId != null)
+                .Include(x => x.ExchangeParcel)
+                .Include(x => x.Rider)
+                .Include(h => h.Hub);
+            if (!selectedDate.HasValue)
             {
-                return NotFound();
+                selectedDate = DateTime.Today;
             }
+            exchangeParcelsQuery = exchangeParcelsQuery.Where(x => x.ExchangeParcel.ExchangeDate.Date == selectedDate.Value.Date);
+            var exchangeParcels = exchangeParcelsQuery.ToList();
             return View(exchangeParcels);
         }
 
