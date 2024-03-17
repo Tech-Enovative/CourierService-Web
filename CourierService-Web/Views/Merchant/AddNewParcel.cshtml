@@ -259,6 +259,7 @@
             } else {
                 pickupLocationInput.removeAttribute('readonly'); // Remove the readonly attribute
                 pickupLocationInput.style.display = "block";
+                pickupLocationInput.value = "";
             }
         }
 
@@ -277,6 +278,6 @@
 
 @section Scripts {
     @{
-        <partial name="_ValidationScriptsPartial" />
+            <partial name="_ValidationScriptsPartial" />
     }
 }
