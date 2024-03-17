@@ -149,21 +149,21 @@
     </div>
 </div>
 
-@* @section Scripts{
+@section Scripts {
     <script>
-        // Get current date in YYYY-MM-DD format
-        function getCurrentDate() {
-            var today = new Date();
-            var dd = String(today.getDate()).padStart(2, '0');
-            var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
-            var yyyy = today.getFullYear();
+        // Wait for the document to be ready
+        document.addEventListener("DOMContentLoaded", function () {
+            // Get the input element
+            var datepicker = document.getElementById('datepicker');
 
-            return yyyy + '-' + mm + '-' + dd;
-        }
+            // Get the query parameter value from the URL
+            var urlParams = new URLSearchParams(window.location.search);
+            var selectedDate = urlParams.get('selectedDate');
 
-        
-        $(document).ready(function () {
-            $('#datepicker').val(getCurrentDate());
+            // If selectedDate is not null, set the value of the input field
+            if (selectedDate) {
+                datepicker.value = selectedDate;
+            }
         });
     </script>
-    } *@
+}

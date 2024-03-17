@@ -205,7 +205,7 @@ namespace CourierService_Web.Controllers
             return View("Profile", rider);
         }
 
-        public IActionResult AllParcel()
+        public IActionResult AllParcel(DateTime? selectedDate)
         {
             if (!IsRiderLoggedIn())
             {
@@ -214,8 +214,22 @@ namespace CourierService_Web.Controllers
             }
 
             var riderId = HttpContext.Request.Cookies["RiderId"];
-            var parcel = _context.Parcels.Where(p => p.RiderId == riderId).Include(u => u.Merchant).Include(h=>h.Hub).ToList();
-            return View(parcel);
+            IQueryable<Parcel> parcelsQuery = _context.Parcels
+                .Where(x => x.RiderId == riderId)
+                .Include(u => u.Rider)
+                .Include(m => m.Merchant)
+                .Include(h => h.Hub);
+
+            if (!selectedDate.HasValue)
+            {
+                selectedDate = DateTime.Today;
+            }
+
+            parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date == selectedDate.Value.Date);
+
+            var parcels = parcelsQuery.ToList();
+
+            return View(parcelsQuery);
         }
 
         //status change to PickedUp
