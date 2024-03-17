@@ -479,7 +479,7 @@ namespace CourierService_Web.Controllers
                     merchant.Password = resetPassword.NewPassword;
                     _context.SaveChanges();
                     TempData["success"] = "Password Changed Successfully";
-                    return RedirectToAction("Login", "Home");
+                    return RedirectToAction("Index");
                 }
 
                 else if (merchant.Password != resetPassword.OldPassword)
