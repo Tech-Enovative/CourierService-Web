@@ -5,6 +5,7 @@ using CourierService_Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Amazon;
+using System.Text;
 
 namespace CourierService_Web.Controllers
 {
@@ -409,11 +410,56 @@ namespace CourierService_Web.Controllers
             parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date == selectedDate.Value.Date);
 
             var parcels = parcelsQuery.ToList();
+            //selecteddate pass to viewbag
+            ViewBag.SelectedDate = selectedDate.Value.Date;
 
             return View(parcelsQuery);
 
             
         }
+
+        public IActionResult DownloadCsv(DateTime? selectedDate)
+        {
+            if (!IsMerchantLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            // Get the list of parcels based on the selected date
+            var merchantId = HttpContext.Request.Cookies["MerchantId"];
+            IQueryable<Parcel> parcelsQuery = _context.Parcels
+                .Where(x => x.MerchantId == merchantId)
+                .Include(u => u.Rider)
+                .Include(h => h.Hub);
+
+            if (!selectedDate.HasValue)
+            {
+                selectedDate = DateTime.Today;
+            }
+
+            parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date == selectedDate.Value.Date);
+
+            var parcels = parcelsQuery.ToList();
+
+            // Generate CSV content
+            StringBuilder csvContent = new StringBuilder();
+
+            // Add Byte Order Mark (BOM) to ensure proper encoding in Excel
+            csvContent.Append("\uFEFF");
+
+            csvContent.AppendLine("ID,Hub,Rider,Pickup Location,Pickup Request Date,Receiver Name,Receiver Address,Receiver Contact,Product Name,Product Weight,Product Price,Product Quantity,Delivery Type,Delivery Charge,Total Price,Status,Payment Status");
+
+            foreach (var parcel in parcels)
+            {
+                csvContent.AppendLine($"{parcel.Id},{parcel.Hub?.Name ?? "Not Assigned"},{parcel.Rider?.Name ?? "Not Assigned"},{parcel.PickupLocation},{parcel.PickupRequestDate?.ToString("M/d/yyyy, h:mm tt")},{parcel.ReceiverName},{parcel.ReceiverAddress},{parcel.ReceiverContactNumber},{parcel.ProductName},{parcel.ProductWeight},{parcel.ProductPrice},{parcel.ProductQuantity},{parcel.DeliveryType},{parcel.DeliveryCharge},{parcel.TotalPrice},{parcel.Status},{parcel.PaymentStatus}");
+            }
+
+            // Return CSV file
+            return File(Encoding.UTF8.GetBytes(csvContent.ToString()), "text/csv", $"Parcels_{selectedDate.Value.ToString("yyyy-MM-dd")}.csv");
+        }
+
+
+
 
         //change parcel status to ReturnParcelReceived
         public IActionResult ReturnParcelReceived(string id)
