@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CourierService_Web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240316061000_PaymentTable")]
-    partial class PaymentTable
+    [Migration("20240318142150_NewMig")]
+    partial class NewMig
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -231,7 +231,7 @@ namespace CourierService_Web.Migrations
                             Address = "Dhaka, Bangladesh",
                             AdminId = "A-123",
                             Area = "Mirpur",
-                            CreatedAt = new DateTime(2024, 3, 16, 12, 9, 57, 862, DateTimeKind.Local).AddTicks(6644),
+                            CreatedAt = new DateTime(2024, 3, 18, 20, 21, 49, 585, DateTimeKind.Local).AddTicks(5805),
                             CreatedBy = "Admin",
                             District = "Dhaka",
                             Email = "hub@gmail.com",
@@ -318,7 +318,7 @@ namespace CourierService_Web.Migrations
                             Area = "Mirpur",
                             CompanyName = "Merchant Company",
                             ContactNumber = "01837730317",
-                            CreatedAt = new DateTime(2024, 3, 16, 12, 9, 57, 862, DateTimeKind.Local).AddTicks(6577),
+                            CreatedAt = new DateTime(2024, 3, 18, 20, 21, 49, 585, DateTimeKind.Local).AddTicks(5695),
                             Email = "merchant@gmail.com",
                             FullAddress = "Dhaka, Bangladesh",
                             Name = "Merchant",
@@ -563,7 +563,7 @@ namespace CourierService_Web.Migrations
                             Id = "R-123",
                             Area = "Dhaka",
                             ContactNumber = "01837730317",
-                            CreatedAt = new DateTime(2024, 3, 16, 12, 9, 57, 862, DateTimeKind.Local).AddTicks(6716),
+                            CreatedAt = new DateTime(2024, 3, 18, 20, 21, 49, 585, DateTimeKind.Local).AddTicks(5890),
                             District = "Dhaka",
                             Email = "rider@gmail.com",
                             FullAddress = "Dhaka, Bangladesh",

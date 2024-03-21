@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CourierService_Web.Migrations
 {
     /// <inheritdoc />
-    public partial class NewDatabaseWithNewModels : Migration
+    public partial class NewMig : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -47,6 +47,7 @@ namespace CourierService_Web.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    District = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Area = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -77,16 +78,16 @@ namespace CourierService_Web.Migrations
                     FullAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CompanyAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     District = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Area = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Area = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ContactNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FacebookUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Website = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ConfirmPassword = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NID = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TradeLicense = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Tin = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     HubId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
@@ -118,7 +119,7 @@ namespace CourierService_Web.Migrations
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
                     State = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HubId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    HubId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -127,8 +128,27 @@ namespace CourierService_Web.Migrations
                         name: "FK_Riders_Hubs_HubId",
                         column: x => x.HubId,
                         principalTable: "Hubs",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Complain",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Subject = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MerchantId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Complain", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Complain_Merchants_MerchantId",
+                        column: x => x.MerchantId,
+                        principalTable: "Merchants",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -163,6 +183,68 @@ namespace CourierService_Web.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ExchangeParcels",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ParcelId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ExchangeDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    RiderId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    HubId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    MerchantId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExchangeParcels", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ExchangeParcels_Hubs_HubId",
+                        column: x => x.HubId,
+                        principalTable: "Hubs",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ExchangeParcels_Merchants_MerchantId",
+                        column: x => x.MerchantId,
+                        principalTable: "Merchants",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ExchangeParcels_Riders_RiderId",
+                        column: x => x.RiderId,
+                        principalTable: "Riders",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ReturnParcels",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ParcelId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReturnDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    RiderId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    HubId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    MerchantId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReturnParcels", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ReturnParcels_Hubs_HubId",
+                        column: x => x.HubId,
+                        principalTable: "Hubs",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ReturnParcels_Merchants_MerchantId",
+                        column: x => x.MerchantId,
+                        principalTable: "Merchants",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ReturnParcels_Riders_RiderId",
+                        column: x => x.RiderId,
+                        principalTable: "Riders",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Parcels",
                 columns: table => new
                 {
@@ -190,7 +272,9 @@ namespace CourierService_Web.Migrations
                     MerchantId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     RiderId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     HubId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    DeliveryId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    ReturnId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    DeliveryId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ExchangeId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -199,6 +283,11 @@ namespace CourierService_Web.Migrations
                         name: "FK_Parcels_DeliveredParcels_DeliveryId",
                         column: x => x.DeliveryId,
                         principalTable: "DeliveredParcels",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Parcels_ExchangeParcels_ExchangeId",
+                        column: x => x.ExchangeId,
+                        principalTable: "ExchangeParcels",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Parcels_Hubs_HubId",
@@ -211,6 +300,11 @@ namespace CourierService_Web.Migrations
                         principalTable: "Merchants",
                         principalColumn: "Id");
                     table.ForeignKey(
+                        name: "FK_Parcels_ReturnParcels_ReturnId",
+                        column: x => x.ReturnId,
+                        principalTable: "ReturnParcels",
+                        principalColumn: "Id");
+                    table.ForeignKey(
                         name: "FK_Parcels_Riders_RiderId",
                         column: x => x.RiderId,
                         principalTable: "Riders",
@@ -218,64 +312,50 @@ namespace CourierService_Web.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ExchangeParcels",
+                name: "Payments",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ParcelId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    ExchangeDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    RiderId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    HubId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Amount = table.Column<int>(type: "int", nullable: false),
+                    PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ParcelId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ExchangeParcels", x => x.Id);
+                    table.PrimaryKey("PK_Payments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ExchangeParcels_Hubs_HubId",
-                        column: x => x.HubId,
-                        principalTable: "Hubs",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_ExchangeParcels_Parcels_ParcelId",
+                        name: "FK_Payments_Parcels_ParcelId",
                         column: x => x.ParcelId,
                         principalTable: "Parcels",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_ExchangeParcels_Riders_RiderId",
-                        column: x => x.RiderId,
-                        principalTable: "Riders",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "ReturnParcels",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ParcelId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    ReturnDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    RiderId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    HubId = table.Column<string>(type: "nvarchar(450)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ReturnParcels", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ReturnParcels_Hubs_HubId",
-                        column: x => x.HubId,
-                        principalTable: "Hubs",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_ReturnParcels_Parcels_ParcelId",
-                        column: x => x.ParcelId,
-                        principalTable: "Parcels",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_ReturnParcels_Riders_RiderId",
-                        column: x => x.RiderId,
-                        principalTable: "Riders",
-                        principalColumn: "Id");
-                });
+            migrationBuilder.InsertData(
+                table: "Admins",
+                columns: new[] { "Id", "Email", "Name", "Password" },
+                values: new object[] { "A-123", "flyerbd@gmail.com", "Admin", "1111" });
+
+            migrationBuilder.InsertData(
+                table: "Merchants",
+                columns: new[] { "Id", "Area", "CompanyAddress", "CompanyName", "ContactNumber", "CreatedAt", "District", "Email", "FacebookUrl", "FullAddress", "HubId", "ImageUrl", "NID", "Name", "Password", "Tin", "TradeLicense", "Website" },
+                values: new object[] { "M-123", "Mirpur", null, "Merchant Company", "01837730317", new DateTime(2024, 3, 18, 20, 21, 49, 585, DateTimeKind.Local).AddTicks(5695), null, "merchant@gmail.com", null, "Dhaka, Bangladesh", null, null, null, "Merchant", "1111", null, null, null });
+
+            migrationBuilder.InsertData(
+                table: "Hubs",
+                columns: new[] { "Id", "Address", "AdminId", "Area", "CreatedAt", "CreatedBy", "District", "Email", "Name", "Password", "PhoneNumber", "Status" },
+                values: new object[] { "H-123", "Dhaka, Bangladesh", "A-123", "Mirpur", new DateTime(2024, 3, 18, 20, 21, 49, 585, DateTimeKind.Local).AddTicks(5805), "Admin", "Dhaka", "hub@gmail.com", "Hub", "1111", "01837730317", 1 });
+
+            migrationBuilder.InsertData(
+                table: "Riders",
+                columns: new[] { "Id", "Area", "ContactNumber", "CreatedAt", "District", "Email", "FullAddress", "HubId", "ImageUrl", "NID", "Name", "Password", "Salary", "State", "Status" },
+                values: new object[] { "R-123", "Dhaka", "01837730317", new DateTime(2024, 3, 18, 20, 21, 49, 585, DateTimeKind.Local).AddTicks(5890), "Dhaka", "rider@gmail.com", "Dhaka, Bangladesh", "H-123", null, "0123456789", "Rider", "1111", 10000, "Available", 1 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Complain_MerchantId",
+                table: "Complain",
+                column: "MerchantId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DeliveredParcels_HubId",
@@ -298,9 +378,9 @@ namespace CourierService_Web.Migrations
                 column: "HubId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ExchangeParcels_ParcelId",
+                name: "IX_ExchangeParcels_MerchantId",
                 table: "ExchangeParcels",
-                column: "ParcelId");
+                column: "MerchantId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ExchangeParcels_RiderId",
@@ -325,6 +405,13 @@ namespace CourierService_Web.Migrations
                 filter: "[DeliveryId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Parcels_ExchangeId",
+                table: "Parcels",
+                column: "ExchangeId",
+                unique: true,
+                filter: "[ExchangeId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Parcels_HubId",
                 table: "Parcels",
                 column: "HubId");
@@ -335,9 +422,21 @@ namespace CourierService_Web.Migrations
                 column: "MerchantId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Parcels_ReturnId",
+                table: "Parcels",
+                column: "ReturnId",
+                unique: true,
+                filter: "[ReturnId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Parcels_RiderId",
                 table: "Parcels",
                 column: "RiderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payments_ParcelId",
+                table: "Payments",
+                column: "ParcelId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ReturnParcels_HubId",
@@ -345,9 +444,9 @@ namespace CourierService_Web.Migrations
                 column: "HubId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReturnParcels_ParcelId",
+                name: "IX_ReturnParcels_MerchantId",
                 table: "ReturnParcels",
-                column: "ParcelId");
+                column: "MerchantId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ReturnParcels_RiderId",
@@ -364,19 +463,25 @@ namespace CourierService_Web.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Complain");
+
+            migrationBuilder.DropTable(
                 name: "Contacts");
 
             migrationBuilder.DropTable(
-                name: "ExchangeParcels");
-
-            migrationBuilder.DropTable(
-                name: "ReturnParcels");
+                name: "Payments");
 
             migrationBuilder.DropTable(
                 name: "Parcels");
 
             migrationBuilder.DropTable(
                 name: "DeliveredParcels");
+
+            migrationBuilder.DropTable(
+                name: "ExchangeParcels");
+
+            migrationBuilder.DropTable(
+                name: "ReturnParcels");
 
             migrationBuilder.DropTable(
                 name: "Merchants");
