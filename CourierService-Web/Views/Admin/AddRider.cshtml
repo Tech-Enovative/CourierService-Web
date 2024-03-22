@@ -36,16 +36,83 @@
                                 <span asp-validation-for="NID" class="text-danger"></span>
                             </div>
                             <div class="form-group">
-                                <label asp-for="District" for="District">District<span class="text-danger">*</span></label>
-                                <input asp-for="District" type="text" name="District" parsley-trigger="change" required
-                                       placeholder="Enter district" class="form-control" id="District">
+                                <label asp-for="District" for="District">District</label>
+                                <select asp-for="District" id="District" class="form-control">
+                                    <option value="Bagerhat">Bagerhat</option>
+                                    <option value="Bandarban">Bandarban</option>
+                                    <option value="Barguna">Barguna</option>
+                                    <option value="Barisal">Barisal</option>
+                                    <option value="Bhola">Bhola</option>
+                                    <option value="Bogra">Bogra</option>
+                                    <option value="Brahmanbaria">Brahmanbaria</option>
+                                    <option value="Chandpur">Chandpur</option>
+                                    <option value="Chapainawabganj">Chapainawabganj</option>
+                                    <option value="Chittagong">Chittagong</option>
+                                    <option value="Chuadanga">Chuadanga</option>
+                                    <option value="Comilla">Comilla</option>
+                                    <option value="Cox's Bazar">Cox's Bazar</option>
+                                    <option value="Dhaka">Dhaka</option>
+                                    <option value="Dinajpur">Dinajpur</option>
+                                    <option value="Faridpur">Faridpur</option>
+                                    <option value="Feni">Feni</option>
+                                    <option value="Gaibandha">Gaibandha</option>
+                                    <option value="Gazipur">Gazipur</option>
+                                    <option value="Gopalganj">Gopalganj</option>
+                                    <option value="Habiganj">Habiganj</option>
+                                    <option value="Jamalpur">Jamalpur</option>
+                                    <option value="Jessore">Jessore</option>
+                                    <option value="Jhalokati">Jhalokati</option>
+                                    <option value="Jhenaidah">Jhenaidah</option>
+                                    <option value="Joypurhat">Joypurhat</option>
+                                    <option value="Khagrachhari">Khagrachhari</option>
+                                    <option value="Khulna">Khulna</option>
+                                    <option value="Kishoreganj">Kishoreganj</option>
+                                    <option value="Kurigram">Kurigram</option>
+                                    <option value="Kushtia">Kushtia</option>
+                                    <option value="Lakshmipur">Lakshmipur</option>
+                                    <option value="Lalmonirhat">Lalmonirhat</option>
+                                    <option value="Madaripur">Madaripur</option>
+                                    <option value="Magura">Magura</option>
+                                    <option value="Manikganj">Manikganj</option>
+                                    <option value="Meherpur">Meherpur</option>
+                                    <option value="Moulvibazar">Moulvibazar</option>
+                                    <option value="Munshiganj">Munshiganj</option>
+                                    <option value="Mymensingh">Mymensingh</option>
+                                    <option value="Naogaon">Naogaon</option>
+                                    <option value="Narail">Narail</option>
+                                    <option value="Narayanganj">Narayanganj</option>
+                                    <option value="Narsingdi">Narsingdi</option>
+                                    <option value="Natore">Natore</option>
+                                    <option value="Nawabganj">Nawabganj</option>
+                                    <option value="Netrakona">Netrakona</option>
+                                    <option value="Nilphamari">Nilphamari</option>
+                                    <option value="Noakhali">Noakhali</option>
+                                    <option value="Pabna">Pabna</option>
+                                    <option value="Panchagarh">Panchagarh</option>
+                                    <option value="Patuakhali">Patuakhali</option>
+                                    <option value="Pirojpur">Pirojpur</option>
+                                    <option value="Rajbari">Rajbari</option>
+                                    <option value="Rajshahi">Rajshahi</option>
+                                    <option value="Rangamati">Rangamati</option>
+                                    <option value="Rangpur">Rangpur</option>
+                                    <option value="Satkhira">Satkhira</option>
+                                    <option value="Shariatpur">Shariatpur</option>
+                                    <option value="Sherpur">Sherpur</option>
+                                    <option value="Sirajganj">Sirajganj</option>
+                                    <option value="Sunamganj">Sunamganj</option>
+                                    <option value="Sylhet">Sylhet</option>
+                                    <option value="Tangail">Tangail</option>
+                                    <option value="Thakurgaon">Thakurgaon</option>
+                                </select>
                                 <span asp-validation-for="District" class="text-danger"></span>
                             </div>
+
+
                             <div class="form-group">
-                                <label asp-for="Area" for="Area">Area<span class="text-danger">*</span></label>
-                                <input asp-for="Area" type="text" name="Area" parsley-trigger="change" required
-                                       placeholder="Enter area" class="form-control" id="Area">
-                                <span asp-validation-for="Area" class="text-danger"></span>
+                                <label asp-for="Area" for="Area">Area</label>
+                                <select asp-for="Area" id="Area" class="form-control">
+                                    <!-- Options for Area will be dynamically populated based on selected District -->
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label asp-for="Salary" for="Salary">Salary<span class="text-danger">*</span></label>
@@ -98,6 +165,115 @@
         </div>
     </div>
 </div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const areasByDistrict = {
+            "Bagerhat": ["Bagerhat Sadar", "Chitalmari", "Fakirhat", "Kachua", "Mollahat", "Mongla", "Morrelganj", "Rampal", "Sarankhola"],
+            "Bandarban": ["Bandarban Sadar", "Thanchi", "Lama", "Ruma"],
+            "Barguna": ["Barguna Sadar", "Amtali", "Bamna", "Betagi", "Patharghata"],
+            "Barisal": ["Barisal Sadar", "Agailjhara", "Babuganj", "Bakerganj", "Banaripara", "Gaurnadi", "Hizla", "Mehendiganj", "Muladi", "Wazirpur"],
+            "Bhola": ["Bhola Sadar", "Burhanuddin", "Char Fasson", "Daulatkhan", "Lalmohan", "Manpura", "Tazumuddin"],
+            "Bogra": ["Bogra Sadar", "Adamdighi", "Dhunat", "Dhupchanchia", "Gabtali", "Kahaloo", "Nandigram", "Sariakandi", "Sherpur", "Shibganj", "Sonatala"],
+            "Brahmanbaria": ["Brahmanbaria Sadar", "Ashuganj", "Bancharampur", "Kasba", "Nabinagar", "Nasirnagar", "Sarail"],
+            "Chandpur": ["Chandpur Sadar", "Faridganj", "Hajiganj", "Kachua", "Matlab Dakshin", "Matlab Uttar", "Shahrasti"],
+            "Chapainawabganj": ["Chapainawabganj Sadar", "Gomostapur", "Nachole", "Bholahat", "Rohanpur", "Shibganj"],
+            "Chattogram": ["Anwara", "Banshkhali", "Boalkhali", "Chandanaish", "Fatikchhari", "Hathazari", "Lohagara", "Mirsharai", "Patiya", "Rangunia", "Sandwip", "Satkania", "Sitakunda"],
+            "Chuadanga": ["Chuadanga Sadar", "Alamdanga", "Damurhuda", "Jibannagar"],
+            "Cox's Bazar": ["Cox's Bazar Sadar", "Chakaria", "Maheshkhali", "Kutubdia", "Ramu", "Teknaf", "Ukhia"],
+            "Cumilla": ["Cumilla Sadar", "Barura", "Brahmanpara", "Burichang", "Chandina", "Chauddagram", "Daudkandi", "Debidwar", "Homna", "Laksam", "Monohorgonj", "Muradnagar", "Nangalkot", "Comilla Adarsha Sadar", "Meghna", "Titas"],
+            "Dhaka": [
+                "Adabor", "Agargaon", "Airport", "Badda", "Banani", "Banani DOHS", "Banasree", "Bangshal", "Baridhara", "Baridhara DOHS",
+                "Basabo", "Basundhara", "Cantonment", "Chak Bazar", "Dakshinkhan", "Dania", "Darus Salam", "Demra", "Dhamrai", "Dhanmondi",
+                "Dohar", "Elephant Road", "Farmgate", "Gabtoli", "Gandaria", "Gulshan", "Hazaribagh", "Jatrabari", "Kadamtali", "Kafrul",
+                "Kalabagan", "Kamrangirchar", "Kathalbagan", "Kawran Bazar", "Keraniganj", "Khilgaon", "Khilkhet", "Kotwali", "Lalbagh",
+                "Madartek", "Malibagh", "Mirpur", "Mohakhali", "Mohakhali DOHS", "Mohammadpur", "Motijheel", "Mugda", "Nakhalpara", "Nandipara",
+                "Narinda", "Naya Paltan", "New Market", "Pallabi", "Panthapath", "Posta", "Purana Paltan", "Raja Bazar", "Ramna", "Rampura",
+                "Rayer Bazar", "Rupnagar", "Sabujbagh", "Savar", "Segunbagicha", "Shah Ali", "Shahbagh", "Shajahanpur", "Shamoli", "Shyampur",
+                "Siddheswari", "Sutrapur", "Tejgaon", "Tongi", "Tura", "Turag", "Uttara", "Vatara", "Vasantek"
+            ],
+
+            "Dinajpur": ["Dinajpur Sadar", "Birampur", "Birganj", "Biral", "Bochaganj", "Chirirbandar", "Phulbari", "Ghoraghat", "Hakimpur", "Kaharole", "Khansama", "Nababganj", "Parbatipur"],
+            "Faridpur": ["Faridpur Sadar", "Alfadanga", "Bhanga", "Boalmari", "Char Bhadrasan", "Madhukhali", "Nagarkanda", "Sadarpur", "Shaltha"],
+            "Feni": ["Feni Sadar", "Chhagalnaiya", "Daganbhuiyan", "Parshuram", "Fulgazi", "Sonagazi"],
+            "Gaibandha": ["Gaibandha Sadar", "Fulchhari", "Gobindaganj", "Sundarganj", "Palashbari", "Phulchari", "Sadullapur", "Saghata"],
+            "Gazipur": ["Gazipur Sadar", "Kaliakair", "Kapasia", "Sreepur"],
+            "Gopalganj": ["Gopalganj Sadar", "Kashiani", "Kotalipara", "Muksudpur", "Tungipara"],
+            "Habiganj": ["Habiganj Sadar", "Ajmiriganj", "Baniachong", "Bahubal", "Chunarughat", "Lakhai", "Madhabpur", "Nabiganj"],
+            "Jamalpur": ["Jamalpur Sadar", "Baksiganj", "Dewanganj", "Islampur", "Madarganj", "Melandaha", "Sarishabari"],
+            "Jashore": ["Jashore Sadar", "Chaugachha", "Jhikargachha", "Keshabpur", "Bagherpara", "Manirampur", "Abhaynagar", "Sharsha"],
+            "Jhalokati": ["Jhalokati Sadar", "Kathalia", "Nalchity", "Rajapur"],
+            "Jhenaidah": ["Jhenaidah Sadar", "Harinakundu", "Kaliganj", "Kotchandpur", "Maheshpur", "Shailkupa"],
+            "Joypurhat": ["Joypurhat Sadar", "Akkelpur", "Kalai", "Khetlal", "Panchbibi"],
+            "Khagrachhari": ["Khagrachhari Sadar", "Dighinala", "Lakshmichhari", "Mahalchhari", "Manikchhari", "Matiranga", "Panchhari", "Ramgarh"],
+            "Khulna": ["Khulna Sadar", "Dacope", "Koyra", "Paikgachha", "Phultala", "Rupsha", "Terokhada", "Dighalia", "Batiaghata", "Dumuria"],
+            "Kishoreganj": ["Kishoreganj Sadar", "Austagram", "Bajitpur", "Bhairab", "Hossainpur", "Itna", "Karimganj", "Katiadi", "Kuliarchar", "Mithamain", "Nikli", "Pakundia", "Tarail"],
+            "Kurigram": ["Kurigram Sadar", "Bhurungamari", "Char Rajibpur", "Chilmari", "Phulbari", "Nageshwari", "Rajarhat", "Rajibpur", "Ulipur"],
+            "Kushtia": ["Kushtia Sadar", "Bheramara", "Daulatpur", "Khoksa", "Kumarkhali", "Mirpur"],
+            "Lakshmipur": ["Lakshmipur Sadar", "Raipur", "Ramganj", "Ramgati", "Kamalnagar"],
+            "Lalmonirhat": ["Lalmonirhat Sadar", "Aditmari", "Hatibandha", "Kaliganj", "Patgram"],
+            "Madaripur": ["Madaripur Sadar", "Kalkini", "Rajoir", "Shibchar"],
+            "Magura": ["Magura Sadar", "Mohammadpur", "Shalikha", "Sreepur"],
+            "Manikganj": ["Manikganj Sadar", "Ghior", "Harirampur", "Shibloya", "Singair"],
+            "Meherpur": ["Meherpur Sadar", "Gangni", "Mujibnagar"],
+            "Moulvibazar": ["Moulvibazar Sadar", "Barlekha", "Kamalganj", "Kulaura", "Rajnagar", "Sreemangal"],
+            "Munshiganj": ["Munshiganj Sadar", "Sirajdikhan", "Lohajang", "Gazaria", "Sreenagar", "Tongibari"],
+            "Mymensingh": ["Mymensingh Sadar", "Bhaluka", "Trishal", "Fulbaria", "Gaffargaon", "Gauripur", "Haluaghat", "Ishwarganj"],
+            "Naogaon": ["Naogaon Sadar", "Atrai", "Badalgachhi", "Dhamoirhat", "Manda", "Mohadevpur", "Niamatpur", "Patnitala", "Porsha", "Raninagar", "Sapahar"],
+            "Narail": ["Narail Sadar", "Kalia", "Lohagara"],
+            "Narayanganj": ["Narayanganj Sadar", "Araihazar", "Bandar", "Rupganj", "Sonargaon"],
+            "Narsingdi": ["Narsingdi Sadar", "Belabo", "Monohardi", "Palash", "Raipura", "Shibpur"],
+            "Natore": ["Natore Sadar", "Baraigram", "Boraigram", "Gurudaspur", "Lalpur", "Singra"],
+            "Netrokona": ["Netrokona Sadar", "Atpara", "Barhatta", "Durgapur", "Khaliajuri", "Kalmakanda", "Madan", "Mohanganj", "Purbadhala"],
+            "Nilphamari": ["Nilphamari Sadar", "Dimla", "Domar", "Jaldhaka", "Kishoreganj", "Saidpur"],
+            "Noakhali": ["Noakhali Sadar", "Begumganj", "Chatkhil", "Companiganj", "Hatiya", "Senbagh"],
+            "Pabna": ["Pabna Sadar", "Atgharia", "Bera", "Bhangura", "Chatmohar", "Faridpur", "Ishwardi", "Santhia", "Sujanagar"],
+            "Panchagarh": ["Panchagarh Sadar", "Atwari", "Boda", "Debiganj", "Tetulia"],
+            "Patuakhali": ["Patuakhali Sadar", "Bauphal", "Dashmina", "Galachipa", "Kalapara", "Mirzaganj", "Rangabali"],
+            "Pirojpur": ["Pirojpur Sadar", "Bhandaria", "Kawkhali", "Mathbaria", "Nazirpur", "Nesarabad (Swarupkathi)"],
+            "Rajbari": ["Rajbari Sadar", "Baliakandi", "Goalandaghat", "Pangsha"],
+            "Rajshahi": ["Rajshahi Sadar", "Bagha", "Bagmara", "Charghat", "Durgapur", "Godagari", "Mohanpur", "Paba", "Puthia", "Tanore"],
+            "Rangamati": ["Rangamati Sadar", "Belaichhari", "Baghaichhari", "Barkal", "Juraichhari", "Rajasthali", "Kaptai", "Langadu", "Naniarchar"],
+            "Satkhira": ["Satkhira Sadar", "Assasuni", "Debhata", "Kalaroa", "Kaliganj", "Satkhira Sadar", "Shyamnagar", "Tala"],
+            "Shariatpur": ["Shariatpur Sadar", "Bhedarganj", "Damudya", "Gosairhat", "Naria", "Zajira"],
+            "Sherpur": ["Sherpur Sadar", "Jhenaigati", "Nakla", "Nalitabari", "Sreebardi"],
+            "Sirajganj": ["Sirajganj Sadar", "Belkuchi", "Chauhali", "Kamarkhanda", "Kazipur", "Raiganj", "Shahjadpur", "Tarash", "Ullahpara"],
+            "Sunamganj": ["Sunamganj Sadar", "Bishwamvarpur", "Chhatak", "Derai", "Dharampasha", "Dowarabazar", "Jagannathpur", "Jamalganj", "Shalla", "Tahirpur"],
+            "Sylhet": ["Sylhet Sadar", "Balaganj", "Beanibazar", "Bishwanath", "Companiganj", "Dakshin Surma", "Fenchuganj", "Golapganj", "Gowainghat", "Jaintiapur", "Kanaighat", "Zakiganj"],
+            "Tangail": ["Tangail Sadar", "Basail", "Bhuapur", "Delduar", "Dhanbari", "Ghatail", "Gopalpur", "Kalihati", "Madhupur", "Mirzapur", "Nagarpur", "Sakhipur"],
+            "Thakurgaon": ["Thakurgaon Sadar", "Baliadangi", "Haripur", "Pirganj", "Ranisankail"],
+        };
+
+
+        const districtSelect = document.getElementById("District");
+        const areaSelect = document.getElementById("Area");
+
+        // Function to populate the Area dropdown based on the selected District
+        function populateAreas() {
+            const selectedDistrict = districtSelect.value;
+
+            // Clear existing options
+            areaSelect.innerHTML = "";
+
+            // Populate options based on selected District
+            areasByDistrict[selectedDistrict].forEach(area => {
+                const option = document.createElement("option");
+                option.textContent = area;
+                option.value = area;
+                areaSelect.appendChild(option);
+            });
+        }
+
+        // Event listener to trigger population of Areas when District selection changes
+        districtSelect.addEventListener("change", populateAreas);
+
+        // Populate initial Areas based on default selected District
+        populateAreas();
+    });
+
+
+</script>
 
 @section Scripts {
     @{

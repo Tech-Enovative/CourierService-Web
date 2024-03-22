@@ -275,7 +275,7 @@ namespace CourierService_Web.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-            // Get the list of exchange parcels based on the selected date
+            
             var merchantId = HttpContext.Request.Cookies["MerchantId"];
             IQueryable<Parcel> exchangeParcelsQuery = _context.Parcels
                 .Where(x => x.MerchantId == merchantId && x.ExchangeId != null)
@@ -292,16 +292,16 @@ namespace CourierService_Web.Controllers
 
             var exchangeParcels = exchangeParcelsQuery.ToList();
 
-            // Generate CSV content
+            
             StringBuilder csvContent = new StringBuilder();
 
-            // Add Byte Order Mark (BOM) to ensure proper encoding in Excel
+            
             csvContent.Append("\uFEFF");
 
-            // Column headers
+            
             csvContent.AppendLine("ID, Hub, Rider, Pickup Location, Pickup Request Date, Exchange Date, Receiver Name, Receiver Address, Receiver Contact, Product Name, Product Weight, Product Price, Product Quantity, Delivery Type, Delivery Charge, Total Price, Status, Payment Status");
 
-            // Data rows
+            
             foreach (var parcel in exchangeParcels)
             {
                 csvContent.AppendLine($"{parcel.Id}, {parcel.Hub?.Name ?? "Not Assigned"}, {parcel.Rider?.Name ?? "Not Assigned"}, {parcel.PickupLocation}, {parcel.PickupRequestDate?.ToString("M/d/yyyy, h:mm tt")}, {parcel.ExchangeParcel.ExchangeDate.ToString("M/d/yyyy, h:mm tt")}, {parcel.ReceiverName}, {parcel.ReceiverAddress}, {parcel.ReceiverContactNumber}, {parcel.ProductName}, {parcel.ProductWeight}, {parcel.ProductPrice}, {parcel.ProductQuantity}, {parcel.DeliveryType}, {parcel.DeliveryCharge}, {parcel.TotalPrice}, {parcel.Status}, {parcel.PaymentStatus}");
