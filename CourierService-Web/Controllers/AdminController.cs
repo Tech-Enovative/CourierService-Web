@@ -6,6 +6,7 @@ using CourierService_Web.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace CourierService_Web.Controllers
 {
@@ -894,6 +895,60 @@ namespace CourierService_Web.Controllers
 
         return View(parcels);
     }
+
+        public IActionResult DownloadCsv(DateTime? startDate, DateTime? endDate)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+           
+           
+            IQueryable<Parcel> parcelsQuery = _context.Parcels
+                .Include(m => m.Merchant)
+                .Include(u => u.Rider)
+                .Include(h => h.Hub);
+
+            // Filter parcels by date range
+            if (startDate.HasValue && endDate.HasValue)
+            {
+                parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date >= startDate.Value.Date && x.PickupRequestDate.Value.Date <= endDate.Value.Date);
+            }
+            else if (startDate.HasValue)
+            {
+                parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date >= startDate.Value.Date);
+            }
+            else if (endDate.HasValue)
+            {
+                parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date <= endDate.Value.Date);
+            }
+            else
+            {
+                // Default to today if no date range is provided
+                parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date == DateTime.Today);
+            }
+
+            var parcels = parcelsQuery.ToList();
+
+            // Generate CSV content
+            StringBuilder csvContent = new StringBuilder();
+
+            // Column headers
+            csvContent.AppendLine("ID,Merchant,Hub,Rider,Pickup Location,Pickup Request Date,Receiver Name,Receiver Address,Receiver Contact,Product Name,Product Weight,Product Price,Product Quantity,Delivery Type,Delivery Charge,Total Price,Status,Payment Status");
+
+            // Data rows
+            foreach (var parcel in parcels)
+            {
+                // Ensure proper formatting of text fields by enclosing them in double quotes
+                csvContent.AppendLine($"\"{parcel.Id}\",\"{parcel.Merchant?.Name ?? "Not Assigned"}\",\"{parcel.Hub?.Name ?? "Not Assigned"}\",\"{parcel.Rider?.Name ?? "Not Assigned"}\",\"{parcel.PickupLocation}\",\"{parcel.PickupRequestDate?.ToString("M/d/yyyy, h:mm tt")}\",\"{parcel.ReceiverName}\",\"{parcel.ReceiverAddress}\",\"{parcel.ReceiverContactNumber}\",\"{parcel.ProductName}\",{parcel.ProductWeight},{parcel.ProductPrice},{parcel.ProductQuantity},\"{parcel.DeliveryType}\",{parcel.DeliveryCharge},{parcel.TotalPrice},\"{parcel.Status}\",\"{parcel.PaymentStatus}\"");
+            }
+
+            // Return CSV file
+            return File(Encoding.UTF8.GetBytes(csvContent.ToString()), "text/csv", $"Parcels_{startDate?.ToString("yyyy-MM-dd")}_{endDate?.ToString("yyyy-MM-dd")}.csv");
+        }
+
+
 
 
 
