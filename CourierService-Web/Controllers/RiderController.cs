@@ -575,17 +575,20 @@ namespace CourierService_Web.Controllers
             // Send permission request to the merchant
             var rider = _context.Riders.Find(riderId);
             var merchant = _context.Merchants.Find(parcel.MerchantId);
-            var notification = new Notifications
+            var notification = new RequestPermission
             {
                 Title = "Permission Request",
-                Message = $"Rider {rider.Name} has requested permission to change the price of parcel {parcelId} to {newPrice}",
+                Message = $"{rider.Name} has requested permission to change the price of {parcel.ProductName} to {newPrice} TK",
                 SenderId = riderId,
                 ReceiverId = merchant.Id,
                 Date = DateTime.Now,
-                IsRead = false
+                ParcelId = parcelId,
+                RequestedPrice = newPrice
+                
             };
-            _context.Notifications.Add(notification);
+            _context.NotificationsPermission.Add(notification);
             _context.SaveChanges();
+            TempData["success"] = "Permission request sent to merchant";
 
             return RedirectToAction("AllParcel"); // Redirect to the parcel list page
         }

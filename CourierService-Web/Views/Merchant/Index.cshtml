@@ -181,10 +181,10 @@
 
             <!-- end row -->
 
-            @* <div class="row justify-content-center">
+            <div class="row justify-content-center">
                 <div class="col-lg-12">
                     <div class="card-box">
-                        <h4 class="header-title text-success">Today's Parcel : @ViewBag.TodayTotalParcel </h4>
+                        <h4 class="header-title text-success">Notifications</h4>
                         @{
                             int sl = 1;
                         }
@@ -193,122 +193,52 @@
                                 <thead>
                                     <tr>
                                         <th>SL</th>
-                                        <th>ID</th>
-                                        <th>Hub</th>
-                                        <th>Rider</th>
-                                        <th>Pickup Location</th>
-                                        <th>Pickup Request Date</th>
-                                        <th>Receiver Information</th>
-                                        <th>Product</th>
-                                        <th>Delivery</th>
-                                        <th>Total Price</th>
-                                        <th>Status</th>
-                                        <th>Payment</th>
+                                        <th>Title</th>
+                                        <th>Message</th>
+                                        <th>Product Price</th>
+                                        <th>Requested Product Price</th>
+                                        <th>Rider Name</th>
+                                        <th>Date</th>
+                                        <th>Parcel ID</th>
                                         <th>Action</th>
-
-                                       
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var parcel in ViewBag.TodayParcelList)
+                                    @foreach (var notification in ViewBag.Notifications)
                                     {
                                         <tr>
                                             <td>@sl</td>
-                                            <td>@parcel.Id</td>
+                                            <td>@notification.Title</td>
+                                            <td>@notification.Message</td>
+                                            <td>@notification.Parcel.ProductPrice</td>
+                                            <td>@notification.RequestedPrice</td>
+                                            <td>@notification.Parcel.Rider.Name</td>
+                                            <td>@notification.Date</td>
+                                            <td>@notification.ParcelId</td>
 
-                                            @if (parcel.HubId == null)
+                                            @if (notification.Status == 0)
                                             {
-                                                <td><span class="badge badge-danger text-medium">Not Assigned</span></td>
-                                            }
-                                            else
-                                            {
-
                                                 <td>
-                                                    <strong>Name:</strong> @parcel.Hub.Name <br />
-                                                    <strong>Phone:</strong> @parcel.Hub.PhoneNumber
+                                                    <form id="approvalForm_@notification.ParcelId" method="post" asp-action="ApprovePermission">
+                                                        <input type="hidden" name="parcelId" value="@notification.ParcelId" />
+                                                        <input type="hidden" name="newPrice" value="@notification.RequestedPrice" />
+                                                        <button id="approveButton_@notification.ParcelId" type="submit" class="btn btn-success">Approve</button>
+                                                    </form>
                                                 </td>
                                             }
-
-                                            @if (parcel.RiderId == null)
+                                            else if (notification.Status == 1)
                                             {
-                                                <td><span class="badge badge-danger text-medium">Not Assigned</span></td>
-                                            }
-                                            else
-                                            {
-
                                                 <td>
-                                                    <strong>Name:</strong> @parcel.Rider.Name <br />
-                                                    <strong>Phone:</strong> @parcel.Rider.ContactNumber
+                                                   <span>Approved</span>
                                                 </td>
                                             }
-                                            <td>@parcel.PickupLocation</td>
-                                            <td>@(parcel.PickupRequestDate?.ToString("M/d/yyyy, h:mm tt"))</td>
-                                            <td>
-                                                <strong>Name:</strong> @parcel.ReceiverName<br>
-                                                <strong>Address:</strong> @parcel.ReceiverAddress<br>
-                                                <strong>Contact:</strong> @parcel.ReceiverContactNumber
-                                            </td>
-
-                                            <td>
-                                                <strong>Name:</strong> @parcel.ProductName <br />
-                                                <strong>Weight:</strong> @parcel.ProductWeight KG <br />
-                                                <strong>Price:</strong> @parcel.ProductPrice TK <br />
-                                                <strong>Quantity:</strong> @parcel.ProductQuantity <br />
-                                            </td>
-
-                                            <td>
-                                                <strong>Type:</strong> @parcel.DeliveryType <br />
-                                                <strong>Charge:</strong> @parcel.DeliveryCharge TK <br />
-                                            </td>
-                                            <td>@parcel.TotalPrice TK</td>
-
-
-                                            @if (parcel.Status == "Pickup Request")
-                                            {
-                                                <td><span class="badge badge-success font-weight-bold">@parcel.Status</span></td>
-                                            }
-                                            else if (parcel.Status == "Dispatched")
-                                            {
-                                                <td><span class="badge badge-warning font-weight-bold">@parcel.Status</span></td>
-                                            }
-                                            else if (parcel.Status == "Transit")
-                                            {
-                                                <td><span class="badge badge-info text-medium">@parcel.Status</span></td>
-                                            }
-                                            else if (parcel.Status == "Delivered")
-                                            {
-                                                <td><span class="badge badge-success text-medium">@parcel.Status</span></td>
-                                            }
                                             else
                                             {
-                                                <td><span class="badge badge-danger text-medium">@parcel.Status</span></td>
-                                            }
+                                                <td>
+                                                    <button class="btn btn-danger">Rejected</button>
+                                                </td>
 
-                                            @if (parcel.PaymentStatus == "Paid To Merchant")
-                                            {
-                                                <td><span class="badge badge-success text-medium">Payment Received</span></td>
                                             }
-                                            else
-                                            {
-                                                <td><span class="badge badge-info text-medium">Pending</span></td>
-                                            }
-
-                                            <td>
-                                                @if (parcel.Status == "Parcel Returned To Merchant")
-                                                {
-                                                    <a asp-route-id="@parcel.Id" asp-controller="Merchant" asp-action="ReturnParcelReceived" class="btn btn-sm btn-success">
-                                                        <i class="fas fa-check"></i> Return Parcel Received
-                                                    </a>
-                                                }
-                                                else if(parcel.Status =="Exchanged Parcel Returned Merchant")
-                                                {
-                                                    <a asp-route-id="@parcel.Id" asp-controller="Merchant" asp-action="ExchangeParcelReceived" class="btn btn-sm btn-success">
-                                                        <i class="fas fa-check"></i> Exchange Parcel Received
-                                                    </a>
-                                                }
-                                                
-                                            </td>
-
 
                                         </tr>
                                         sl++;
@@ -318,11 +248,8 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
-
-
-
-            </div> *@
             <!-- end row -->
 
         </div> <!-- end container-fluid -->
@@ -338,3 +265,23 @@
 <!-- ============================================================== -->
 <!-- End Page content -->
 <!-- ============================================================== -->
+<script>
+    // Wait for the document to be ready
+    document.addEventListener("DOMContentLoaded", function () {
+        // Get all approve buttons
+        var approveButtons = document.querySelectorAll('[id^="approveButton_"]');
+
+        // Loop through each approve button
+        approveButtons.forEach(function (button) {
+            // Add event listener for click event
+            button.addEventListener('click', function () {
+                // Get the parent form of the clicked button
+                var form = button.closest('form');
+                // Disable the button to prevent multiple submissions
+                button.disabled = true;
+                // Hide the parent form
+                form.style.display = 'none';
+            });
+        });
+    });
+</script>

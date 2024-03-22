@@ -139,7 +139,8 @@ namespace CourierService_Web.Controllers
             //ViewBag.TodayProductPrice = _context.Parcels.Where(x => x.MerchantId == merchantId && x.PaymentStatus == "Paid" && x.DeliveryParcel.DeliveryDate >= todayStart && x.DeliveryParcel.DeliveryDate < tomorrowStart).Sum(x => x.ProductPrice);
             ViewBag.TodayPayment = totalProductPrice + todayDeliveryCharge;
 
-
+            //notification
+            ViewBag.Notifications = _context.NotificationsPermission.Where(x => x.ReceiverId == merchantId).OrderByDescending(x => x.Date).Include(p=>p.Parcel).Include(x=>x.Parcel.Rider).ToList();
 
 
 
@@ -759,22 +760,16 @@ namespace CourierService_Web.Controllers
 
             
             parcel.ProductPrice = newPrice;
+            
+
+            //now recalculate the total price including delivery charge and product price with quantity
+            parcel.TotalPrice = (int)(parcel.ProductPrice * parcel.ProductQuantity + parcel.DeliveryCharge);
+            //make notification status 1
+            var notification = _context.NotificationsPermission.Find(parcelId);
+            notification.Status = 1;
             _context.SaveChanges();
 
-            
-            var totalPriceEntity = parcel.TotalPrice;
-
-            
-            if (newPrice < parcel.ProductPrice)
-            {
-                totalPriceEntity -= (totalPriceEntity - newPrice);
-            }
-            
-            else if (newPrice > parcel.ProductPrice)
-            {
-                totalPriceEntity += (newPrice - totalPriceEntity);
-            }
-            _context.SaveChanges();
+            TempData["success"] = "Permission Approved Successfully";
 
             
             return RedirectToAction("Index");

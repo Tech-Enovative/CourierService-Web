@@ -82,5 +82,7 @@ namespace CourierService_Web.Models
         public Hub? Hub { get; set; }
 
         public List<Complain>? complains { get; set; }
+
+       
     }
 }

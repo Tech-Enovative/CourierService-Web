@@ -88,6 +88,8 @@ namespace CourierService_Web.Models
             Payments.Add(new Payment { Amount = amount });
         }
 
+        public List<RequestPermission>? Notifications { get; set; }
+
 
     }
 }

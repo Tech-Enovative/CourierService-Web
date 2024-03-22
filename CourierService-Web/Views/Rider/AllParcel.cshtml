@@ -241,19 +241,21 @@
                                                             </div>
                                                             <div class="modal-body">
                                                                 <!-- Form for sending permission request -->
-                                                                <form id="permissionForm_@parcel.Id" method="post">
+                                                                <form id="permissionForm_@parcel.Id" method="post" asp-controller="Rider" asp-action="SendPermissionRequest">
                                                                     <input type="hidden" name="parcelId" value="@parcel.Id" />
                                                                     <div class="form-group">
                                                                         <label for="newPriceInput_@parcel.Id">New Price:</label>
                                                                         <input type="number" id="newPriceInput_@parcel.Id" name="newPrice" class="form-control" value="@parcel.ProductPrice" />
                                                                         <!-- Hidden input for current price -->
                                                                         <input type="hidden" name="currentPrice" value="@parcel.ProductPrice" />
+                                                                        <button type="submit" class="btn btn-primary">Send Permission</button>
                                                                     </div>
                                                                 </form>
+
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                                <button type="submit" form="permissionForm_@parcel.Id" class="btn btn-primary">Send Permission</button>
+                                                               
                                                             </div>
                                                         </div>
                                                     </div>

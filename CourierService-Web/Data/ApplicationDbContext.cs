@@ -25,7 +25,7 @@ namespace CourierService_Web.Data
         public DbSet<Complain> Complain { get; set; }  
         public DbSet<Payment> Payments { get; set; }
 
-        public DbSet<Notifications> Notifications { get; set; }
+        public DbSet<RequestPermission> NotificationsPermission { get; set; }
 
 
 
@@ -130,6 +130,14 @@ namespace CourierService_Web.Data
                 .HasOne(p => p.Parcel)
                 .WithMany(p => p.Payments)
                 .HasForeignKey(p => p.ParcelId);
+
+            //relationship between parcel and notification
+            modelBuilder.Entity<RequestPermission>()
+                .HasOne(p => p.Parcel)
+                .WithMany(p => p.Notifications)
+                .HasForeignKey(p => p.ParcelId);
+
+           
 
 
             //seed admin data

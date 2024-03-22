@@ -4,6 +4,7 @@ using CourierService_Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CourierService_Web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240322202800_NewTableNotifi")]
+    partial class NewTableNotifi
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -228,7 +231,7 @@ namespace CourierService_Web.Migrations
                             Address = "Dhaka, Bangladesh",
                             AdminId = "A-123",
                             Area = "Mirpur",
-                            CreatedAt = new DateTime(2024, 3, 23, 2, 49, 1, 674, DateTimeKind.Local).AddTicks(1567),
+                            CreatedAt = new DateTime(2024, 3, 23, 2, 27, 59, 322, DateTimeKind.Local).AddTicks(4893),
                             CreatedBy = "Admin",
                             District = "Dhaka",
                             Email = "hub@gmail.com",
@@ -315,12 +318,63 @@ namespace CourierService_Web.Migrations
                             Area = "Mirpur",
                             CompanyName = "Merchant Company",
                             ContactNumber = "01837730317",
-                            CreatedAt = new DateTime(2024, 3, 23, 2, 49, 1, 674, DateTimeKind.Local).AddTicks(1518),
+                            CreatedAt = new DateTime(2024, 3, 23, 2, 27, 59, 322, DateTimeKind.Local).AddTicks(4823),
                             Email = "merchant@gmail.com",
                             FullAddress = "Dhaka, Bangladesh",
                             Name = "Merchant",
                             Password = "1111"
                         });
+                });
+
+            modelBuilder.Entity("CourierService_Web.Models.Notifications", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("MerchantId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ParcelId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ReceiverId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RequestedPrice")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RiderId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("SenderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MerchantId");
+
+                    b.HasIndex("ParcelId");
+
+                    b.HasIndex("RiderId");
+
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("CourierService_Web.Models.Parcel", b =>
@@ -461,47 +515,6 @@ namespace CourierService_Web.Migrations
                     b.ToTable("Payments");
                 });
 
-            modelBuilder.Entity("CourierService_Web.Models.RequestPermission", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ParcelId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ReceiverId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("RequestedPrice")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SenderId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ParcelId");
-
-                    b.ToTable("NotificationsPermission");
-                });
-
             modelBuilder.Entity("CourierService_Web.Models.ReturnParcel", b =>
                 {
                     b.Property<string>("Id")
@@ -601,7 +614,7 @@ namespace CourierService_Web.Migrations
                             Id = "R-123",
                             Area = "Dhaka",
                             ContactNumber = "01837730317",
-                            CreatedAt = new DateTime(2024, 3, 23, 2, 49, 1, 674, DateTimeKind.Local).AddTicks(1626),
+                            CreatedAt = new DateTime(2024, 3, 23, 2, 27, 59, 322, DateTimeKind.Local).AddTicks(4934),
                             District = "Dhaka",
                             Email = "rider@gmail.com",
                             FullAddress = "Dhaka, Bangladesh",
@@ -684,6 +697,25 @@ namespace CourierService_Web.Migrations
                     b.Navigation("Hub");
                 });
 
+            modelBuilder.Entity("CourierService_Web.Models.Notifications", b =>
+                {
+                    b.HasOne("CourierService_Web.Models.Merchant", null)
+                        .WithMany("Notifications")
+                        .HasForeignKey("MerchantId");
+
+                    b.HasOne("CourierService_Web.Models.Parcel", "Parcel")
+                        .WithMany("Notifications")
+                        .HasForeignKey("ParcelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CourierService_Web.Models.Rider", null)
+                        .WithMany("Notifications")
+                        .HasForeignKey("RiderId");
+
+                    b.Navigation("Parcel");
+                });
+
             modelBuilder.Entity("CourierService_Web.Models.Parcel", b =>
                 {
                     b.HasOne("CourierService_Web.Models.DeliveredParcel", "DeliveryParcel")
@@ -727,17 +759,6 @@ namespace CourierService_Web.Migrations
                 {
                     b.HasOne("CourierService_Web.Models.Parcel", "Parcel")
                         .WithMany("Payments")
-                        .HasForeignKey("ParcelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Parcel");
-                });
-
-            modelBuilder.Entity("CourierService_Web.Models.RequestPermission", b =>
-                {
-                    b.HasOne("CourierService_Web.Models.Parcel", "Parcel")
-                        .WithMany("Notifications")
                         .HasForeignKey("ParcelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -806,6 +827,8 @@ namespace CourierService_Web.Migrations
                 {
                     b.Navigation("DeliveredParcels");
 
+                    b.Navigation("Notifications");
+
                     b.Navigation("Parcels");
 
                     b.Navigation("complains");
@@ -828,6 +851,8 @@ namespace CourierService_Web.Migrations
                     b.Navigation("DeliveredParcels");
 
                     b.Navigation("ExchangeParcels");
+
+                    b.Navigation("Notifications");
 
                     b.Navigation("Parcels");
 
