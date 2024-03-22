@@ -511,54 +511,82 @@ namespace CourierService_Web.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult Parcels(DateTime? selectedDate)
+        public IActionResult Parcels(DateTime? startDate, DateTime? endDate)
         {
             if (!IsMerchantLoggedIn())
             {
                 return RedirectToAction("Login", "Home");
             }
+
             var merchantId = HttpContext.Request.Cookies["MerchantId"];
             IQueryable<Parcel> parcelsQuery = _context.Parcels
                 .Where(x => x.MerchantId == merchantId)
                 .Include(u => u.Rider)
                 .Include(h => h.Hub);
 
-            if (!selectedDate.HasValue)
+            // If both start date and end date are provided, filter by date range
+            if (startDate.HasValue && endDate.HasValue)
             {
-                selectedDate = DateTime.Today;
+                parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date >= startDate.Value.Date && x.PickupRequestDate.Value.Date <= endDate.Value.Date);
             }
-
-            parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date == selectedDate.Value.Date);
+            // If only start date is provided, filter from start date to today
+            else if (startDate.HasValue)
+            {
+                parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date >= startDate.Value.Date && x.PickupRequestDate.Value.Date <= DateTime.Today);
+            }
+            // If only end date is provided, filter from the beginning to end date
+            else if (endDate.HasValue)
+            {
+                parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date <= endDate.Value.Date);
+            }
+            // If no date range is provided, default to today
+            else
+            {
+                parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date == DateTime.Today);
+            }
 
             var parcels = parcelsQuery.ToList();
-            //selecteddate pass to viewbag
-            ViewBag.SelectedDate = selectedDate.Value.Date;
 
-            return View(parcelsQuery);
+            // Pass selected date range to the ViewBag
+            ViewBag.StartDate = startDate ?? DateTime.Today;
+            ViewBag.EndDate = endDate ?? DateTime.Today;
 
-            
+            return View(parcels);
         }
 
-        public IActionResult DownloadCsv(DateTime? selectedDate)
+
+        public IActionResult DownloadCsv(DateTime? startDate, DateTime? endDate)
         {
             if (!IsMerchantLoggedIn())
             {
                 return RedirectToAction("Login", "Home");
             }
 
-            // Get the list of parcels based on the selected date
+            // Get the list of parcels based on the selected date range
             var merchantId = HttpContext.Request.Cookies["MerchantId"];
             IQueryable<Parcel> parcelsQuery = _context.Parcels
                 .Where(x => x.MerchantId == merchantId)
                 .Include(u => u.Rider)
                 .Include(h => h.Hub);
 
-            if (!selectedDate.HasValue)
+            // Filter parcels by date range
+            if (startDate.HasValue && endDate.HasValue)
             {
-                selectedDate = DateTime.Today;
+                parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date >= startDate.Value.Date && x.PickupRequestDate.Value.Date <= endDate.Value.Date);
             }
-
-            parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date == selectedDate.Value.Date);
+            else if (startDate.HasValue)
+            {
+                parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date >= startDate.Value.Date);
+            }
+            else if (endDate.HasValue)
+            {
+                parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date <= endDate.Value.Date);
+            }
+            else
+            {
+                // Default to today if no date range is provided
+                parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date == DateTime.Today);
+            }
 
             var parcels = parcelsQuery.ToList();
 
@@ -576,10 +604,11 @@ namespace CourierService_Web.Controllers
             }
 
             // Return CSV file
-            return File(Encoding.UTF8.GetBytes(csvContent.ToString()), "text/csv", $"Parcels_{selectedDate.Value.ToString("yyyy-MM-dd")}.csv");
+            return File(Encoding.UTF8.GetBytes(csvContent.ToString()), "text/csv", $"Parcels_{startDate?.ToString("yyyy-MM-dd")}_{endDate?.ToString("yyyy-MM-dd")}.csv");
         }
 
-        
+
+
 
 
 

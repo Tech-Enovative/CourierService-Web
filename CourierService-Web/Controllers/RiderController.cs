@@ -206,11 +206,10 @@ namespace CourierService_Web.Controllers
             return View("Profile", rider);
         }
 
-        public IActionResult AllParcel(DateTime? selectedDate)
+        public IActionResult AllParcel(DateTime? startDate, DateTime? endDate)
         {
             if (!IsRiderLoggedIn())
             {
-
                 return RedirectToAction("Login", "Home");
             }
 
@@ -221,17 +220,32 @@ namespace CourierService_Web.Controllers
                 .Include(m => m.Merchant)
                 .Include(h => h.Hub);
 
-            if (!selectedDate.HasValue)
+           
+            if (startDate.HasValue && endDate.HasValue)
             {
-                selectedDate = DateTime.Today;
+                parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date >= startDate.Value.Date && x.PickupRequestDate.Value.Date <= endDate.Value.Date);
             }
-
-            parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date == selectedDate.Value.Date);
+            // If only start date is provided, filter from start date to today
+            else if (startDate.HasValue)
+            {
+                parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date >= startDate.Value.Date && x.PickupRequestDate.Value.Date <= DateTime.Today);
+            }
+            // If only end date is provided, filter from the beginning to end date
+            else if (endDate.HasValue)
+            {
+                parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date <= endDate.Value.Date);
+            }
+            // If no date range is provided, default to today
+            else
+            {
+                parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date == DateTime.Today);
+            }
 
             var parcels = parcelsQuery.ToList();
 
-            return View(parcelsQuery);
+            return View(parcels);
         }
+
 
         //status change to PickedUp
         public IActionResult PickedUp(string id)

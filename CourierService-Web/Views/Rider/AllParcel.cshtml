@@ -11,20 +11,55 @@
             <div class="row justify-content-center">
                 @using (Html.BeginForm("AllParcel", "Rider", FormMethod.Get))
                 {
-                    <div class="form-group text-center">
-                        <!-- Center the form -->
-                        <label for="datepicker">Select Date:</label>
-                        <input type="date" id="datepicker" name="selectedDate" class="form-control form-control-sm" />
-                    </div>
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-success btn-md">Filter</button>
+                    <div class="form-row justify-content-center">
+                        <!-- Date range selector -->
+                        <div class="form-group col-md-5 mt-2">
+                            <label for="startDate">Start Date:</label>
+                            <input type="date" id="startDate" name="startDate" class="form-control form-control-sm" />
+                        </div>
+                        <div class="form-group col-md-5 mt-2">
+                            <label for="endDate">End Date:</label>
+                            <input type="date" id="endDate" name="endDate" class="form-control form-control-sm" />
+                        </div>
+                        <div class="form-group col-md-2 mt-4">
+                            <button type="submit" class="btn btn-success btn-md">Filter</button>
+                        </div>
                     </div>
                 }
                 <div class="col-lg-12">
-                    <div class="card-box">
+                    <div class="col-lg-3">
+                        <label for="statusFilter">Filter by Status:</label>
+                        <select id="statusFilter" class="form-control">
+                            <option value="">All</option>
+                            <option value="Pickup Request">Pickup Request</option>
+                            @*  <option value="Dispatched">Dispatched</option>
+                            <option value="Transit">Transit</option> *@
+                            <option value="Delivered">Delivered</option>
+                            <option value="Exchanged">Exchanged</option>
+                            <option value="Returned">Returned</option>
+
+                            <!-- Add more options as needed -->
+                        </select>
+                    </div>
+                    <div class="card-box mt-2">
                         <h4 class="header-title text-primary">Total Parcel : @Model.Count()</h4>
 
-                        <div class="table-responsive">
+                        <div class="row">
+                            <div class="col-lg-9"></div>
+                            <div class="col-lg-3">
+                                <input type="text" id="searchInput" class="form-control mb-2" placeholder="Search...">
+                            </div>
+                        </div>
+                        
+
+                        @* <div class="d-flex justify-content-end mb-2">
+                            <a href="@Url.Action("DownloadCsv", "Rider", new { startDate = ViewBag.StartDate, endDate = ViewBag.EndDate })" class="btn btn-info btn-md">
+                                <i class="fas fa-download mr-1"></i>
+                                Download CSV
+                            </a>
+                        </div> *@
+
+                        <div class="table-responsive" id="parcelTable">
                             <table class="table mb-0">
                                 <thead>
                                     @{
@@ -222,6 +257,83 @@
                 datepicker.value = selectedDate;
             }
         });
+    </script>
+
+    <script>
+        // JavaScript function to filter table rows based on search input
+        document.addEventListener("DOMContentLoaded", function () {
+            // Get the input element
+            var searchInput = document.getElementById('searchInput');
+            // Get the table rows
+            var rows = document.querySelectorAll("#parcelTable tbody tr");
+
+            // Add event listener for input event
+            searchInput.addEventListener('input', function () {
+                var searchText = searchInput.value.toLowerCase();
+
+                // Loop through all table rows
+                rows.forEach(function (row) {
+                    var shouldDisplay = false;
+                    // Loop through all columns in each row
+                    row.querySelectorAll('td').forEach(function (cell) {
+                        if (cell.textContent.toLowerCase().indexOf(searchText) !== -1) {
+                            shouldDisplay = true;
+                        }
+                    });
+                    // Display or hide row based on search text
+                    if (shouldDisplay) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Get the input element and table rows
+            var searchInput = document.getElementById('searchInput');
+            var statusFilter = document.getElementById('statusFilter');
+            var rows = document.querySelectorAll("#parcelTable tbody tr");
+
+            // Add event listener for input event on search input
+            searchInput.addEventListener('input', filterRows);
+            // Add event listener for change event on status filter dropdown
+            statusFilter.addEventListener('change', filterRows);
+
+            // Function to filter table rows based on search input and selected status
+            function filterRows() {
+                var searchText = searchInput.value.toLowerCase();
+                var selectedStatus = statusFilter.value.toLowerCase();
+
+                // Loop through all table rows
+                rows.forEach(function (row) {
+                    var shouldDisplay = false;
+                    // Loop through all columns in each row
+                    row.querySelectorAll('td').forEach(function (cell, index) {
+                        if (index !== 10 && cell.textContent.toLowerCase().indexOf(searchText) !== -1) {
+                            shouldDisplay = true;
+                        }
+                    });
+                    // Filter by selected status
+                    if (selectedStatus !== "" && row.style.display !== 'none') {
+                        var statusCell = row.querySelectorAll('td')[10]; // Assuming status is at index 10
+                        if (statusCell.textContent.toLowerCase() !== selectedStatus) {
+                            shouldDisplay = false;
+                        }
+                    }
+                    // Display or hide row based on search text and selected status
+                    if (shouldDisplay) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+        });
+
     </script>
 }
 
