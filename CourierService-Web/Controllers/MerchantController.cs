@@ -742,5 +742,43 @@ namespace CourierService_Web.Controllers
             TempData["success"] = "Complain Added Successfully";
             return RedirectToAction("Complain");
         }
+
+
+        [HttpPost]
+        public IActionResult ApprovePermission(string parcelId,int newPrice)
+        {
+            
+            var parcel = _context.Parcels.Find(parcelId);
+            var merchantId = HttpContext.Request.Cookies["MerchantId"];
+
+            
+            if (parcel.MerchantId != merchantId)
+            {
+                return BadRequest("Unauthorized");
+            }
+
+            
+            parcel.ProductPrice = newPrice;
+            _context.SaveChanges();
+
+            
+            var totalPriceEntity = parcel.TotalPrice;
+
+            
+            if (newPrice < parcel.ProductPrice)
+            {
+                totalPriceEntity -= (totalPriceEntity - newPrice);
+            }
+            
+            else if (newPrice > parcel.ProductPrice)
+            {
+                totalPriceEntity += (newPrice - totalPriceEntity);
+            }
+            _context.SaveChanges();
+
+            
+            return RedirectToAction("Index");
+        }
+
     }
 }

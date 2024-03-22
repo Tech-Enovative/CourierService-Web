@@ -25,6 +25,8 @@ namespace CourierService_Web.Data
         public DbSet<Complain> Complain { get; set; }  
         public DbSet<Payment> Payments { get; set; }
 
+        public DbSet<Notifications> Notifications { get; set; }
+
 
 
 

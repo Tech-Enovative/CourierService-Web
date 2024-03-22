@@ -558,5 +558,36 @@ namespace CourierService_Web.Controllers
 
 
         }
+
+        [HttpPost]
+        public IActionResult SendPermissionRequest(string parcelId, int newPrice)
+        {
+            // Get the parcel and rider information
+            var parcel = _context.Parcels.Find(parcelId);
+            var riderId = HttpContext.Request.Cookies["RiderId"];
+
+            // Check if the rider is authorized to edit the price
+            if (parcel.RiderId != riderId)
+            {
+                return BadRequest("Unauthorized");
+            }
+
+            // Send permission request to the merchant
+            var rider = _context.Riders.Find(riderId);
+            var merchant = _context.Merchants.Find(parcel.MerchantId);
+            var notification = new Notifications
+            {
+                Title = "Permission Request",
+                Message = $"Rider {rider.Name} has requested permission to change the price of parcel {parcelId} to {newPrice}",
+                SenderId = riderId,
+                ReceiverId = merchant.Id,
+                Date = DateTime.Now,
+                IsRead = false
+            };
+            _context.Notifications.Add(notification);
+            _context.SaveChanges();
+
+            return RedirectToAction("AllParcel"); // Redirect to the parcel list page
+        }
     }
 }

@@ -225,6 +225,43 @@
                                                 }
                                             </td>
 
+                                            <td>
+                                                <!-- Button to trigger modal -->
+                                                <button type="button" class="btn btn-primary mt-2" data-toggle="modal" data-target="#permissionModal_@parcel.Id">Send Permission</button>
+
+                                                <!-- Modal -->
+                                                <div class="modal fade" id="permissionModal_@parcel.Id" tabindex="-1" role="dialog" aria-labelledby="permissionModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="permissionModalLabel">Send Permission Request</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <!-- Form for sending permission request -->
+                                                                <form id="permissionForm_@parcel.Id" method="post">
+                                                                    <input type="hidden" name="parcelId" value="@parcel.Id" />
+                                                                    <div class="form-group">
+                                                                        <label for="newPriceInput_@parcel.Id">New Price:</label>
+                                                                        <input type="number" id="newPriceInput_@parcel.Id" name="newPrice" class="form-control" value="@parcel.ProductPrice" />
+                                                                        <!-- Hidden input for current price -->
+                                                                        <input type="hidden" name="currentPrice" value="@parcel.ProductPrice" />
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                <button type="submit" form="permissionForm_@parcel.Id" class="btn btn-primary">Send Permission</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+
+
 
 
                                         </tr>
