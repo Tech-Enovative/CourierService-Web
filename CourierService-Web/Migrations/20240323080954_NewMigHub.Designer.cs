@@ -4,6 +4,7 @@ using CourierService_Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CourierService_Web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240323080954_NewMigHub")]
+    partial class NewMigHub
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -228,7 +231,7 @@ namespace CourierService_Web.Migrations
                             Address = "Dhaka, Bangladesh",
                             AdminId = "A-123",
                             Area = "Mirpur",
-                            CreatedAt = new DateTime(2024, 3, 23, 14, 23, 35, 657, DateTimeKind.Local).AddTicks(5233),
+                            CreatedAt = new DateTime(2024, 3, 23, 14, 9, 53, 688, DateTimeKind.Local).AddTicks(3721),
                             CreatedBy = "Admin",
                             District = "Dhaka",
                             Email = "hub@gmail.com",
@@ -315,7 +318,7 @@ namespace CourierService_Web.Migrations
                             Area = "Mirpur",
                             CompanyName = "Merchant Company",
                             ContactNumber = "01837730317",
-                            CreatedAt = new DateTime(2024, 3, 23, 14, 23, 35, 657, DateTimeKind.Local).AddTicks(5181),
+                            CreatedAt = new DateTime(2024, 3, 23, 14, 9, 53, 688, DateTimeKind.Local).AddTicks(3660),
                             Email = "merchant@gmail.com",
                             FullAddress = "Dhaka, Bangladesh",
                             Name = "Merchant",
@@ -604,7 +607,7 @@ namespace CourierService_Web.Migrations
                             Id = "R-123",
                             Area = "Dhaka",
                             ContactNumber = "01837730317",
-                            CreatedAt = new DateTime(2024, 3, 23, 14, 23, 35, 657, DateTimeKind.Local).AddTicks(5265),
+                            CreatedAt = new DateTime(2024, 3, 23, 14, 9, 53, 688, DateTimeKind.Local).AddTicks(3774),
                             District = "Dhaka",
                             Email = "rider@gmail.com",
                             FullAddress = "Dhaka, Bangladesh",
@@ -629,14 +632,8 @@ namespace CourierService_Web.Migrations
                     b.Property<int?>("HubDue")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("HubDueDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int?>("HubReceivedAmount")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("HubReceivedDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("ParcelId")
                         .IsRequired()

@@ -92,6 +92,8 @@ namespace CourierService_Web.Models
 
         public List<RequestPermission>? Notifications { get; set; }
 
+        public List<RiderPayment>? riderPayments { get; set; }
+
 
     }
 }

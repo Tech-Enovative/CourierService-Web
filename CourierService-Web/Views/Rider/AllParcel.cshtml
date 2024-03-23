@@ -76,6 +76,7 @@
                                         <th>Receiver Information</th>
                                         <th>Product</th>
                                         <th>Delivery</th>
+                                        <th>Total Price</th>
                                         <th>Status</th>
                                         <th>Payment Status</th>
                                         <th>Action</th>
@@ -132,6 +133,7 @@
                                                 <strong>Type:</strong> @parcel.DeliveryType <br />
                                                 <strong>Charge:</strong> @parcel.DeliveryCharge TK <br />
                                             </td>
+                                            <td>@parcel.TotalPrice TK</td>
                                             <td>
                                                 @if (parcel.Status == "Pickup Request")
                                                 {
@@ -162,6 +164,17 @@
                                                 else if (parcel.PaymentStatus == "Paid Delivery Charge To Merchant")
                                                 {
                                                     <span class ="badge badge-info text-medium">Delivery Charge Received</span>
+                                                }
+
+                                                //Delivery Charge Received By Rider
+                                                else if (parcel.PaymentStatus == "Delivery Charge Received By Rider")
+                                                {
+                                                    <span class="badge badge-success text-medium">@parcel.PaymentStatus</span>
+                                                }
+
+                                                else if (parcel.PaymentStatus == "Payment Received By Rider")
+                                                {
+                                                    <span class="badge badge-info text-medium">@parcel.PaymentStatus</span>
                                                 }
                                                 else
                                                 {
@@ -207,13 +220,13 @@
                                                             <i class="fas fa-check"></i> Exchange Parcel
                                                         </a>
                                                     }
-                                                    @if (parcel.Status == "Delivered" && parcel.PaymentInHand != "PaymentInHand")
+                                                    @if (parcel.Status == "Delivered" && parcel.PaymentStatus != "Payment Received By Rider")
                                                     {
                                                         <a asp-route-id="@parcel.Id" asp-controller="Rider" asp-action="Payment" class="btn btn-sm btn-success">
                                                             Payment Done
                                                         </a>
                                                     }
-                                                    @if ((parcel.Status == "Exchanged" || parcel.Status == "Returned") && parcel.PaymentStatus != "Paid Delivery Charge")
+                                                    @if ((parcel.Status == "Exchanged" || parcel.Status == "Returned") && parcel.PaymentStatus != "Delivery Charge Received By Rider")
                                                     {
                                                         <a asp-route-id="@parcel.Id" asp-controller="Rider" asp-action="PaymentDeliveryCharge" class="btn btn-sm btn-success">
                                                             <i class="fas fa-check"></i> Collect Delivery Charge
@@ -225,42 +238,46 @@
                                                 }
                                             </td>
 
-                                            <td>
-                                                <!-- Button to trigger modal -->
-                                                <button type="button" class="btn btn-primary mt-2" data-toggle="modal" data-target="#permissionModal_@parcel.Id">Send Permission</button>
+                                            @if (parcel.PaymentStatus == null)
+                                            {
+                                                <td>
+                                                    <!-- Button to trigger modal -->
+                                                    <button type="button" class="btn btn-primary mt-2" data-toggle="modal" data-target="#permissionModal_@parcel.Id">Send Permission</button>
 
-                                                <!-- Modal -->
-                                                <div class="modal fade" id="permissionModal_@parcel.Id" tabindex="-1" role="dialog" aria-labelledby="permissionModalLabel" aria-hidden="true">
-                                                    <div class="modal-dialog" role="document">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="permissionModalLabel">Send Permission Request</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <!-- Form for sending permission request -->
-                                                                <form id="permissionForm_@parcel.Id" method="post" asp-controller="Rider" asp-action="SendPermissionRequest">
-                                                                    <input type="hidden" name="parcelId" value="@parcel.Id" />
-                                                                    <div class="form-group">
-                                                                        <label for="newPriceInput_@parcel.Id">New Price:</label>
-                                                                        <input type="number" id="newPriceInput_@parcel.Id" name="newPrice" class="form-control" value="@parcel.ProductPrice" />
-                                                                        <!-- Hidden input for current price -->
-                                                                        <input type="hidden" name="currentPrice" value="@parcel.ProductPrice" />
-                                                                        <button type="submit" class="btn btn-primary">Send Permission</button>
-                                                                    </div>
-                                                                </form>
+                                                    <!-- Modal -->
+                                                    <div class="modal fade" id="permissionModal_@parcel.Id" tabindex="-1" role="dialog" aria-labelledby="permissionModalLabel" aria-hidden="true">
+                                                        <div class="modal-dialog" role="document">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="permissionModalLabel">Send Permission Request</h5>
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <!-- Form for sending permission request -->
+                                                                    <form id="permissionForm_@parcel.Id" method="post" asp-controller="Rider" asp-action="SendPermissionRequest">
+                                                                        <input type="hidden" name="parcelId" value="@parcel.Id" />
+                                                                        <div class="form-group">
+                                                                            <label for="newPriceInput_@parcel.Id">New Price:</label>
+                                                                            <input type="number" id="newPriceInput_@parcel.Id" name="newPrice" class="form-control" value="@parcel.ProductPrice" />
+                                                                            <!-- Hidden input for current price -->
+                                                                            <input type="hidden" name="currentPrice" value="@parcel.ProductPrice" />
+                                                                            <button type="submit" class="btn btn-primary">Send Permission</button>
+                                                                        </div>
+                                                                    </form>
 
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                               
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </td>
+                                                </td>
+                                            }
+                                            
 
 
 

@@ -131,6 +131,35 @@
 
             </div>
             <!-- end row -->
+
+            <div class="card mx-auto" style="max-width: 400px;">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Today's Accounts</h5>
+                    <table class="table">
+                        <tbody>
+                            @* <tr>
+                            <th scope="row">Total Delivery Charge</th>
+                            <td>@ViewBag.TodayDeliveryCharge BDT</td>
+                            </tr> *@
+                            <tr>
+                                <th scope="row">Amount Collected</th>
+                                <td>@ViewBag.AmountCollected BDT</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Hub Received</th>
+                                <td>@ViewBag.HubReceivedAmount BDT</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Hub Due</th>
+                                <td>@ViewBag.HubDue BDT</td>
+                            </tr>
+                            
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             @* <div class="row justify-content-center">
                 <div class="col-lg-12">
                     <div class="card-box">

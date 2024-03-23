@@ -65,6 +65,20 @@ namespace CourierService_Web.Controllers
             //all parcel list count for today by rider
             ViewBag.AllParcelListCount = _context.Parcels.Count(x => x.DispatchDate >= todayStart && x.DispatchDate < tomorrowStart && x.RiderId == riderId);
 
+            //amount collected by rider today
+            ViewBag.AmountCollected = _context.riderPayments.Where(x => x.RiderId == riderId && x.PaymentDate >= todayStart && x.PaymentDate < tomorrowStart).Sum(x => x.Amount);
+
+            //hub received amount today
+            ViewBag.HubReceivedAmount = _context.riderPayments.Where(x => x.RiderId == riderId && x.HubReceivedDate >= todayStart && x.HubReceivedDate < tomorrowStart).Sum(x => x.HubReceivedAmount);
+
+            //hub due amount today
+            //ViewBag.HubDueAmount = _context.riderPayments.Where(x => x.RiderId == riderId && x.HubDueDate >= todayStart && x.HubDueDate < tomorrowStart).Sum(x => x.HubDue);
+
+            //calculate hub due amount accroding to HubReceivedAmount
+            ViewBag.HubDue = ViewBag.AmountCollected - ViewBag.HubReceivedAmount;
+
+            
+
         }
 
 
@@ -278,11 +292,8 @@ namespace CourierService_Web.Controllers
             var riderId = HttpContext.Request.Cookies["RiderId"];
             var parcel = _context.Parcels.Find(id);
             parcel.Status = "Parcel On The Way";
-            //find rider by riderId
-            var rider = _context.Riders.Find(riderId);
-            rider.State = "Busy";
+           
             _context.Parcels.Update(parcel);
-            _context.Riders.Update(rider);
             _context.SaveChanges();
             return RedirectToAction("AllParcel");
         }
@@ -484,9 +495,16 @@ namespace CourierService_Web.Controllers
                 return NotFound();
             }
             //update payment status to paid
-            parcel.PaymentStatus = "Paid";
-            parcel.AddPayment(parcel.TotalPrice);
+            parcel.PaymentStatus = "Payment Received By Rider";
             _context.Parcels.Update(parcel);
+
+            var riderPayment = new RiderPayment
+            {
+                Amount = parcel.TotalPrice,
+                ParcelId = parcel.Id,
+                RiderId = parcel.RiderId
+            };
+            _context.riderPayments.Add(riderPayment);
             _context.SaveChanges();
             return RedirectToAction("AllParcel");
 
@@ -501,9 +519,14 @@ namespace CourierService_Web.Controllers
                 return NotFound();
             }
             //update payment status to paid
-            parcel.PaymentStatus = "Paid Delivery Charge";
-            parcel.AddPayment(parcel.DeliveryCharge);
-            _context.Parcels.Update(parcel);
+            parcel.PaymentStatus = "Delivery Charge Received By Rider";
+            var riderPayment = new RiderPayment
+            {
+                Amount = parcel.DeliveryCharge,
+                ParcelId = parcel.Id,
+                RiderId = parcel.RiderId
+            };
+            _context.riderPayments.Add(riderPayment);
             _context.SaveChanges();
             return RedirectToAction("AllParcel");
 

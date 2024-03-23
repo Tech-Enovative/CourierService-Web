@@ -231,7 +231,7 @@ namespace CourierService_Web.Controllers
             }
 
             // Get a list of available riders
-            var riders = _context.Riders.Where(u => u.State == "Available");
+            var riders = _context.Riders.ToList();
 
             // Pass the list of riders to the view
             ViewBag.Riders = riders;
@@ -284,7 +284,9 @@ namespace CourierService_Web.Controllers
             var rider = _context.Riders.Find(riderId);
             if (rider == null)
             {
-                return NotFound();
+                //redirect to the assign parcel page
+                TempData["error"] = "Please Select A Rider";
+                return RedirectToAction("AssignParcel", new { id = id });
             }
 
             // Assign the rider to the parcel
@@ -320,7 +322,8 @@ namespace CourierService_Web.Controllers
             var rider = _context.Riders.Find(riderId);
             if (rider == null)
             {
-                return NotFound();
+                TempData["error"] = "Please Select A Rider";
+                return RedirectToAction("AssignDeliveryRider", new { id = id });
             }
 
             // Assign the rider to the parcel
@@ -351,7 +354,7 @@ namespace CourierService_Web.Controllers
             }
 
             // Get a list of available riders
-            var riders = _context.Riders.Where(u => u.State == "Available");
+            var riders = _context.Riders.ToList();
 
             // Pass the list of riders to the view
             ViewBag.Riders = riders;
@@ -375,7 +378,8 @@ namespace CourierService_Web.Controllers
             var rider = _context.Riders.Find(riderId);
             if (rider == null)
             {
-                return NotFound();
+                TempData["error"] = "Please Select A Rider";
+                return RedirectToAction("AssignRiderToMerchant", new { id = id });
             }
             parcel.Rider = rider;
             parcel.Status = "Assigned For Return Parcel";

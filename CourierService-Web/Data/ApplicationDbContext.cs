@@ -27,6 +27,8 @@ namespace CourierService_Web.Data
 
         public DbSet<RequestPermission> NotificationsPermission { get; set; }
 
+        public DbSet<RiderPayment> riderPayments { get; set; }
+
 
 
 
@@ -135,6 +137,18 @@ namespace CourierService_Web.Data
             modelBuilder.Entity<RequestPermission>()
                 .HasOne(p => p.Parcel)
                 .WithMany(p => p.Notifications)
+                .HasForeignKey(p => p.ParcelId);
+
+            //relationship between rider and rider payment
+            modelBuilder.Entity<RiderPayment>()
+                .HasOne(r => r.Rider)
+                .WithMany(r => r.riderPayments)
+                .HasForeignKey(r => r.RiderId);
+
+            //relationship between parcel and rider payment
+            modelBuilder.Entity<RiderPayment>()
+                .HasOne(p => p.Parcel)
+                .WithMany(p => p.riderPayments)
                 .HasForeignKey(p => p.ParcelId);
 
            
