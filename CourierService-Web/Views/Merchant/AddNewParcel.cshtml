@@ -149,6 +149,13 @@
                                        placeholder="Enter Delivery Charge" class="form-control" id="DeliveryCharge" readonly>
                                 <span asp-validation-for="DeliveryCharge" class="text-danger"></span>
                             </div>
+
+                            <div class="form-group">
+                                <label asp-for="COD" for="COD">COD Charge<span class="text-danger">*</span></label>
+                                <input asp-for="COD" type="number" name="COD" parsley-trigger="change" required
+                                       placeholder="Enter COD" class="form-control" id="COD" readonly>
+                                <span asp-validation-for="COD" class="text-danger"></span>
+                            </div>
                             <div class="form-group">
                                 <label asp-for="TotalPrice"  for="TotalPrice">Total Price<span class="text-danger"></span></label>
                                 <input asp-for="TotalPrice" type="number" name="TotalPrice" parsley-trigger="change" required
@@ -183,16 +190,13 @@
         var productPriceInput = document.getElementById("ProductPrice");
         var productQuantityInput = document.getElementById("ProductQuantity");
         var deliveryChargeInput = document.getElementById("DeliveryCharge");
+        var codInput = document.getElementById("COD");
         var totalPriceInput = document.getElementById("TotalPrice");
 
-        
         function calculateDeliveryCharge() {
-            var productWeight = parseFloat(productWeightSelect.value);
+            var productWeight = parseInt(productWeightSelect.value);
             var deliveryType = deliveryTypeSelect.value;
-            var productPrice = parseFloat(productPriceInput.value);
-            var productQuantity = parseInt(productQuantityInput.value);
             var deliveryCharge = 0;
-            var totalPrice = 0;
 
             // Calculate delivery charge based on product weight and delivery type
             if (deliveryType === "InsideDhaka") {
@@ -227,24 +231,47 @@
                 }
             }
 
-            // Calculate total price
-            totalPrice = productPrice * productQuantity + deliveryCharge;
+            return deliveryCharge;
+        }
 
-            // Set the calculated delivery charge and total price to the input fields
+        function calculateCOD() {
+            var productPrice = parseInt(productPriceInput.value);
+            var codCharge = Math.round(productPrice * 0.01); // Calculate COD charge (1% of product price)
+            return codCharge;
+        }
+
+        function calculateTotalPrice() {
+            var deliveryCharge = calculateDeliveryCharge();
+            var codCharge = calculateCOD();
+            var productPrice = parseInt(productPriceInput.value);
+            var productQuantity = parseInt(productQuantityInput.value);
+            var totalPrice = (productPrice + codCharge) * productQuantity + deliveryCharge;
+            return totalPrice;
+        }
+
+        function updatePrices() {
+            var deliveryCharge = calculateDeliveryCharge();
+            var codCharge = calculateCOD();
+            var totalPrice = calculateTotalPrice();
+
+            // Set the calculated delivery charge, COD charge, and total price to the input fields
             deliveryChargeInput.value = deliveryCharge;
+            codInput.value = codCharge;
             totalPriceInput.value = totalPrice;
         }
 
-       
-        calculateDeliveryCharge();
+        // Call the function initially
+        updatePrices();
 
-        
-        productWeightSelect.addEventListener("change", calculateDeliveryCharge);
-        deliveryTypeSelect.addEventListener("change", calculateDeliveryCharge);
-        productPriceInput.addEventListener("change", calculateDeliveryCharge);
-        productQuantityInput.addEventListener("change", calculateDeliveryCharge);
+        // Call the function whenever inputs change
+        productWeightSelect.addEventListener("change", updatePrices);
+        deliveryTypeSelect.addEventListener("change", updatePrices);
+        productPriceInput.addEventListener("change", updatePrices);
+        productQuantityInput.addEventListener("change", updatePrices);
     });
 </script>
+
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         var pickupOptionSelect = document.getElementById("PickupOption");

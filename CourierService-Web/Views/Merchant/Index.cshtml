@@ -149,28 +149,28 @@
                     <h5 class="card-title text-center">Today's Accounts</h5>
                     <table class="table">
                         <tbody>
-                            <tr>
+                            @* <tr>
                                 <th scope="row">Total Delivery Charge</th>
                                 <td>@ViewBag.TodayDeliveryCharge BDT</td>
-                            </tr>
+                            </tr> *@
                             <tr>
-                                <th scope="row">Total Product Price</th>
+                                <th scope="row">Amount Collection</th>
                                 <td>@ViewBag.TodayProductPrice BDT</td>
                             </tr>
                             <tr>
-                                <th scope="row">Discount</th>
+                                <th scope="row">Amount Payable</th>
                                 <td>0 BDT</td>
                             </tr>
                             <tr>
-                                <th scope="row">Promo Discount</th>
-                                <td>0 BDT</td>
+                                <th scope="row">Amount Due</th>
+                                <td>@ViewBag.TodayDeliveryCharge BDT</td>
                             </tr>
-                            <tr>
+                            @* <tr>
                                 <th scope="row">Additional Charge</th>
                                 <td>0 BDT</td>
-                            </tr>
+                            </tr> *@
                             <tr>
-                                <th scope="row">Total Cost</th>
+                                <th scope="row">Now Payable</th>
                                 <td>@ViewBag.TodayPayment BDT</td>
                             </tr>
                         </tbody>

@@ -31,7 +31,7 @@ namespace CourierService_Web.Models
         public decimal ProductWeight { get; set; }
 
         [Required(ErrorMessage = "Product price is required")]
-        [Range(1,int.MaxValue,ErrorMessage ="Product price can't be below 0")]
+        [Range(0,int.MaxValue,ErrorMessage ="Product price can't be below 0")]
         public int ProductPrice { get; set; }
 
         [Range(1, int.MaxValue, ErrorMessage = "Product quantity must be at least 1")]
@@ -55,6 +55,8 @@ namespace CourierService_Web.Models
         public string PickupLocation { get; set; }
         public string DeliveryType { get; set; }
         public int TotalPrice { get; set; }
+
+        public int COD { get; set; }
         
         [ForeignKey("MerchantId")]
         public string? MerchantId { get; set; }
