@@ -69,10 +69,10 @@ namespace CourierService_Web.Controllers
             ViewBag.AmountCollected = _context.riderPayments.Where(x => x.RiderId == riderId && x.PaymentDate >= todayStart && x.PaymentDate < tomorrowStart).Sum(x => x.Amount);
 
             //hub received amount by hub today
-            ViewBag.HubReceivedAmount = _context.HubPayments.Where(x => x.HubId == rider.HubId && x.DateTime >= todayStart && x.DateTime < tomorrowStart).Sum(x => x.AmountReceived);
+            ViewBag.HubReceivedAmount = _context.HubPayments.Where(x=> x.DateTime >= todayStart && x.DateTime < tomorrowStart).Sum(x => x.AmountReceived);
 
             //due
-            ViewBag.DueAmount = _context.HubPayments.Where(x => x.HubId == rider.HubId && x.DateTime >= todayStart && x.DateTime < tomorrowStart).Sum(x => x.DueAmount);
+            ViewBag.DueAmount = _context.HubPayments.Where(x=>x.DateTime >= todayStart && x.DateTime < tomorrowStart).Sum(x => x.DueAmount);
 
            
 
