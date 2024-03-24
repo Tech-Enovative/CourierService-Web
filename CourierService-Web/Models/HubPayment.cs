@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using CourierService_Web.Controllers;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CourierService_Web.Models
 {
@@ -16,7 +17,7 @@ namespace CourierService_Web.Models
 
         //calculate due amount
        public int? DueAmount { get;set; }
-
+       public List<MerchantPayment> MerchantPayments { get; set; }
        public List<RiderPayment> RiderPayments { get; set; }
     }
 }

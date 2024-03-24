@@ -72,11 +72,12 @@ namespace CourierService_Web.Controllers
             ViewBag.HubReceivedAmount = _context.HubPayments.Where(x=> x.DateTime >= todayStart && x.DateTime < tomorrowStart).Sum(x => x.AmountReceived);
 
             //due
-            ViewBag.DueAmount = _context.HubPayments.Where(x=>x.DateTime >= todayStart && x.DateTime < tomorrowStart).Sum(x => x.DueAmount);
+            ViewBag.DueAmount = @ViewBag.AmountCollected - @ViewBag.HubReceivedAmount;
 
-           
 
-            
+
+
+
 
         }
 

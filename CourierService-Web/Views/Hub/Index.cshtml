@@ -41,7 +41,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-6 col-xl-3">
+                @* <div class="col-md-6 col-xl-3">
                     <div class="card-box tilebox-one bg-warning d-flex align-items-center justify-content-between">
                         <div>
                             <h6 class="text-black font-weight-bold text-uppercase mt-0">Pending Parcels</h6>
@@ -49,7 +49,7 @@
                         </div>
                         <i class="fas fa-clipboard-list fa-3x text-black"></i>
                     </div>
-                </div>
+                </div> *@
 
                 <div class="col-md-6 col-xl-3">
                     <div class="card-box tilebox-one bg-success d-flex align-items-center justify-content-between">
@@ -158,13 +158,19 @@
 
             <!-- End card boxes -->
 
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#receiveAmountModal">
-                Partial
-            </button>
+            <div class="row justify-content-center mb-2">
+                <div class="col-md-6 col-xl-3">
+                    <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#receiveAmountModal">
+                        Partial Payment
+                    </button>
+                </div>
 
-            <form method="post" asp-controller="Hub" asp-action="FullPayment">
-                <button type="submit" class="btn btn-success">Full Payment</button>
-            </form>
+                <div class="col-md-6 col-xl-3">
+                    <form method="post" asp-controller="Hub" asp-action="FullPayment">
+                        <button type="submit" class="btn btn-success btn-block">Full Payment</button>
+                    </form>
+                </div>
+            </div>
             
 
             @* <form method="post" asp-controller="Hub" asp-action="NotReceived">
@@ -200,39 +206,28 @@
             </div>
 
 
-            @* <div class="card mx-auto" style="max-width: 400px;">
+            <div class="card mx-auto" style="max-width: 400px;">
                 <div class="card-body">
-                    <h5 class="card-title text-center">Delivery Charges Details</h5>
+                    <h5 class="card-title text-center">Account Details</h5>
                     <table class="table">
                         <tbody>
                             <tr>
-                                <th scope="row">Delivery Charge</th>
-                                <td>100 BDT</td>
+                                <th scope="row">Total Amount</th>
+                                <td>@ViewBag.TotalAmount BDT</td>
                             </tr>
                             <tr>
-                                <th scope="row">COD (Cash on Delivery)</th>
-                                <td>0 BDT</td>
+                                <th scope="row">Amount Received</th>
+                                <td>@ViewBag.ReceivedAmount BDT</td>
                             </tr>
+                            
                             <tr>
-                                <th scope="row">Discount</th>
-                                <td>0 BDT</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Promo Discount</th>
-                                <td>0 BDT</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Additional Charge</th>
-                                <td>0 BDT</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Total Cost</th>
-                                <td>110 BDT</td>
+                                <th scope="row">Total Due</th>
+                                <td>@ViewBag.DueAmountHub BDT</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-            </div> *@
+            </div>
             <!-- Parcel details table -->
             
            @*  <div class="row">

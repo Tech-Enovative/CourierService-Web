@@ -142,6 +142,8 @@ namespace CourierService_Web.Controllers
             //notification
             ViewBag.Notifications = _context.NotificationsPermission.Where(x => x.ReceiverId == merchantId).OrderByDescending(x => x.Date).Include(p=>p.Parcel).Include(x=>x.Parcel.Rider).ToList();
 
+            //amount collected by hub according to merchant id
+            ViewBag.TotalAmountCollected = _context.HubPayments.Where(x => x.Hub.Merchants.Any(x => x.Id == merchantId)).Sum(x => x.TotalAmount);
 
 
         }

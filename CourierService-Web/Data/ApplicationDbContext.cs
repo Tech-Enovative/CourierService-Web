@@ -30,6 +30,7 @@ namespace CourierService_Web.Data
         public DbSet<RiderPayment> riderPayments { get; set; }
 
         public DbSet<HubPayment> HubPayments { get; set; }
+        public DbSet<MerchantPayment> MerchantPayments { get; set; }    
 
 
 
@@ -152,6 +153,12 @@ namespace CourierService_Web.Data
                 .HasOne(p => p.Parcel)
                 .WithMany(p => p.riderPayments)
                 .HasForeignKey(p => p.ParcelId);
+
+            //realtionship between merchantPayment and HubPayment
+            modelBuilder.Entity<MerchantPayment>()
+                .HasOne(m => m.HubPayment)
+                .WithMany(h => h.MerchantPayments)
+                .HasForeignKey(m => m.HubPaymentId);
 
            
 

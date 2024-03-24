@@ -103,6 +103,9 @@
                                             <td>
                                                 <strong>Name:</strong> @parcel.Merchant.Name <br />
                                                 <strong>Phone:</strong> @parcel.Merchant.ContactNumber
+                                                <td>
+                                    <button type="button" class="btn btn-primary pay-to-merchant" data-merchant-id="@parcel.Merchant.Id">Pay</button>
+                                </td>
 
                                             </td>
                                             @if (parcel.RiderId == null)
@@ -446,5 +449,23 @@
             }
         });
 
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Get all Pay to Merchant buttons
+            var payToMerchantButtons = document.querySelectorAll(".pay-to-merchant");
+
+            // Add click event listener to each button
+            payToMerchantButtons.forEach(function (button) {
+                button.addEventListener("click", function () {
+                    // Get the merchant ID from the button's data attribute
+                    var merchantId = button.getAttribute("data-merchant-id");
+
+                    // Redirect to PayToMerchant action with the merchant ID
+                    window.location.href = "/Hub/PayToMerchant?merchantId=" + merchantId;
+                });
+            });
+        });
     </script>
 }

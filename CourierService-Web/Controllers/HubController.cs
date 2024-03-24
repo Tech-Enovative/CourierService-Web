@@ -95,6 +95,9 @@ namespace CourierService_Web.Controllers
                 .Sum(h => h.TotalAmount);
             ViewBag.TotalAmountHub = totalAmountHub;
 
+            
+
+
 
             
 
@@ -115,8 +118,7 @@ namespace CourierService_Web.Controllers
             }
         }
 
-        [HttpPost]
-        public IActionResult ReceiveAmount(int amount)
+         public IActionResult PayToMerchant(string merchantId)
         {
             // Check if the hub is logged in
             if (!IsHubLoggedIn())
@@ -124,54 +126,62 @@ namespace CourierService_Web.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-            // Check if the received amount is valid
-            if (amount <= 0)
-            {
-                TempData["error"] = "Amount must be greater than 0";
-                return RedirectToAction("Index");
-            }
-
+            // Get the hub's ID
             var hubId = Request.Cookies["HubId"];
 
-            // Total amount received in rider payments today according to hubId
-            var totalAmountReceivedToday = _context.riderPayments
-                .Where(r => r.Parcel.HubId == hubId && r.PaymentDate.Date == DateTime.Today.Date)
-                .Sum(r => r.Amount);
+           
+            var totalAmountCollected = _context.HubPayments
+                .Where(h => h.HubId == hubId && h.MerchantPayments.Any(mp => mp.MerchantId == merchantId))
+                .Sum(h => h.MerchantPayments.Where(mp => mp.MerchantId == merchantId).Sum(mp => mp.TotalAmount));
 
-            // Get or create HubPayment for today
-            var hubPayment = _context.HubPayments.FirstOrDefault(h => h.HubId == hubId && h.DateTime.Date == DateTime.Today.Date);
+            // Retrieve the merchant from the database
+            var merchant = _context.Merchants.FirstOrDefault(m => m.Id == merchantId);
 
-            if (hubPayment == null)
+            if (merchant == null)
             {
-                hubPayment = new HubPayment
-                {
-                    HubId = hubId,
-                    TotalAmount = totalAmountReceivedToday,
-                    AmountReceived = amount,
-                    DueAmount = totalAmountReceivedToday - amount,
-                    DateTime = DateTime.Now
-                };
+                // Handle if merchant is not found
+                TempData["error"] = "Merchant not found.";
+                return RedirectToAction("Index"); // Redirect to appropriate action
+            }
+
+            // Update merchant's payment information
+            var merchantPayment = new MerchantPayment
+            {
+                MerchantId = merchantId,
+                TotalAmount = totalAmountCollected,
+                AmountPaid = totalAmountCollected,
+                DueAmount = 0,
+                DateTime = DateTime.Now
+            };
+
+            // Create a HubPayment for this payment
+            var hubPayment = new HubPayment
+            {
+                HubId = hubId,
+                TotalAmount = totalAmountCollected,
+                AmountReceived = totalAmountCollected,
+                DueAmount = 0,
+                DateTime = DateTime.Now,
+                MerchantPayments = new List<MerchantPayment> { merchantPayment }
+            };
+
+            // Save changes to the database
+            try
+            {
                 _context.HubPayments.Add(hubPayment);
-            }
+                _context.SaveChanges();
 
-            else
+                TempData["success"] = "Payment to merchant processed successfully.";
+                return RedirectToAction("Index"); 
+            }
+            catch (Exception ex)
             {
-               var dueAmount = hubPayment.DueAmount;
-
-                if(dueAmount == 0)
-                {
-                    TempData["error"] = "No Due Amount";
-                    return RedirectToAction("Index");
-                }
-
-                hubPayment.AmountReceived += amount;
-                hubPayment.DueAmount = dueAmount - amount;
+                // Handle exception
+                TempData["error"] = "An error occurred while processing the payment to merchant: " + ex.Message;
+                return RedirectToAction("Index"); 
             }
-
-            _context.SaveChanges();
-            TempData["success"] = "Amount Received Successfully";
-            return RedirectToAction("Index");
         }
+        
 
         //FullPayment
         [HttpPost]
