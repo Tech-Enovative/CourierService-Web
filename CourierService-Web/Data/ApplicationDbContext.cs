@@ -29,6 +29,8 @@ namespace CourierService_Web.Data
 
         public DbSet<RiderPayment> riderPayments { get; set; }
 
+        public DbSet<HubPayment> HubPayments { get; set; }
+
 
 
 

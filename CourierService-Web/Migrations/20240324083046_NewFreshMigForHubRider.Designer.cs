@@ -4,6 +4,7 @@ using CourierService_Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CourierService_Web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240324083046_NewFreshMigForHubRider")]
+    partial class NewFreshMigForHubRider
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,7 +44,7 @@ namespace CourierService_Web.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Admins", (string)null);
+                    b.ToTable("Admins");
 
                     b.HasData(
                         new
@@ -76,7 +79,7 @@ namespace CourierService_Web.Migrations
 
                     b.HasIndex("MerchantId");
 
-                    b.ToTable("Complain", (string)null);
+                    b.ToTable("Complain");
                 });
 
             modelBuilder.Entity("CourierService_Web.Models.Contact", b =>
@@ -105,7 +108,7 @@ namespace CourierService_Web.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Contacts", (string)null);
+                    b.ToTable("Contacts");
                 });
 
             modelBuilder.Entity("CourierService_Web.Models.DeliveredParcel", b =>
@@ -136,7 +139,7 @@ namespace CourierService_Web.Migrations
 
                     b.HasIndex("RiderId");
 
-                    b.ToTable("DeliveredParcels", (string)null);
+                    b.ToTable("DeliveredParcels");
                 });
 
             modelBuilder.Entity("CourierService_Web.Models.ExchangeParcel", b =>
@@ -167,7 +170,7 @@ namespace CourierService_Web.Migrations
 
                     b.HasIndex("RiderId");
 
-                    b.ToTable("ExchangeParcels", (string)null);
+                    b.ToTable("ExchangeParcels");
                 });
 
             modelBuilder.Entity("CourierService_Web.Models.Hub", b =>
@@ -219,7 +222,7 @@ namespace CourierService_Web.Migrations
 
                     b.HasIndex("AdminId");
 
-                    b.ToTable("Hubs", (string)null);
+                    b.ToTable("Hubs");
 
                     b.HasData(
                         new
@@ -228,7 +231,7 @@ namespace CourierService_Web.Migrations
                             Address = "Dhaka, Bangladesh",
                             AdminId = "A-123",
                             Area = "Mirpur",
-                            CreatedAt = new DateTime(2024, 3, 24, 15, 3, 14, 400, DateTimeKind.Local).AddTicks(1247),
+                            CreatedAt = new DateTime(2024, 3, 24, 14, 30, 42, 921, DateTimeKind.Local).AddTicks(3943),
                             CreatedBy = "Admin",
                             District = "Dhaka",
                             Email = "hub@gmail.com",
@@ -256,9 +259,6 @@ namespace CourierService_Web.Migrations
                     b.Property<string>("HubId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("RiderPaymentId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int?>("TotalAmount")
                         .HasColumnType("int");
 
@@ -266,11 +266,7 @@ namespace CourierService_Web.Migrations
 
                     b.HasIndex("HubId");
 
-                    b.HasIndex("RiderPaymentId")
-                        .IsUnique()
-                        .HasFilter("[RiderPaymentId] IS NOT NULL");
-
-                    b.ToTable("HubPayments", (string)null);
+                    b.ToTable("HubPayments");
                 });
 
             modelBuilder.Entity("CourierService_Web.Models.Merchant", b =>
@@ -340,7 +336,7 @@ namespace CourierService_Web.Migrations
 
                     b.HasIndex("HubId");
 
-                    b.ToTable("Merchants", (string)null);
+                    b.ToTable("Merchants");
 
                     b.HasData(
                         new
@@ -349,7 +345,7 @@ namespace CourierService_Web.Migrations
                             Area = "Mirpur",
                             CompanyName = "Merchant Company",
                             ContactNumber = "01837730317",
-                            CreatedAt = new DateTime(2024, 3, 24, 15, 3, 14, 400, DateTimeKind.Local).AddTicks(1197),
+                            CreatedAt = new DateTime(2024, 3, 24, 14, 30, 42, 921, DateTimeKind.Local).AddTicks(3842),
                             Email = "merchant@gmail.com",
                             FullAddress = "Dhaka, Bangladesh",
                             Name = "Merchant",
@@ -470,7 +466,7 @@ namespace CourierService_Web.Migrations
 
                     b.HasIndex("RiderId");
 
-                    b.ToTable("Parcels", (string)null);
+                    b.ToTable("Parcels");
                 });
 
             modelBuilder.Entity("CourierService_Web.Models.Payment", b =>
@@ -495,7 +491,7 @@ namespace CourierService_Web.Migrations
 
                     b.HasIndex("ParcelId");
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("CourierService_Web.Models.RequestPermission", b =>
@@ -536,7 +532,7 @@ namespace CourierService_Web.Migrations
 
                     b.HasIndex("ParcelId");
 
-                    b.ToTable("NotificationsPermission", (string)null);
+                    b.ToTable("NotificationsPermission");
                 });
 
             modelBuilder.Entity("CourierService_Web.Models.ReturnParcel", b =>
@@ -567,7 +563,7 @@ namespace CourierService_Web.Migrations
 
                     b.HasIndex("RiderId");
 
-                    b.ToTable("ReturnParcels", (string)null);
+                    b.ToTable("ReturnParcels");
                 });
 
             modelBuilder.Entity("CourierService_Web.Models.Rider", b =>
@@ -630,7 +626,7 @@ namespace CourierService_Web.Migrations
 
                     b.HasIndex("HubId");
 
-                    b.ToTable("Riders", (string)null);
+                    b.ToTable("Riders");
 
                     b.HasData(
                         new
@@ -638,7 +634,7 @@ namespace CourierService_Web.Migrations
                             Id = "R-123",
                             Area = "Dhaka",
                             ContactNumber = "01837730317",
-                            CreatedAt = new DateTime(2024, 3, 24, 15, 3, 14, 400, DateTimeKind.Local).AddTicks(1288),
+                            CreatedAt = new DateTime(2024, 3, 24, 14, 30, 42, 921, DateTimeKind.Local).AddTicks(4017),
                             District = "Dhaka",
                             Email = "rider@gmail.com",
                             FullAddress = "Dhaka, Bangladesh",
@@ -663,9 +659,6 @@ namespace CourierService_Web.Migrations
                     b.Property<int?>("Due")
                         .HasColumnType("int");
 
-                    b.Property<string>("HubPaymentId")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("HubReceived")
                         .HasColumnType("int");
 
@@ -686,7 +679,7 @@ namespace CourierService_Web.Migrations
 
                     b.HasIndex("RiderId");
 
-                    b.ToTable("riderPayments", (string)null);
+                    b.ToTable("riderPayments");
                 });
 
             modelBuilder.Entity("CourierService_Web.Models.Complain", b =>
@@ -755,13 +748,7 @@ namespace CourierService_Web.Migrations
                         .WithMany()
                         .HasForeignKey("HubId");
 
-                    b.HasOne("CourierService_Web.Models.RiderPayment", "RiderPayment")
-                        .WithOne("HubPayment")
-                        .HasForeignKey("CourierService_Web.Models.HubPayment", "RiderPaymentId");
-
                     b.Navigation("Hub");
-
-                    b.Navigation("RiderPayment");
                 });
 
             modelBuilder.Entity("CourierService_Web.Models.Merchant", b =>
@@ -944,12 +931,6 @@ namespace CourierService_Web.Migrations
                     b.Navigation("ReturnParcels");
 
                     b.Navigation("riderPayments");
-                });
-
-            modelBuilder.Entity("CourierService_Web.Models.RiderPayment", b =>
-                {
-                    b.Navigation("HubPayment")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

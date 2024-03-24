@@ -219,10 +219,10 @@
                                             @if (notification.Status == 0)
                                             {
                                                 <td>
-                                                    <form id="approvalForm_@notification.ParcelId" method="post" asp-action="ApprovePermission">
+                                                    <form  method="post">
                                                         <input type="hidden" name="parcelId" value="@notification.ParcelId" />
                                                         <input type="hidden" name="newPrice" value="@notification.RequestedPrice" />
-                                                        <button id="approveButton_@notification.ParcelId" type="submit" class="btn btn-success">Approve</button>
+                                                        <button asp-action="ApprovePermission" type="submit" class="btn btn-success">Approve</button>
                                                     </form>
                                                 </td>
                                             }

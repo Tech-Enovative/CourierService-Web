@@ -11,14 +11,6 @@ namespace CourierService_Web.Models
         [Required]
         public int Amount { get; set; }
 
-        public int? HubReceivedAmount { get; set; }
-
-        public DateTime? HubReceivedDate { get; set; }
-
-        public int? HubDue { get; set; }
-
-        public DateTime? HubDueDate { get; set; }
-
         [Required]
         public DateTime PaymentDate { get; set; } = DateTime.Now;
 

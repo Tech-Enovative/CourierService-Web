@@ -81,6 +81,67 @@ namespace CourierService_Web.Controllers
                 return false;
             }
         }
+
+        [HttpPost]
+        public IActionResult ReceiveAmount(int amount)
+        {
+            // Check if the hub is logged in
+            if (!IsHubLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            // Check if the received amount is valid
+            if (amount <= 0)
+            {
+                TempData["error"] = "Amount must be greater than 0";
+                return RedirectToAction("Index");
+            }
+
+            var hubId = Request.Cookies["HubId"];
+
+            // Total amount received in rider payments today according to hubId
+            var totalAmountReceivedToday = _context.riderPayments
+                .Where(r => r.Parcel.HubId == hubId && r.PaymentDate.Date == DateTime.Today.Date)
+                .Sum(r => r.Amount);
+
+            // Get or create HubPayment for today
+            var hubPayment = _context.HubPayments.FirstOrDefault(h => h.HubId == hubId && h.DateTime.Date == DateTime.Today.Date);
+
+            if (hubPayment == null)
+            {
+                hubPayment = new HubPayment
+                {
+                    HubId = hubId,
+                    TotalAmount = totalAmountReceivedToday,
+                    AmountReceived = amount,
+                    DueAmount = totalAmountReceivedToday - amount,
+                    DateTime = DateTime.Now
+                };
+                _context.HubPayments.Add(hubPayment);
+            }
+
+            else
+            {
+               var dueAmount = hubPayment.DueAmount;
+
+                if(dueAmount == 0)
+                {
+                    TempData["error"] = "No Due Amount";
+                    return RedirectToAction("Index");
+                }
+
+                hubPayment.AmountReceived += amount;
+                hubPayment.DueAmount = dueAmount - amount;
+            }
+
+            _context.SaveChanges();
+            TempData["success"] = "Amount Received Successfully";
+            return RedirectToAction("Index");
+        }
+
+
+
         public IActionResult Index()
         {
             UpdateLayout();
