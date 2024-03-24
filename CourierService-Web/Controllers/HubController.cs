@@ -64,6 +64,39 @@ namespace CourierService_Web.Controllers
             var parcelAssignedForDeliveryCount = _context.Parcels.Where(p => p.HubId == hubId && p.Status == "Assigned For Delivery").Count();
             ViewBag.ParcelAssignedForDeliveryCount = parcelAssignedForDeliveryCount;
 
+            //total amount calculation from rider payment today according to hubId
+            var totalAmount = _context.riderPayments
+                .Where(r => r.Parcel.HubId == hubId && r.PaymentDate.Date == DateTime.Today.Date)
+                .Sum(r => r.Amount);
+            ViewBag.TotalAmount = totalAmount;
+            
+
+            //received amount calculation from hub payment today according to hubId
+            var receivedAmount = _context.HubPayments
+                .Where(h => h.HubId == hubId && h.DateTime.Date == DateTime.Today.Date)
+                .Sum(h => h.AmountReceived);
+            ViewBag.ReceivedAmount = receivedAmount;
+
+            //due amount calculation from rider payment today according to hubId
+            var dueAmount = _context.riderPayments
+                .Where(h => h.Parcel.HubId == hubId && h.PaymentDate.Date == DateTime.Today.Date)
+                .Sum(h => h.Amount);
+            ViewBag.DueAmount = dueAmount;
+
+            //due amount calculation from hub payment today according to hubId
+            var dueAmountHub = _context.HubPayments
+                .Where(h => h.HubId == hubId && h.DateTime.Date == DateTime.Today.Date)
+                .Sum(h => h.DueAmount);
+            ViewBag.DueAmountHub = dueAmountHub;
+
+            //total amount calculation by hubId in hub payment
+            var totalAmountHub = _context.HubPayments
+                .Where(h => h.HubId == hubId)
+                .Sum(h => h.TotalAmount);
+            ViewBag.TotalAmountHub = totalAmountHub;
+
+
+            
 
 
 
@@ -137,6 +170,142 @@ namespace CourierService_Web.Controllers
 
             _context.SaveChanges();
             TempData["success"] = "Amount Received Successfully";
+            return RedirectToAction("Index");
+        }
+
+        //FullPayment
+        [HttpPost]
+        public IActionResult FullPayment()
+        {
+            if (!IsHubLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            
+
+
+            var hubId = Request.Cookies["HubId"];
+            var hub = _context.HubPayments.FirstOrDefault(h => h.HubId == hubId && h.DateTime.Date == DateTime.Today.Date);
+
+            //check if hub payment is already done
+            if (hub != null)
+            {
+                TempData["error"] = "Payment Already Received";
+                return RedirectToAction("Index");
+            }
+
+            // Total amount received in rider payments today according to hubId
+            var totalAmount = _context.riderPayments
+                .Where(r => r.Parcel.HubId == hubId && r.PaymentDate.Date == DateTime.Today.Date)
+                .Sum(r => r.Amount);
+
+            var hubPayment = new HubPayment
+            {
+                HubId = hubId,
+                TotalAmount = totalAmount,
+                AmountReceived = totalAmount,
+                DueAmount = 0,
+                DateTime = DateTime.Now
+            };
+
+
+
+            _context.HubPayments.Add(hubPayment);
+
+            _context.SaveChanges();
+            TempData["success"] = "Full Payment Received Successfully";
+            return RedirectToAction("Index");
+        }
+
+        //partial payment
+        public IActionResult PartialPayment(int amount)
+        {
+            if (!IsHubLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            if (amount <= 0)
+            {
+                TempData["error"] = "Amount must be greater than 0";
+                return RedirectToAction("Index");
+            }
+
+            var hubId = Request.Cookies["HubId"];
+
+            var totalAmount = _context.riderPayments
+               .Where(r => r.Parcel.HubId == hubId && r.PaymentDate.Date == DateTime.Today.Date)
+               .Sum(r => r.Amount);
+
+
+            //hub existing payment
+            var hubPayment = _context.HubPayments.FirstOrDefault(h => h.HubId == hubId && h.DateTime.Date == DateTime.Today.Date);
+            if (hubPayment == null)
+            {
+                var newPayment = new HubPayment
+                {
+                    HubId = hubId,
+                    TotalAmount = totalAmount,
+                    AmountReceived = amount,
+                    DueAmount = totalAmount - amount,
+                    DateTime = DateTime.Now
+                };
+                _context.HubPayments.Add(newPayment);
+
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            else
+            {
+
+                var dueAmount = hubPayment.DueAmount;
+                if (dueAmount == 0)
+                {
+                    TempData["error"] = "No Due Amount";
+                    return RedirectToAction("Index");
+                }
+                if (amount > dueAmount)
+                {
+                    TempData["error"] = "Amount must be less than or equal to due amount";
+                    return RedirectToAction("Index");
+                }
+                hubPayment.AmountReceived += amount;
+                hubPayment.DueAmount = dueAmount - amount;
+            }
+            _context.SaveChanges();
+            TempData["success"] = "Partial Payment Received Successfully";
+            return RedirectToAction("Index");
+        }
+
+        //Not Received
+        [HttpPost]
+        public IActionResult NotReceived()
+        {
+            if (!IsHubLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            var hubId = Request.Cookies["HubId"];
+
+            var hubPayment = _context.HubPayments.FirstOrDefault(h => h.HubId == hubId && h.DateTime.Date == DateTime.Today.Date);
+            if (hubPayment == null)
+            {
+                TempData["error"] = "No Payment Received Today";
+                return RedirectToAction("Index");
+            }
+
+            if (hubPayment.DueAmount == 0)
+            {
+                TempData["error"] = "No Due Amount";
+                return RedirectToAction("Index");
+            }
+
+            hubPayment.AmountReceived = 0;
+            hubPayment.DueAmount = hubPayment.TotalAmount;
+            _context.SaveChanges();
+            TempData["success"] = "Payment Not Received";
             return RedirectToAction("Index");
         }
 

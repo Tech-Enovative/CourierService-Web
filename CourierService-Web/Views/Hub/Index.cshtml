@@ -100,6 +100,7 @@
                         <i class="fas fa-truck-loading fa-3x text-black"></i>
                     </div>
                 </div>
+               
 
                 <div class="col-md-6 col-xl-3">
                     <div class="card-box tilebox-one bg-danger d-flex align-items-center justify-content-between">
@@ -110,12 +111,67 @@
                         <i class="fas fa-truck fa-3x text-black"></i>
                     </div>
                 </div>
+                
+                @* <div class="col-md-6 col-xl-3">
+                    <div class="card-box tilebox-one bg-primary d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Total Amount</h6>
+                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TotalAmountHub</span></h3>
+                        </div>
+                        <i class="fas fa-dollar-sign fa-3x text-black"></i>
+                    </div>
+                </div> *@
+
+                <div class="col-md-6 col-xl-3">
+                    <div class="card-box tilebox-one bg-info d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Today Rider Received</h6>
+                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TotalAmount</span></h3>
+                        </div>
+                        <i class="fas fa-truck-loading fa-3x text-black"></i>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-xl-3">
+                    <div class="card-box tilebox-one bg-success d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Payment Received</h6>
+                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.ReceivedAmount</span></h3>
+                        </div>
+                        <i class="fas fa-check-circle fa-3x text-black"></i>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-xl-3">
+                    <div class="card-box tilebox-one bg-danger d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Due</h6>
+                            @* <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TotalAmount</span></h3>  *@
+                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.DueAmountHub</span></h3>
+                        </div>
+                        <i class="fas fa-exclamation-circle fa-3x text-black"></i>
+                    </div>
+                </div>
+
             </div>
+
+
             <!-- End card boxes -->
 
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#receiveAmountModal">
-                Receive Amount from Rider
+                Partial
             </button>
+
+            <form method="post" asp-controller="Hub" asp-action="FullPayment">
+                <button type="submit" class="btn btn-success">Full Payment</button>
+            </form>
+            
+
+            @* <form method="post" asp-controller="Hub" asp-action="NotReceived">
+                <button type="button"  class="btn btn-danger">
+                    Not Received
+                </button>
+            </form> *@
 
             <!-- Modal -->
             <div class="modal fade" id="receiveAmountModal" tabindex="-1" role="dialog" aria-labelledby="receiveAmountModalLabel" aria-hidden="true">
@@ -128,7 +184,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <form id="receiveAmountForm" method="post" action="@Url.Action("ReceiveAmount", "Hub")">
+                            <form id="receiveAmountForm" method="post" action="@Url.Action("PartialPayment", "Hub")">
                                 <div class="form-group">
                                     <label for="receivedAmount">Amount Received:</label>
                                     <input type="number" class="form-control" id="receivedAmount" name="amount" required>

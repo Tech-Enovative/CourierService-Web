@@ -762,16 +762,11 @@ namespace CourierService_Web.Controllers
             parcel.ProductPrice = newPrice;
             
 
-            //now recalculate the total price including delivery charge and product price with quantity
+            
             parcel.TotalPrice = (int)(parcel.ProductPrice * parcel.ProductQuantity + parcel.DeliveryCharge);
-            //make notification status 1
+           
             var notification = _context.NotificationsPermission.Where(p=>p.ParcelId == parcelId).FirstOrDefault();
             notification.Status = 1;
-
-            //foreach(var n in notification)
-            //{
-            //    n.Status = 1;
-            //}
 
             _context.SaveChanges();
 
