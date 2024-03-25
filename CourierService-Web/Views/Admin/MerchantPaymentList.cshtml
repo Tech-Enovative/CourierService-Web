@@ -13,6 +13,10 @@
                     <div class="card-box">
                         <h4 class="header-title text-success">Merchant Payment List</h4>
                         <div class="table-responsive">
+                            <div class="mb-3">
+                                <a asp-action="MerchantPaymentList" asp-route-showDuePayments="false" class="btn btn-primary">All Payments</a>
+                                <a asp-action="MerchantPaymentList" asp-route-showDuePayments="true" class="btn btn-danger">Due Payments Only</a>
+                            </div>
                             <table class="table mb-0">
                                 <thead>
                                     <tr>

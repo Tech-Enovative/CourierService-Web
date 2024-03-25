@@ -356,44 +356,74 @@ namespace CourierService_Web.Controllers
         }
 
         //merchant payment list
-        public IActionResult MerchantPaymentList()
+        public IActionResult MerchantPaymentList(bool showDuePayments = false)
         {
             if (!IsAdminLoggedIn())
             {
                 return RedirectToAction("Login", "Home");
             }
-            //payment list for today
-            var merchantPayments = _context.MerchantPayments.Include(u => u.Merchant).Where(p => p.DateTime.Date == DateTime.Today.Date).ToList();
-           
+
+            // Payment list for today
+            var merchantPaymentsQuery = _context.MerchantPayments.Include(u => u.Merchant).Where(p => p.DateTime.Date == DateTime.Today.Date);
+
+            // Filter by due payments if requested
+            if (showDuePayments)
+            {
+                merchantPaymentsQuery = merchantPaymentsQuery.Where(p => p.DueAmount > 0);
+                return View(merchantPaymentsQuery);
+            }
+
+            var merchantPayments = merchantPaymentsQuery.ToList();
+
             if (merchantPayments == null)
             {
                 return NotFound();
             }
+
             return View(merchantPayments);
         }
 
+
         //hub payment list
-        public IActionResult HubPaymentList()
-        {
-            if (!IsAdminLoggedIn())
-            {
-                return RedirectToAction("Login", "Home");
-            }
-            //payment list for today
-            var hubPayments = _context.HubPayments
-     .Include(p => p.Hub)
-     .Include(p => p.MerchantPayments) // Include merchant payments
-         .ThenInclude(mp => mp.Merchant) // Then include merchant info
-     .Where(p => p.DateTime.Date == DateTime.Today.Date)
-     .ToList();
+        public IActionResult HubPaymentList(bool showDuePayments = false)
+{
+    if (!IsAdminLoggedIn())
+    {
+        return RedirectToAction("Login", "Home");
+    }
+
+    // Payment list for today
+    IQueryable<HubPayment> hubPaymentsQuery = _context.HubPayments
+        .Include(p => p.Hub);
+
+    // Include merchant payments and their associated merchants
+    if (showDuePayments)
+    {
+        hubPaymentsQuery = hubPaymentsQuery
+            .Include(p => p.MerchantPayments)
+                .ThenInclude(mp => mp.Merchant)
+            .Where(p => p.DueAmount > 0);
+    }
+    else
+    {
+        hubPaymentsQuery = hubPaymentsQuery
+            .Include(p => p.MerchantPayments)
+                .ThenInclude(mp => mp.Merchant);
+    }
+
+    var hubPayments = hubPaymentsQuery
+        .Where(p => p.DateTime.Date == DateTime.Today.Date)
+        .ToList();
+
+    if (hubPayments == null)
+    {
+        return NotFound();
+    }
+
+    return View(hubPayments);
+}
 
 
-            if (hubPayments == null)
-            {
-                return NotFound();
-            }
-            return View(hubPayments);
-        }
 
         //rider payment list
         public IActionResult RiderPaymentList()

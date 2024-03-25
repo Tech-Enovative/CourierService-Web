@@ -13,6 +13,10 @@
                     <div class="card-box">
                         <h4 class="header-title text-success">Hub Payment List</h4>
                         <div class="table-responsive">
+                            <div class="mb-3">
+                                <a asp-action="HubPaymentList" asp-route-showDuePayments="false" class="btn btn-primary">All Payments</a>
+                                <a asp-action="HubPaymentList" asp-route-showDuePayments="true" class="btn btn-danger">Due Payments Only</a>
+                            </div>
                             <table class="table mb-0">
                                 <thead>
                                     <tr>
@@ -21,7 +25,6 @@
                                         <th>Total Amount</th>
                                         <th>Amount Received</th>
                                         <th>Due Amount</th>
-                                        
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -36,7 +39,6 @@
                                             <td>@payment.TotalAmount</td>
                                             <td>@payment.AmountReceived</td>
                                             <td>@payment.DueAmount</td>
-                                            
                                         </tr>
                                         sl++;
                                     }
