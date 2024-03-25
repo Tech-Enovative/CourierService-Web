@@ -85,7 +85,7 @@
                                         <th>Payment Status</th>
                                        @*  <th>Payment</th> *@
                                         <th>Action</th>
-                                        <th>Delete</th>
+                                        @* <th>Delete</th> *@
 
                                     </tr>
                                 </thead>
@@ -205,7 +205,7 @@
                                                     <span class="badge badge-danger text-medium">@parcel.PaymentStatus</span>
                                                 }
                                             </td>
-                                           @*  <td>
+                                            <td>
                                                 @if (parcel.PaymentStatus == "Paid" && parcel.PaymentInHand == null)
                                                 {
                                                     <a asp-route-id="@parcel.Id" asp-action="PaymentInHand" class="btn btn-xs btn-success">
@@ -241,7 +241,7 @@
                                                 
                                                
 
-                                            </td> *@
+                                            </td>
                                             @if (parcel.RiderId == null)
                                             {
                                                 <td>
@@ -286,7 +286,7 @@
 
                                                         </a>
                                                     }
-                                                    else if (parcel.Status == "Exchanged" && parcel.PaymentStatus == "Paid Delivery Charge")
+                                                    else if (parcel.Status == "Exchanged" && parcel.PaymentStatus == "Delivery Charge Received By Rider")
                                                     {
                                                         <a asp-action="ExchangeParcelHub" asp-route-id="@parcel.Id" class="btn btn-sm btn-info">
                                                             <i class="fas fa-plus-circle"></i> Exchanged Parcel In Hub
@@ -307,7 +307,7 @@
                                             </a> *@
                                                 </td>
                                             }
-
+@* 
                                             <td>
                                                 <!-- Button trigger modal -->
                                                 <button class="btn btn-sm btn-danger waves-effect waves-light" data-toggle="modal" data-target="#myModal_@parcel.Id">
@@ -340,7 +340,7 @@
 
 
 
-                                            </td>
+                                            </td> *@
 
 
 

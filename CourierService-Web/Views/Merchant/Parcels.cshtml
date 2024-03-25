@@ -183,6 +183,13 @@
                                                         <i class="fas fa-check"></i> Return Parcel Received
                                                     </a>
                                                 }
+                                                else if (parcel.Status == "Exchanged Parcel Returned Merchant")
+                                                {
+                                                    <a asp-route-id="@parcel.Id" asp-controller="Merchant" asp-action="ExchangeParcelReceived" class="btn btn-sm btn-success">
+                                                        <i class="fas fa-check"></i> Exchange Parcel Received
+                                                    </a>
+                                                }
+                                                
                                             </td>
                                             
 

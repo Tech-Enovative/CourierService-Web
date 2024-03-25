@@ -369,15 +369,36 @@ namespace CourierService_Web.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-            var hubId = Request.Cookies["HubId"];
-            //merchant payment list according to hubId today
-            var merchantPayments = _context.MerchantPayments
-                .Where(m => m.Merchant.HubId == hubId && m.DateTime.Date == DateTime.Today.Date)
-                .Include(m => m.Merchant)
-                .ToList();
-            
-            return View(merchantPayments);
+            try
+            {
+                var hubId = Request.Cookies["HubId"];
+
+                //hub payment Id for today
+                var hubPaymentId = _context.HubPayments
+                    .FirstOrDefault(h => h.HubId == hubId && h.DateTime.Date == DateTime.Today.Date)?.Id;
+
+                // Log the retrieved hubId for debugging
+                Console.WriteLine("HubId from cookie: " + hubId);
+
+                //merchant payment list according to hubId today
+                var merchantPayments = _context.MerchantPayments
+                    .Where(m => m.HubPaymentId == hubPaymentId && m.DateTime.Date == DateTime.Today.Date)
+                    .Include(m => m.Merchant)
+                    .ToList();
+
+                // Log the count of retrieved merchant payments for debugging
+                Console.WriteLine("Merchant payments count: " + merchantPayments.Count);
+
+                return View(merchantPayments);
+            }
+            catch (Exception ex)
+            {
+                // Log or handle the exception
+                Console.WriteLine("Error occurred: " + ex.Message);
+                return RedirectToAction("Error", "Home");
+            }
         }
+
 
 
 
@@ -499,7 +520,7 @@ namespace CourierService_Web.Controllers
             returnParcel.Status = "Return Parcel In Hub";
             _context.Parcels.Update(returnParcel);
             _context.SaveChanges();
-            return RedirectToAction("ReturnParcel");
+            return RedirectToAction("Parcel");
         }
 
         //status - ExchangeParcelHub
@@ -513,7 +534,7 @@ namespace CourierService_Web.Controllers
             exchangeParcel.Status = "Exchange Parcel In Hub";
             _context.Parcels.Update(exchangeParcel);
             _context.SaveChanges();
-            return RedirectToAction("ExchangeParcel");
+            return RedirectToAction("Parcel");
         }
         //assign a parcel
         public IActionResult AssignParcel(string id)
