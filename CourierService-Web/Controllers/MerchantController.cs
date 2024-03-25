@@ -145,6 +145,12 @@ namespace CourierService_Web.Controllers
             //amount collected by hub according to merchant id
             ViewBag.TotalAmountCollected = _context.HubPayments.Where(x => x.Hub.Merchants.Any(x => x.Id == merchantId)).Sum(x => x.TotalAmount);
 
+            //total price sum calculation from parcel according to merchant id today
+            ViewBag.TotalPriceSum = _context.Parcels.Where(x => x.MerchantId == merchantId && x.PickupRequestDate >=todayStart && x.PickupRequestDate < tomorrowStart ).Sum(x => x.TotalPrice);
+            //amount paid by merchant today
+            ViewBag.AmountPaid = _context.MerchantPayments.Where(x => x.MerchantId == merchantId && x.DateTime >= todayStart && x.DateTime < tomorrowStart).Sum(x => x.AmountPaid);
+            //calculate due amount
+            ViewBag.DueAmount = ViewBag.TotalPriceSum - ViewBag.AmountPaid;
 
         }
         private bool IsMerchantLoggedIn()

@@ -1,4 +1,5 @@
-﻿using CourierService_Web.Data;
+﻿using Amazon.S3.Model;
+using CourierService_Web.Data;
 using CourierService_Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -118,23 +119,22 @@ namespace CourierService_Web.Controllers
             }
         }
 
-         public IActionResult PayToMerchant(string merchantId)
+        // Action to pay to merchant
+        public IActionResult PayToMerchant(string merchantId)
         {
-            // Check if the hub is logged in
+           
             if (!IsHubLoggedIn())
             {
                 return RedirectToAction("Login", "Home");
             }
 
-            // Get the hub's ID
+           
             var hubId = Request.Cookies["HubId"];
 
-           
-            var totalAmountCollected = _context.HubPayments
-                .Where(h => h.HubId == hubId && h.MerchantPayments.Any(mp => mp.MerchantId == merchantId))
-                .Sum(h => h.MerchantPayments.Where(mp => mp.MerchantId == merchantId).Sum(mp => mp.TotalAmount));
-
-            // Retrieve the merchant from the database
+            // Calculate total amount collected for the merchant by summing up the total amounts from HubPayments
+            var totalAmountCollected = _context.riderPayments.Where(h => h.Parcel.HubId == hubId && h.PaymentDate.Date == DateTime.Today.Date && h.Parcel.MerchantId == merchantId)
+                .Sum(h => h.Amount);
+            
             var merchant = _context.Merchants.FirstOrDefault(m => m.Id == merchantId);
 
             if (merchant == null)
@@ -153,35 +153,41 @@ namespace CourierService_Web.Controllers
                 DueAmount = 0,
                 DateTime = DateTime.Now
             };
+            
 
             // Create a HubPayment for this payment
-            var hubPayment = new HubPayment
-            {
-                HubId = hubId,
-                TotalAmount = totalAmountCollected,
-                AmountReceived = totalAmountCollected,
-                DueAmount = 0,
-                DateTime = DateTime.Now,
-                MerchantPayments = new List<MerchantPayment> { merchantPayment }
-            };
+            
+            
 
-            // Save changes to the database
             try
             {
-                _context.HubPayments.Add(hubPayment);
+                _context.MerchantPayments.Add(merchantPayment);
+                _context.SaveChanges();
+
+                //parcels to update for today only
+                var parcelsToUpdate = _context.Parcels
+                    .Where(p => p.MerchantId == merchantId && p.HubId == hubId && p.PaymentStatus != "Paid To Merchant" && p.PickupRequestDate.Value.Date == DateTime.Today.Date)
+                    .ToList();
+            
+
+                foreach (var parcel in parcelsToUpdate)
+                {
+                    parcel.PaymentStatus = "Paid To Merchant";
+                }
                 _context.SaveChanges();
 
                 TempData["success"] = "Payment to merchant processed successfully.";
-                return RedirectToAction("Index"); 
+                return RedirectToAction("Index"); // Redirect to appropriate action
             }
             catch (Exception ex)
             {
                 // Handle exception
                 TempData["error"] = "An error occurred while processing the payment to merchant: " + ex.Message;
-                return RedirectToAction("Index"); 
+                return RedirectToAction("Index"); // Redirect to appropriate action
             }
         }
-        
+
+
 
         //FullPayment
         [HttpPost]
@@ -366,6 +372,7 @@ namespace CourierService_Web.Controllers
             // Pass selected date range to the view
             ViewBag.StartDate = startDate ?? DateTime.Today;
             ViewBag.EndDate = endDate ?? DateTime.Today;
+            
 
             return View(parcels);
         }

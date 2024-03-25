@@ -64,6 +64,7 @@
                                         <th>SL</th>
                                         <th>ID</th>
                                         <th>Merchant</th>
+                                        <th>Pay To Merchant</th>
                                         <th>Rider</th>
                                         <th>Pickup Location</th>
                                         <th>Pickup Request Date</th>
@@ -82,7 +83,7 @@
                                         <th>Total Price</th>
                                         <th>Status</th>
                                         <th>Payment Status</th>
-                                        <th>Payment</th>
+                                       @*  <th>Payment</th> *@
                                         <th>Action</th>
                                         <th>Delete</th>
 
@@ -104,7 +105,11 @@
                                                 <strong>Name:</strong> @parcel.Merchant.Name <br />
                                                 <strong>Phone:</strong> @parcel.Merchant.ContactNumber
                                                 <td>
-                                    <button type="button" class="btn btn-primary pay-to-merchant" data-merchant-id="@parcel.Merchant.Id">Pay</button>
+                                                    @if(parcel.PaymentStatus != "Paid To Merchant" && parcel.PaymentStatus == "Payment Received By Rider")
+                                                    {
+                                                    <button type="button" class="btn btn-primary pay-to-merchant" data-merchant-id="@parcel.Merchant.Id">Pay</button>
+                                                    }
+                                    
                                 </td>
 
                                             </td>
@@ -197,10 +202,10 @@
                                                 }
                                                 else
                                                 {
-                                                    <span class="badge badge-danger text-medium">Pending</span>
+                                                    <span class="badge badge-danger text-medium">@parcel.PaymentStatus</span>
                                                 }
                                             </td>
-                                            <td>
+                                           @*  <td>
                                                 @if (parcel.PaymentStatus == "Paid" && parcel.PaymentInHand == null)
                                                 {
                                                     <a asp-route-id="@parcel.Id" asp-action="PaymentInHand" class="btn btn-xs btn-success">
@@ -236,7 +241,7 @@
                                                 
                                                
 
-                                            </td>
+                                            </td> *@
                                             @if (parcel.RiderId == null)
                                             {
                                                 <td>

@@ -83,6 +83,9 @@ namespace CourierService_Web.Models
 
         public List<Complain>? complains { get; set; }
 
-       
+        // Navigation property to MerchantPayments
+        public List<MerchantPayment>? MerchantPayments { get; set; }
+
+
     }
 }

@@ -72,7 +72,7 @@
                                     <tr>
                                         <th>SL</th>
                                         <th>ID</th>
-                                        <th>Merchant Name</th>
+                                        <th>Merchant</th>
                                         <th>Rider</th>
                                         <th>Pickup Location</th>
                                         <th>Pickup Request Date</th>
@@ -80,11 +80,11 @@
                                         <th>Product</th>
                                         <th>Delivery</th>
                                         <th>Total Price</th>
-                                       @*  <th>Merchant Account</th> *@
+                                        
                                         <th>Status</th>                       
                                         <th>Payment Status</th>
-                                       
-                                         <th>Action</th> 
+                                        <th>View</th>
+                                         
                                         @if(AdminEmail =="flyerbd@gmail.com")
                                         {
                                             <th>Delete</th>
@@ -103,7 +103,10 @@
                                         <tr >
                                             <td>@sl</td>
                                             <td>@parcel.Id</td>
-                                            <td>@parcel.Merchant.Name</td>
+                                            <td>
+                                                <strong>Name:</strong> @parcel.Merchant.Name <br />
+                                                <strong>Phone:</strong> @parcel.Merchant.ContactNumber
+                                            </td>
                                             @if (parcel.RiderId == null)
                                             {
                                                 <td><span class="badge badge-danger text-medium">Not Assigned</span></td>
@@ -183,14 +186,14 @@
                                             {
                                                 <td><span class="badge badge-info text-medium">Pending</span></td>
                                             }
-                                            <td>
+                                            @* <td>
                                                 @if (parcel.Status == "Parcel Returned To Merchant")
                                                 {
                                                     <a asp-route-id="@parcel.Id" asp-controller="Merchant" asp-action="ReturnParcelReceived" class="btn btn-sm btn-success">
                                                         <i class="fas fa-check"></i> Return Parcel Received
                                                     </a>
                                                 }
-                                            </td>
+                                            </td> *@
 
 
                                         
@@ -230,6 +233,27 @@
 
                                                 </td>
                                             }
+                                            <td>
+                                                <button class="btn btn-primary merchantAccountsTrigger" data-merchant-id="@parcel.Merchant.Id" type="button" data-toggle="modal" data-target="#merchantAccountsModal">Merchant Accounts</button>
+                                                <!-- Merchant Accounts Modal -->
+                                                <div class="modal fade" id="merchantAccountsModal" tabindex="-1" role="dialog" aria-labelledby="merchantAccountsModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="merchantAccountsModalLabel">Merchant Accounts</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <!-- Content will be loaded here -->
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+
                                            
 
                                             
@@ -344,4 +368,53 @@
         });
 
     </script>
+
+    <script>
+        // Event handler for merchant accounts modal trigger
+        $('#merchantAccountsTrigger').click(function () {
+            var merchantId = $(this).data('merchant-id');
+            var url = '/Admin/MerchantAccounts?merchantId=' + merchantId;
+
+            // Fetch the merchant accounts data
+            $.get(url, function (data) {
+                // Construct the HTML content for merchant accounts
+                var modalContent = '<div class="modal-body">';
+                modalContent += '<h5>Merchant Accounts</h5>';
+                modalContent += '<p>Total Price Sum: ' + data.TotalPriceSum + ' BDT</p>';
+                modalContent += '<p>Amount Paid: ' + data.AmountPaid + ' BDT</p>';
+                modalContent += '<p>Due Amount: ' + data.DueAmount + ' BDT</p>';
+                // Add more data as needed
+                modalContent += '</div>';
+
+                // Set the modal body content and display the modal
+                $('#merchantAccountsModal .modal-body').html(modalContent);
+                $('#merchantAccountsModal').modal('show');
+            });
+        });
+
+        // Event handler for rider accounts modal trigger
+        $('#riderAccountsTrigger').click(function () {
+            var riderId = $(this).data('rider-id');
+            var url = '/Admin/RiderAccounts?riderId=' + riderId;
+
+            // Fetch the rider accounts data
+            $.get(url, function (data) {
+                // Construct the HTML content for rider accounts
+                var modalContent = '<div class="modal-body">';
+                modalContent += '<h5>Rider Accounts</h5>';
+                modalContent += '<p>Total Delivery Charge: ' + data.TotalDeliveryCharge + ' BDT</p>';
+                modalContent += '<p>Amount Collected: ' + data.AmountCollected + ' BDT</p>';
+                modalContent += '<p>Hub Received: ' + data.HubReceivedAmount + ' BDT</p>';
+                modalContent += '<p>Hub Due: ' + data.DueAmount + ' BDT</p>';
+                // Add more data as needed
+                modalContent += '</div>';
+
+                // Set the modal body content and display the modal
+                $('#riderAccountsModal .modal-body').html(modalContent);
+                $('#riderAccountsModal').modal('show');
+            });
+        });
+    </script>
+
+
 }

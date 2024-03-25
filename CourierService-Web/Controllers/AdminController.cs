@@ -124,7 +124,49 @@ namespace CourierService_Web.Controllers
                 .ToList();
             ViewBag.TodayParcelList = todayParcelList;
 
-          
+            //total from MerchantPayment table for today
+            var todayMerchantPayment = _context.MerchantPayments
+                .Where(p => p.DateTime >= todayStart && p.DateTime < tomorrowStart)
+                .Sum(p => p.AmountPaid);
+            ViewBag.TodayMerchantPayment = todayMerchantPayment;
+
+            //total delivery charge for today which is delivered, exchange and return
+            var todayDeliveryCharge = _context.Parcels
+                .Where(p => p.DeliveryParcel.DeliveryDate >= todayStart && p.DeliveryParcel.DeliveryDate < tomorrowStart)
+                .Sum(p => p.DeliveryCharge);
+            ViewBag.TodayDeliveryCharge = todayDeliveryCharge;
+
+            //total delivery charge for today which is delivered, exchange and return
+            var todayExchangeCharge = _context.Parcels
+                .Where(p => p.ExchangeParcel.ExchangeDate >= todayStart && p.ExchangeParcel.ExchangeDate < tomorrowStart)
+                .Sum(p => p.DeliveryCharge);
+            ViewBag.TodayExchangeCharge = todayExchangeCharge;
+
+            //total delivery charge for today which is delivered, exchange and return
+            var todayReturnCharge = _context.Parcels
+                .Where(p => p.ReturnParcel.ReturnDate >= todayStart && p.ReturnParcel.ReturnDate < tomorrowStart)
+                .Sum(p => p.DeliveryCharge);
+            ViewBag.TodayReturnCharge = todayReturnCharge;
+
+            var totalDeliveryCharge = todayDeliveryCharge + todayExchangeCharge + todayReturnCharge;
+            ViewBag.TotalDeliveryCharge = totalDeliveryCharge;
+
+
+            //calculate total COD for today
+            var totalCOD = _context.Parcels
+                .Where(p => p.DeliveryParcel.DeliveryDate >= todayStart && p.DeliveryParcel.DeliveryDate < tomorrowStart)
+                .Sum(p => p.COD);
+            ViewBag.TotalCOD = totalCOD;
+
+            var amountPayable = ViewBag.TodayMerchantPayment - ViewBag.TotalDeliveryCharge - ViewBag.TotalCOD;
+            ViewBag.AmountPayable = amountPayable;
+
+            var profit = ViewBag.TodayMerchantPayment - ViewBag.AmountPayable;
+            ViewBag.Profit = profit;
+
+
+
+
 
 
 
@@ -141,6 +183,8 @@ namespace CourierService_Web.Controllers
                 return false;
             }
         }
+
+       
 
         //Return Parcel List
         public IActionResult ReturnParcelList(DateTime? selectedDate)

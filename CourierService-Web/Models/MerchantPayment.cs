@@ -5,7 +5,9 @@ namespace CourierService_Web.Models
     public class MerchantPayment
     {
         public string Id { get; set; } = "MerchantPAY-" + Guid.NewGuid().ToString();
-        public string MerchantId { get; set; }
+
+        [ForeignKey("MerchantId")]
+        public string? MerchantId { get; set; }
         public Merchant? Merchant { get; set; }
 
         public int? TotalAmount { get; set; }
