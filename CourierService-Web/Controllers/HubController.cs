@@ -151,7 +151,8 @@ namespace CourierService_Web.Controllers
                 TotalAmount = totalAmountCollected,
                 AmountPaid = totalAmountCollected,
                 DueAmount = 0,
-                DateTime = DateTime.Now
+                DateTime = DateTime.Now,
+                HubPaymentId = _context.HubPayments.FirstOrDefault(h => h.HubId == hubId && h.DateTime.Date == DateTime.Today.Date)?.Id
             };
             
 
@@ -323,6 +324,59 @@ namespace CourierService_Web.Controllers
             _context.SaveChanges();
             TempData["success"] = "Payment Not Received";
             return RedirectToAction("Index");
+        }
+
+        //RiderPayment List according to hubId
+        public IActionResult RiderPaymentList()
+        {
+            if (!IsHubLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            var hubId = Request.Cookies["HubId"];
+            //rider payment list according to hubId today
+            var riderPayments = _context.riderPayments
+                .Where(r => r.Parcel.HubId == hubId && r.PaymentDate.Date == DateTime.Today.Date)
+                .Include(r => r.Parcel)
+                .Include(r => r.Rider)
+                .ToList();
+
+            //amount collected by rider today according to hubId
+            ViewBag.AmountCollected = riderPayments.Sum(p => p.Amount);
+           
+
+
+            //hub received amount by hub today
+            var hubReceivedAmount = _context.HubPayments
+                .Where(h => h.HubId == hubId && h.DateTime.Date == DateTime.Today.Date)
+                .Sum(h => h.AmountReceived);
+            ViewBag.HubReceivedAmount = hubReceivedAmount;
+           
+
+
+            //due
+            ViewBag.DueAmount = @ViewBag.AmountCollected - @ViewBag.HubReceivedAmount;
+
+            return View(riderPayments);
+        }
+
+        //merchant payment list according to hubId
+        public IActionResult MerchantPaymentList()
+        {
+            if (!IsHubLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            var hubId = Request.Cookies["HubId"];
+            //merchant payment list according to hubId today
+            var merchantPayments = _context.MerchantPayments
+                .Where(m => m.Merchant.HubId == hubId && m.DateTime.Date == DateTime.Today.Date)
+                .Include(m => m.Merchant)
+                .ToList();
+            
+            return View(merchantPayments);
         }
 
 

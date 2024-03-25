@@ -192,6 +192,28 @@
                                         <span> Application User </span>
                                     </a>
                                 </li>
+
+                                <li>
+                                    <a asp-controller="Admin" asp-action="MerchantPaymentList">
+                                        <i class="fas fa-money-check-alt"></i>
+                                        <span> Merchant Payment </span>
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a asp-controller="Admin" asp-action="HubPaymentList">
+                                        <i class="fas fa-warehouse"></i>
+                                        <span> Hub Payment </span>
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a asp-controller="Admin" asp-action="RiderPaymentList">
+                                        <i class="fas fa-motorcycle"></i>
+                                        <span> Rider Payment </span>
+                                    </a>
+                                </li>
+
                                 
                             }
                             @* <li>
@@ -365,6 +387,23 @@
                                     <span> Exchange Parcel </span>
                                 </a>
                             </li> *@
+
+
+                            <li>
+                                <a asp-controller="Hub" asp-action="MerchantPaymentList">
+                                    <i class="fas fa-money-check-alt"></i>
+                                    <span> Merchant Payment </span>
+                                </a>
+                            </li>
+
+                           
+
+                            <li>
+                                <a asp-controller="Hub" asp-action="RiderPaymentList">
+                                    <i class="fas fa-motorcycle"></i>
+                                    <span> Rider Payment </span>
+                                </a>
+                            </li>
 
                             <li>
                                 <a asp-controller="Home" asp-action="Logout">

@@ -1,0 +1,49 @@
+﻿@model IEnumerable<MerchantPayment>
+
+@{
+    ViewData["Title"] = "Merchant Payment List";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row justify-content-center">
+                <div class="col-lg-12">
+                    <div class="card-box">
+                        <h4 class="header-title text-success">Merchant Payment List</h4>
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>SL</th>
+                                        <th>Merchant Name</th>
+                                        <th>Total Amount</th>
+                                        <th>Paid Amount</th>
+                                        <th>Due Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int sl = 1;
+                                    }
+                                    @foreach (var payment in Model)
+                                    {
+                                        <tr>
+                                            <td>@sl</td>
+                                            <td>@payment.Merchant.Name</td>
+                                            <td>@payment.TotalAmount</td>
+                                            <td>@payment.AmountPaid</td>
+                                            <td>@payment.DueAmount</td>
+                                        </tr>
+                                        sl++;
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

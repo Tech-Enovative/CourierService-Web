@@ -355,6 +355,74 @@ namespace CourierService_Web.Controllers
             return View(merchants);
         }
 
+        //merchant payment list
+        public IActionResult MerchantPaymentList()
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            //payment list for today
+            var merchantPayments = _context.MerchantPayments.Include(u => u.Merchant).Where(p => p.DateTime.Date == DateTime.Today.Date).ToList();
+           
+            if (merchantPayments == null)
+            {
+                return NotFound();
+            }
+            return View(merchantPayments);
+        }
+
+        //hub payment list
+        public IActionResult HubPaymentList()
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            //payment list for today
+            var hubPayments = _context.HubPayments
+     .Include(p => p.Hub)
+     .Include(p => p.MerchantPayments) // Include merchant payments
+         .ThenInclude(mp => mp.Merchant) // Then include merchant info
+     .Where(p => p.DateTime.Date == DateTime.Today.Date)
+     .ToList();
+
+
+            if (hubPayments == null)
+            {
+                return NotFound();
+            }
+            return View(hubPayments);
+        }
+
+        //rider payment list
+        public IActionResult RiderPaymentList()
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            //rider payment list for today
+            var riderPayments = _context.riderPayments.Include(u => u.Rider).Where(p => p.PaymentDate.Date == DateTime.Today.Date).ToList();
+           
+            if (riderPayments == null)
+            {
+                return NotFound();
+            }
+            //amount collected by rider today
+            ViewBag.AmountCollected = riderPayments.Where(p => p.PaymentDate.Date == DateTime.Today.Date).Sum(p => p.Amount);
+            
+
+            //hub received amount by hub today
+            ViewBag.HubReceivedAmount = _context.HubPayments.Where(p => p.DateTime.Date == DateTime.Today.Date).Include(r=>r.RiderPayments).Sum(p => p.AmountReceived);
+           
+
+            //due
+            ViewBag.DueAmount = @ViewBag.AmountCollected - @ViewBag.HubReceivedAmount;
+            return View(riderPayments);
+        }
+
 
         public IActionResult Rider()
         {
