@@ -362,7 +362,7 @@ namespace CourierService_Web.Controllers
         }
 
         //merchant payment list according to hubId
-        public IActionResult MerchantPaymentList()
+        public IActionResult MerchantPaymentList(bool showDuePayments = false)
         {
             if (!IsHubLoggedIn())
             {
@@ -373,18 +373,27 @@ namespace CourierService_Web.Controllers
             {
                 var hubId = Request.Cookies["HubId"];
 
-                //hub payment Id for today
+                // Retrieve hub payment Id for today
                 var hubPaymentId = _context.HubPayments
                     .FirstOrDefault(h => h.HubId == hubId && h.DateTime.Date == DateTime.Today.Date)?.Id;
 
                 // Log the retrieved hubId for debugging
                 Console.WriteLine("HubId from cookie: " + hubId);
 
-                //merchant payment list according to hubId today
-                var merchantPayments = _context.MerchantPayments
-                    .Where(m => m.HubPaymentId == hubPaymentId && m.DateTime.Date == DateTime.Today.Date)
-                    .Include(m => m.Merchant)
-                    .ToList();
+                // Query for merchant payments according to hubId and date
+                var merchantPaymentsQuery = _context.MerchantPayments
+                    .Where(m => m.HubPaymentId == hubPaymentId && m.DateTime.Date == DateTime.Today.Date);
+
+                // Include merchant details
+                merchantPaymentsQuery = merchantPaymentsQuery.Include(m => m.Merchant);
+
+                // Filter by due payments if requested
+                if (showDuePayments)
+                {
+                    merchantPaymentsQuery = merchantPaymentsQuery.Where(p => p.DueAmount > 0);
+                }
+
+                var merchantPayments = merchantPaymentsQuery.ToList();
 
                 // Log the count of retrieved merchant payments for debugging
                 Console.WriteLine("Merchant payments count: " + merchantPayments.Count);
@@ -398,6 +407,8 @@ namespace CourierService_Web.Controllers
                 return RedirectToAction("Error", "Home");
             }
         }
+
+
 
 
 
