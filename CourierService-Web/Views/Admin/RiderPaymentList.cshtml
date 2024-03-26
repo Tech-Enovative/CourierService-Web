@@ -1,4 +1,4 @@
-﻿@model IEnumerable<RiderPayment>
+﻿@model IEnumerable<dynamic> // Use dynamic model type
 
 @{
     ViewData["Title"] = "Rider Payment List";
@@ -31,14 +31,15 @@
                                     @{
                                         int sl = 1;
                                     }
-                                    @foreach (var payment in Model)
+                                    @foreach (var rider in Model)
                                     {
                                         <tr>
                                             <td>@sl</td>
-                                            <td>@payment.Rider.Name</td>
-                                            <td>@ViewBag.AmountCollected</td>
+                                            <td>@rider.RiderName</td>
+                                            <td>@rider.TotalAmount</td>
+                                            
                                             <td>@ViewBag.HubReceivedAmount</td>
-                                            <td>@ViewBag.DueAmount</td>
+                                            <td>@ViewBag.Due</td>
                                         </tr>
                                         sl++;
                                     }
@@ -56,15 +57,13 @@
     <script>
         $(document).ready(function () {
             $('#withoutDueButton').on('click', function () {
-                var dueAmount = @ViewBag.DueAmount;
                 $('#riderPaymentsTable tbody tr').show();
-                $('#riderPaymentsTable tbody tr:contains("' + dueAmount + '")').hide();
+                $('#riderPaymentsTable tbody tr:contains("Due")').hide();
             });
 
             $('#dueButton').on('click', function () {
-                var dueAmount = @ViewBag.DueAmount;
                 $('#riderPaymentsTable tbody tr').hide();
-                $('#riderPaymentsTable tbody tr:contains("' + dueAmount + '")').show();
+                $('#riderPaymentsTable tbody tr:contains("Due")').show();
             });
         });
     </script>

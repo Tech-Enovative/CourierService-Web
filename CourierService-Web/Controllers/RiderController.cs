@@ -502,7 +502,7 @@ namespace CourierService_Web.Controllers
             {
                 Amount = parcel.TotalPrice,
                 ParcelId = parcel.Id,
-                RiderId = parcel.RiderId
+                RiderId = parcel.RiderId,
             };
             _context.riderPayments.Add(riderPayment);
             _context.SaveChanges();

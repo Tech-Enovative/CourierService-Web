@@ -223,8 +223,11 @@ namespace CourierService_Web.Controllers
                 TotalAmount = totalAmount,
                 AmountReceived = totalAmount,
                 DueAmount = 0,
-                DateTime = DateTime.Now
+                DateTime = DateTime.Now,
+                //RiderPayments = _context.riderPayments.Where(r => r.Parcel.HubId == hubId && r.PaymentDate.Date == DateTime.Today.Date).ToList()
             };
+
+            //
 
 
 
@@ -335,31 +338,38 @@ namespace CourierService_Web.Controllers
             }
 
             var hubId = Request.Cookies["HubId"];
-            //rider payment list according to hubId today
+            // Rider payment list according to hubId today
             var riderPayments = _context.riderPayments
-                .Where(r => r.Parcel.HubId == hubId && r.PaymentDate.Date == DateTime.Today.Date)
-                .Include(r => r.Parcel)
-                .Include(r => r.Rider)
+                .Where(rp => rp.Parcel.HubId == hubId && rp.PaymentDate.Date == DateTime.Today.Date)
+                .Include(rp => rp.Parcel)
+                .Include(rp => rp.Rider)
                 .ToList();
 
-            //amount collected by rider today according to hubId
-            ViewBag.AmountCollected = riderPayments.Sum(p => p.Amount);
-           
+            // Group rider payments by Rider and calculate the total amount for each Rider
+            var riderTotalAmounts = riderPayments.GroupBy(rp => rp.RiderId)
+                .Select(g => new
+                {
+                    RiderId = g.Key,
+                    RiderName = g.First().Rider.Name,
+                    TotalAmount = g.Sum(rp => rp.Amount)
+                })
+                .ToList();
 
+            // Amount collected by rider today according to hubId
+            ViewBag.AmountCollected = riderPayments.Sum(rp => rp.Amount);
 
-            //hub received amount by hub today
+            // Hub received amount by hub today
             var hubReceivedAmount = _context.HubPayments
                 .Where(h => h.HubId == hubId && h.DateTime.Date == DateTime.Today.Date)
                 .Sum(h => h.AmountReceived);
             ViewBag.HubReceivedAmount = hubReceivedAmount;
-           
 
+            // Due
+            ViewBag.DueAmount = ViewBag.AmountCollected - ViewBag.HubReceivedAmount;
 
-            //due
-            ViewBag.DueAmount = @ViewBag.AmountCollected - @ViewBag.HubReceivedAmount;
-
-            return View(riderPayments);
+            return View(riderTotalAmounts);
         }
+
 
         //merchant payment list according to hubId
         public IActionResult MerchantPaymentList(bool showDuePayments = false)

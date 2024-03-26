@@ -69,7 +69,7 @@ namespace CourierService_Web.Models
         public string? HubId { get; set; }
         public Hub? Hub { get; set; }
 
-        public List<RiderPayment> riderPayments { get; set;}
+        public List<RiderPayment>? riderPayments { get; set;}
         
     }
 }

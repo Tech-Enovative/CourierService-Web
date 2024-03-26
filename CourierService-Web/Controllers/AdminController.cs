@@ -425,7 +425,6 @@ namespace CourierService_Web.Controllers
 
 
 
-        //rider payment list
         public IActionResult RiderPaymentList()
         {
             if (!IsAdminLoggedIn())
@@ -433,25 +432,40 @@ namespace CourierService_Web.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-            //rider payment list for today
-            var riderPayments = _context.riderPayments.Include(u => u.Rider).Where(p => p.PaymentDate.Date == DateTime.Today.Date).ToList();
-           
+            // Retrieve rider payments for today
+            var riderPayments = _context.riderPayments
+                .Include(rp => rp.Rider)
+                .Where(rp => rp.PaymentDate.Date == DateTime.Today.Date)
+                .ToList();
+
             if (riderPayments == null)
             {
                 return NotFound();
             }
-            //amount collected by rider today
-            ViewBag.AmountCollected = riderPayments.Where(p => p.PaymentDate.Date == DateTime.Today.Date).Sum(p => p.Amount);
-            
 
-            //hub received amount by hub today
-            ViewBag.HubReceivedAmount = _context.HubPayments.Where(p => p.DateTime.Date == DateTime.Today.Date).Include(r=>r.RiderPayments).Sum(p => p.AmountReceived);
-           
+            // Group rider payments by Rider and calculate the total amount for each Rider
+            var riderTotalAmounts = riderPayments.GroupBy(rp => rp.RiderId)
+                .Select(g => new
+                {
+                    RiderId = g.Key,
+                    RiderName = g.First().Rider.Name,
+                    TotalAmount = g.Sum(rp => rp.Amount)
+                })
+                .ToList();
+            //hub receive amount for today
+            ViewBag.HubReceivedAmount = _context.HubPayments
+                .Where(p => p.DateTime.Date == DateTime.Today.Date)
+                .Sum(p => p.AmountReceived);
 
-            //due
-            ViewBag.DueAmount = @ViewBag.AmountCollected - @ViewBag.HubReceivedAmount;
-            return View(riderPayments);
+            ViewBag.AmountCollected = riderPayments.Sum(rp => rp.Amount);
+            ViewBag.Due = ViewBag.HubReceivedAmount - ViewBag.AmountCollected;
+
+
+
+            return View(riderTotalAmounts);
         }
+
+
 
 
         public IActionResult Rider()
