@@ -160,17 +160,19 @@
 
             <div class="row justify-content-center mb-2">
                 <div class="col-md-6 col-xl-3">
-                    <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#receiveAmountModal">
+                    <button id="partialPaymentButton" type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#receiveAmountModal">
                         Partial Payment
                     </button>
                 </div>
 
                 <div class="col-md-6 col-xl-3">
                     <form method="post" asp-controller="Hub" asp-action="FullPayment">
-                        <button type="submit" class="btn btn-success btn-block">Full Payment</button>
+                        <button id="fullPaymentButton" type="submit" class="btn btn-success btn-block">Full Payment</button>
                     </form>
                 </div>
             </div>
+
+            
             
 
             @* <form method="post" asp-controller="Hub" asp-action="NotReceived">
@@ -489,3 +491,32 @@
 
 </div>
 <!-- End Page content -->
+<script>
+    // Function to enable/disable payment buttons based on current time
+    function enablePaymentButtons() {
+        var currentDate = new Date();
+        var currentHour = currentDate.getHours();
+        var currentMinute = currentDate.getMinutes();
+
+        // Check if current time is after 4 PM (16:00) and before 12 AM (00:00)
+        if ((currentHour > 18 || (currentHour == 18 && currentMinute >= 0)) && currentHour < 24) {
+            // Enable partial payment button
+            document.getElementById('partialPaymentButton').removeAttribute('disabled');
+            // Enable full payment button
+            document.getElementById('fullPaymentButton').removeAttribute('disabled');
+        } else {
+            // Disable partial payment button
+            document.getElementById('partialPaymentButton').setAttribute('disabled', 'disabled');
+            // Disable full payment button
+            document.getElementById('fullPaymentButton').setAttribute('disabled', 'disabled');
+        }
+    }
+
+    // Call the function when the page loads
+    window.onload = enablePaymentButtons;
+
+    // Call the function every minute to keep the buttons updated
+    setInterval(enablePaymentButtons, 60000); // 60000 milliseconds = 1 minute
+</script>
+
+                                        
