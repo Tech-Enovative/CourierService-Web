@@ -47,7 +47,7 @@
                                             <td>@item.Name</td>
                                             <td>@item.Email</td>
                                             <td>@item.ContactNumber</td>
-                                            <td>@(item.CreatedAt.ToString("M/d/yyyy, h:mm tt"))</td>
+                                            <td>@(item.CreatedAt.ToString("M/d/yyyy"))</td>
                                             <td>
                                                 <a asp-action="EditMerchant" asp-route-id="@item.Id" asp-controller="Admin" class="btn btn-primary">
                                                     <i class="fas fa-edit"></i>

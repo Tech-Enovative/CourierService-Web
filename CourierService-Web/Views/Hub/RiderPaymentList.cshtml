@@ -25,6 +25,7 @@
                                         <th>Total Amount</th>
                                         <th>Paid Amount</th>
                                         <th>Due Amount</th>
+                                        <th>Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -39,6 +40,8 @@
                                             <td>@rider.TotalAmount</td>
                                             <td>@ViewBag.AmountCollected</td>
                                             <td>@ViewBag.DueAmount</td>
+                                            
+                                            <td>@DateTime.Now.ToString("dd/MM/yyyy")</td>
                                         </tr>
                                         sl++;
                                     }

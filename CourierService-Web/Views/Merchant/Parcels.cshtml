@@ -262,7 +262,7 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Get the input element and table rows
+            // Get the input element, status filter, and table rows
             var searchInput = document.getElementById('searchInput');
             var statusFilter = document.getElementById('statusFilter');
             var rows = document.querySelectorAll("#parcelTable tbody tr");
@@ -280,21 +280,19 @@
                 // Loop through all table rows
                 rows.forEach(function (row) {
                     var shouldDisplay = false;
-                    // Loop through all columns in each row
-                    row.querySelectorAll('td').forEach(function (cell, index) {
-                        if (index !== 10 && cell.textContent.toLowerCase().indexOf(searchText) !== -1) {
-                            shouldDisplay = true;
-                        }
+                    var statusCell = row.querySelectorAll('td')[10]; // Assuming status is at index 10
+                    var statusText = statusCell.textContent.toLowerCase();
+
+                    // Check if the row contains the search text in any cell
+                    var containsSearchText = Array.from(row.querySelectorAll('td')).some(function (cell) {
+                        return cell.textContent.toLowerCase().indexOf(searchText) !== -1;
                     });
-                    // Filter by selected status
-                    if (selectedStatus !== "" && row.style.display !== 'none') {
-                        var statusCell = row.querySelectorAll('td')[10]; // Assuming status is at index 10
-                        if (statusCell.textContent.toLowerCase() !== selectedStatus) {
-                            shouldDisplay = false;
-                        }
-                    }
+
+                    // Check if the row matches the selected status
+                    var matchesStatus = selectedStatus === "" || statusText === selectedStatus;
+
                     // Display or hide row based on search text and selected status
-                    if (shouldDisplay) {
+                    if (matchesStatus && (searchText === "" || containsSearchText)) {
                         row.style.display = '';
                     } else {
                         row.style.display = 'none';
@@ -302,6 +300,5 @@
                 });
             }
         });
-
     </script>
 }

@@ -58,7 +58,7 @@
                                             <td>@item.Address</td>
                                             <td>@item.CreatedBy</td>
                                             
-                                            <td>@(item.CreatedAt?.ToString("M/d/yyyy, h:mm tt"))</td>
+                                            <td>@(item.CreatedAt?.ToString("M/d/yyyy"))</td>
                                             @if (@item.Status == 1)
                                             {
                                                 <td><span class="badge badge-success">Active</span></td>

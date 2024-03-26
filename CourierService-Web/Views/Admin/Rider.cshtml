@@ -49,7 +49,7 @@
                                             <td>@item.Email</td>
                                             <td>@item.ContactNumber</td>
                                             <td>@item.Salary</td>
-                                            <td>@(item.CreatedAt?.ToString("M/d/yyyy, h:mm tt"))</td>
+                                            <td>@(item.CreatedAt?.ToString("M/d/yyyy"))</td>
                                             @if (@item.Status == 1)
                                             {
                                                 <td><span class="badge badge-success">Active</span></td>
