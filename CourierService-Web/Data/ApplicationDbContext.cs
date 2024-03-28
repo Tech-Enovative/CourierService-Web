@@ -160,6 +160,12 @@ namespace CourierService_Web.Data
                 .WithMany(h => h.MerchantPayments)
                 .HasForeignKey(m => m.HubPaymentId);
 
+            //relationship between merchant and merchant payment
+            modelBuilder.Entity<MerchantPayment>()
+                .HasOne(m => m.Merchant)
+                .WithMany(m => m.MerchantPayments)
+                .HasForeignKey(m => m.MerchantId);
+
            
 
 

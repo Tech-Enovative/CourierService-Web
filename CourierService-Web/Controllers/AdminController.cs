@@ -681,14 +681,66 @@ namespace CourierService_Web.Controllers
             // Find all parcels associated with the rider
             var parcels = _context.Parcels.Where(p => p.RiderId == id).ToList();
 
-            // Set RiderId to null for all associated parcels
-            foreach (var parcel in parcels)
+            if (parcels.Any())
             {
-                parcel.RiderId = null;
+                // Update or delete associated parcels as needed
+                foreach (var parcel in parcels)
+                {
+                   
+                    parcel.RiderId = null;
+                }
+
+                // Save changes after updating or deleting parcels
+                _context.SaveChanges();
             }
 
-            // Save changes to update the parcels
-            _context.SaveChanges();
+            //find all delivered parcels associated with the rider
+            var deliveredParcels = _context.DeliveredParcels.Where(p => p.RiderId == id).ToList();
+            if (deliveredParcels.Any())
+            {
+                foreach (var parcel in deliveredParcels)
+                {
+                    parcel.RiderId = null;
+                }
+                _context.SaveChanges();
+            }
+
+            //find all exchange parcels associated with the rider
+            var exchangeParcels = _context.ExchangeParcels.Where(p => p.RiderId == id).ToList();
+            if (exchangeParcels.Any())
+            {
+                foreach (var parcel in exchangeParcels)
+                {
+                    parcel.RiderId = null;
+                }
+                _context.SaveChanges();
+            }
+
+            //find all return parcels associated with the rider
+            var returnParcels = _context.ReturnParcels.Where(p => p.RiderId == id).ToList();
+            if (returnParcels.Any())
+            {
+                foreach (var parcel in returnParcels)
+                {
+                    parcel.RiderId = null;
+                }
+                _context.SaveChanges();
+            }
+
+            // Find all rider payments associated with the rider
+            var riderPayments = _context.riderPayments.Where(rp => rp.RiderId == id).ToList();
+            if (riderPayments.Any())
+            {
+                // Delete associated rider payments
+                _context.riderPayments.RemoveRange(riderPayments);
+
+                // Save changes after deleting rider payments
+                _context.SaveChanges();
+            }
+
+
+
+            
 
             //delete from aws s3
             if (rider.ImageUrl != null)
@@ -963,7 +1015,6 @@ namespace CourierService_Web.Controllers
 
         public IActionResult DeleteMerchant(string? id)
         {
-
             if (!IsAdminLoggedIn() || Request.Cookies["AdminEmail"] != "flyerbd@gmail.com")
             {
                 return RedirectToAction("Login", "Home");
@@ -974,17 +1025,71 @@ namespace CourierService_Web.Controllers
                 return NotFound();
             }
 
-            // Find all parcels associated with the rider
-            var parcels = _context.Parcels.Where(p => p.MerchantId == id).ToList();
+            // Find all merchant payments associated with the merchant
+            var merchantPayments = _context.MerchantPayments.Where(mp => mp.MerchantId == id).ToList();
 
-            // Set RiderId to null for all associated parcels
-            foreach (var parcel in parcels)
+            // If there are associated merchant payments, handle them
+            if (merchantPayments.Any())
             {
-                parcel.MerchantId = null;
+                // Delete associated merchant payments
+                _context.MerchantPayments.RemoveRange(merchantPayments);
+
+                // Save changes after deleting merchant payments
+                _context.SaveChanges();
             }
 
-            // Save changes to update the parcels
-            _context.SaveChanges();
+            // Find all parcels associated with the merchant
+            var parcels = _context.DeliveredParcels.Where(p => p.MerchantId == id).ToList();
+
+            // If there are associated parcels, handle them
+            if (parcels.Any())
+            {
+                // Update or delete associated parcels as needed
+                foreach (var parcel in parcels)
+                {
+                    // Here you may choose to delete the parcel or update its MerchantId to null
+                    // For example:
+                    // _context.DeliveredParcels.Remove(parcel);
+                    // or
+                    parcel.MerchantId = null;
+                }
+
+                // Save changes after updating or deleting parcels
+                _context.SaveChanges();
+            }
+
+            //find all delivered parcels associated with the merchant
+            var deliveredParcels = _context.DeliveredParcels.Where(p => p.MerchantId == id).ToList();
+            if(deliveredParcels.Any())
+            {
+                foreach (var parcel in deliveredParcels)
+                {
+                    parcel.MerchantId = null;
+                }
+                _context.SaveChanges();
+            }
+
+            //find all exchange parcels associated with the merchant
+            var exchangeParcels = _context.ExchangeParcels.Where(p => p.MerchantId == id).ToList();
+            if (exchangeParcels.Any())
+            {
+                foreach (var parcel in exchangeParcels)
+                {
+                    parcel.MerchantId = null;
+                }
+                _context.SaveChanges();
+            }
+
+            //find all return parcels associated with the merchant
+            var returnParcels = _context.ReturnParcels.Where(p => p.MerchantId == id).ToList();
+            if (returnParcels.Any())
+            {
+                foreach (var parcel in returnParcels)
+                {
+                    parcel.MerchantId = null;
+                }
+                _context.SaveChanges();
+            }
 
             var merchant = _context.Merchants.Find(id);
             if (merchant == null)
@@ -992,22 +1097,25 @@ namespace CourierService_Web.Controllers
                 return NotFound();
             }
 
-            //delete from aws s3
+            // Delete from AWS S3
             if (merchant.ImageUrl != null)
             {
                 string[] split = merchant.ImageUrl.Split("/");
                 string key = "Merchant/" + split[split.Length - 1];
-                var s3Client = new AmazonS3Client("AKIAU6GDYMTHTIZML6UG", "9Mjr5N26gAtUX6aOyGBNy688zMgP9Dt46ndJOIh/", RegionEndpoint.USEast1);
+                var s3Client = new AmazonS3Client("YOUR_ACCESS_KEY_ID", "YOUR_SECRET_ACCESS_KEY", RegionEndpoint.USEast1);
                 var fileTransferUtility = new TransferUtility(s3Client);
                 fileTransferUtility.S3Client.DeleteObjectAsync("courierbuckets3", key);
             }
 
-
+            // Remove the merchant from the database
             _context.Merchants.Remove(merchant);
             _context.SaveChanges();
+
             TempData["error"] = "Merchant Deleted Successfully";
             return RedirectToAction("Merchant");
         }
+
+
 
         public IActionResult Parcel(DateTime? startDate, DateTime? endDate)
         {
@@ -1323,20 +1431,114 @@ namespace CourierService_Web.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
+
             if (id == null)
             {
                 return NotFound();
             }
+
             var hub = _context.Hubs.Find(id);
+
             if (hub == null)
             {
                 return NotFound();
             }
-            _context.Hubs.Remove(hub);
-            _context.SaveChanges();
-            TempData["error"] = "Hub Deleted Successfully";
-            return RedirectToAction("Hub");
+
+            try
+            {
+                // Find all delivered parcels associated with the hub
+                var deliveredParcels = _context.DeliveredParcels.Where(dp => dp.HubId == id).ToList();
+
+                // If there are associated delivered parcels, handle them
+                if (deliveredParcels.Any())
+                {
+                    // Update HubId to null for each associated delivered parcel
+                    foreach (var parcel in deliveredParcels)
+                    {
+                        parcel.HubId = null;
+                    }
+                }
+
+                // Save changes to update delivered parcels
+                _context.SaveChanges();
+
+                //find all parcels associated with the hub
+                var parcels = _context.Parcels.Where(p => p.HubId == id).ToList();
+                if (parcels.Any())
+                {
+                    foreach(var parcel in parcels)
+                    {
+                        parcel.HubId = null;
+                    }
+                }
+                _context.SaveChanges();
+
+                // find all exchanged parcels associated with the hub
+                var exchangedParcels = _context.ExchangeParcels.Where(ep => ep.HubId == id).ToList();
+                if (exchangedParcels.Any())
+                {
+                    foreach (var parcel in exchangedParcels)
+                    {
+                        parcel.HubId = null;
+                    }
+                }
+                _context.SaveChanges();
+
+                //find all returned parcels associated with the hub
+                var returnedParcels = _context.ReturnParcels.Where(rp => rp.HubId == id).ToList();
+                if (returnedParcels.Any())
+                {
+                    foreach (var parcel in returnedParcels)
+                    {
+                        parcel.HubId = null;
+                    }
+                }
+                _context.SaveChanges();
+
+
+               
+
+
+                // Find all hub payments associated with the hub
+                var hubPayments = _context.HubPayments.Where(hp => hp.HubId == id).ToList();
+
+                // If there are associated hub payments, handle them
+                if (hubPayments.Any())
+                {
+                    // Find all merchant payments associated with the hub payments
+                    var merchantPayments = _context.MerchantPayments.Where(mp => hubPayments.Select(hp => hp.Id).Contains(mp.HubPaymentId)).ToList();
+
+                    // If there are associated merchant payments, delete them
+                    if (merchantPayments.Any())
+                    {
+                        _context.MerchantPayments.RemoveRange(merchantPayments);
+                    }
+
+                    // Delete associated hub payments
+                    _context.HubPayments.RemoveRange(hubPayments);
+                }
+
+                // Save changes to delete hub payments and associated merchant payments
+                _context.SaveChanges();
+
+                // Remove the hub from the database
+                _context.Hubs.Remove(hub);
+                _context.SaveChanges();
+
+                TempData["error"] = "Hub Deleted Successfully";
+                return RedirectToAction("Hub");
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = "An error occurred while deleting the hub: " + ex.Message;
+                return RedirectToAction("Hub");
+            }
         }
+
+
+
+
+
 
         //edit hub
         public IActionResult EditHub(string? id)

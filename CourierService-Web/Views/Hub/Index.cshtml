@@ -112,23 +112,18 @@
                     </div>
                 </div>
                 
-                @* <div class="col-md-6 col-xl-3">
-                    <div class="card-box tilebox-one bg-primary d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Total Amount</h6>
-                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TotalAmountHub</span></h3>
-                        </div>
-                        <i class="fas fa-dollar-sign fa-3x text-black"></i>
-                    </div>
-                </div> *@
+                <div class="col-md-6 col-xl-3">
+                    
+                </div>
+
 
                 <div class="col-md-6 col-xl-3">
                     <div class="card-box tilebox-one bg-info d-flex align-items-center justify-content-between">
                         <div>
                             <h6 class="text-black font-weight-bold text-uppercase mt-0">Today Rider Received</h6>
-                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TotalAmount</span></h3>
+                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TotalAmount </span> BDT</h3>
                         </div>
-                        <i class="fas fa-truck-loading fa-3x text-black"></i>
+                        <i class="fas fa-inbox fa-3x text-black"></i>
                     </div>
                 </div>
 
@@ -136,7 +131,7 @@
                     <div class="card-box tilebox-one bg-success d-flex align-items-center justify-content-between">
                         <div>
                             <h6 class="text-black font-weight-bold text-uppercase mt-0">Payment Received</h6>
-                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.ReceivedAmount</span></h3>
+                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.ReceivedAmount</span> BDT</h3>
                         </div>
                         <i class="fas fa-check-circle fa-3x text-black"></i>
                     </div>
@@ -147,7 +142,7 @@
                         <div>
                             <h6 class="text-black font-weight-bold text-uppercase mt-0">Due</h6>
                             @* <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TotalAmount</span></h3>  *@
-                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.DueAmountHub</span></h3>
+                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.DueAmountHub</span> BDT</h3>
                         </div>
                         <i class="fas fa-exclamation-circle fa-3x text-black"></i>
                     </div>
@@ -498,7 +493,7 @@
         var currentHour = currentDate.getHours();
         var currentMinute = currentDate.getMinutes();
 
-        // Check if current time is after 4 PM (16:00) and before 12 AM (00:00)
+        // Check if current time is after 7 PM (16:00) and before 12 AM (00:00)
         if ((currentHour > 18 || (currentHour == 18 && currentMinute >= 0)) && currentHour < 24) {
             // Enable partial payment button
             document.getElementById('partialPaymentButton').removeAttribute('disabled');
