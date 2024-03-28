@@ -100,8 +100,8 @@
                                             {
 
                                                 <td>
-                                                    <strong>Name:</strong> @parcel.Hub.Name <br />
-                                                    <strong>Phone:</strong> @parcel.Hub.PhoneNumber
+                                                    <strong>Name:</strong> @parcel.Hub?.Name <br />
+                                                    <strong>Phone:</strong> @parcel.Hub?.PhoneNumber
                                                 </td>
                                             }
                                             @if (parcel.RiderId == null)
@@ -112,8 +112,8 @@
                                             {
 
                                                 <td>
-                                                    <strong>Name:</strong> @parcel.Rider.Name <br />
-                                                    <strong>Phone:</strong> @parcel.Rider.ContactNumber
+                                                    <strong>Name:</strong> @parcel.Rider?.Name <br />
+                                                    <strong>Phone:</strong> @parcel.Rider?.ContactNumber
                                                 </td>
                                             }
                                             <td>@parcel.PickupLocation</td>

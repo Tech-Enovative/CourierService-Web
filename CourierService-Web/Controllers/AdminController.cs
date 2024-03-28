@@ -1145,13 +1145,13 @@ namespace CourierService_Web.Controllers
         {
             parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date <= endDate.Value.Date);
         }
-        // If no date range is provided, default to today
-        else
-        {
-            parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date == DateTime.Today);
-        }
+            // If no date range is provided, default to today
+            //else
+            //{
+            //    parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date == DateTime.Today);
+            //}
 
-        var parcels = parcelsQuery.ToList();
+            var parcels = parcelsQuery.ToList();
 
         // Pass selected date range to the view
         ViewBag.StartDate = startDate ?? DateTime.Today;
@@ -1583,7 +1583,131 @@ namespace CourierService_Web.Controllers
             }
         }
 
-        
+        public IActionResult AssignParcelAdmin(string id)
+        {
+
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            // Find the parcel by ID
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+
+            // Get a list of available riders
+            var riders = _context.Riders.ToList();
+
+            // Pass the list of riders to the view
+            ViewBag.Riders = riders;
+
+
+            return View(parcel);
+        }
+
+        public IActionResult AssignDeliveryRiderAdmin(string id)
+        {
+
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            // Find the parcel by ID
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+
+            // Get a list of available riders
+            var riders = _context.Riders.Where(u => u.State == "Available");
+
+            // Pass the list of riders to the view
+            ViewBag.Riders = riders;
+
+
+            return View(parcel);
+        }
+        [HttpPost]
+        public IActionResult AssignParcel(string id, string riderId)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+
+            // Find the parcel by ID
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+
+            // Find the rider by ID
+            var rider = _context.Riders.Find(riderId);
+            if (rider == null)
+            {
+                //redirect to the assign parcel page
+                TempData["error"] = "Please Select A Rider";
+                return RedirectToAction("AssignParcel", new { id = id });
+            }
+
+            // Assign the rider to the parcel
+            parcel.Rider = rider;
+            parcel.Status = "Assigned A Rider For Pickup";
+            parcel.DispatchDate = DateTime.Now.Date;
+
+
+            // Save changes to the database
+            _context.SaveChanges();
+            TempData["success"] = "Parcel Assigned Successfully";
+            // Redirect to the parcel details page or any other desired page
+            return RedirectToAction("Parcel", "Admin");
+        }
+
+        [HttpPost]
+        public IActionResult AssignDeliveryRider(string id, string riderId)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+
+            // Find the parcel by ID
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+
+            // Find the rider by ID
+            var rider = _context.Riders.Find(riderId);
+            if (rider == null)
+            {
+                TempData["error"] = "Please Select A Rider";
+                return RedirectToAction("AssignDeliveryRider", new { id = id });
+            }
+
+            // Assign the rider to the parcel
+            parcel.Rider = rider;
+            parcel.Status = "Assigned For Delivery";
+            //parcel.DispatchDate = DateTime.Now.Date;
+
+
+            // Save changes to the database
+            _context.SaveChanges();
+            TempData["success"] = "Assigned Successfully";
+            // Redirect to the parcel details page or any other desired page
+            return RedirectToAction("Parcel", "Admin");
+        }
+
+
 
     }
 }

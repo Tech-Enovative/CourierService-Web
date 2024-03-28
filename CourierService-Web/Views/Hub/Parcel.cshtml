@@ -102,8 +102,8 @@
                                             <td>@parcel.Id</td>
 
                                             <td>
-                                                <strong>Name:</strong> @parcel.Merchant.Name <br />
-                                                <strong>Phone:</strong> @parcel.Merchant.ContactNumber
+                                                <strong>Name:</strong> @parcel.Merchant?.Name <br />
+                                                <strong>Phone:</strong> @parcel.Merchant?.ContactNumber
                                                 <td>
                                                     @if(parcel.PaymentStatus != "Paid To Merchant" && parcel.PaymentStatus == "Payment Received By Rider")
                                                     {
@@ -121,8 +121,8 @@
                                             {
 
                                                 <td>
-                                                    <strong>Name:</strong> @parcel.Rider.Name <br />
-                                                    <strong>Phone:</strong> @parcel.Rider.ContactNumber
+                                                    <strong>Name:</strong> @parcel.Rider?.Name <br />
+                                                    <strong>Phone:</strong> @parcel.Rider?.ContactNumber
                                                 </td>
                                             }
                                             <td>@parcel.PickupLocation</td>

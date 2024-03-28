@@ -548,11 +548,7 @@ namespace CourierService_Web.Controllers
             {
                 parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date <= endDate.Value.Date);
             }
-            // If no date range is provided, default to today
-            else
-            {
-                parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date == DateTime.Today);
-            }
+           
 
             var parcels = parcelsQuery.ToList();
 

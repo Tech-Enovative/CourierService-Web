@@ -245,7 +245,7 @@
             var codCharge = calculateCOD();
             var productPrice = parseInt(productPriceInput.value);
             var productQuantity = parseInt(productQuantityInput.value);
-            var totalPrice = (productPrice + codCharge) * productQuantity + deliveryCharge;
+            var totalPrice = (productPrice + codCharge)  + deliveryCharge;
             return totalPrice;
         }
 

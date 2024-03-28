@@ -98,8 +98,8 @@
                                             {
 
                                                 <td>
-                                                    <strong>Name:</strong> @parcel.Hub.Name <br />
-                                                    <strong>Phone:</strong> @parcel.Hub.PhoneNumber
+                                                    <strong>Name:</strong> @parcel.Hub?.Name <br />
+                                                    <strong>Phone:</strong> @parcel.Hub?.PhoneNumber
                                                 </td>
                                             }
                                             @if (parcel.MerchantId == null)
@@ -110,8 +110,8 @@
                                             {
 
                                                 <td>
-                                                    <strong>Name:</strong> @parcel.Merchant.Name <br />
-                                                    <strong>Phone:</strong> @parcel.Merchant.ContactNumber
+                                                    <strong>Name:</strong> @parcel.Merchant?.Name <br />
+                                                    <strong>Phone:</strong> @parcel.Merchant?.ContactNumber
                                                 </td>
                                             }
                                             <td>@parcel.PickupLocation</td>

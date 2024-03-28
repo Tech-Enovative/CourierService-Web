@@ -87,6 +87,7 @@
                                          
                                         @if(AdminEmail =="flyerbd@gmail.com")
                                         {
+                                            <th>Action</th>
                                             <th>Delete</th>
                                         }
                                        
@@ -104,8 +105,9 @@
                                             <td>@sl</td>
                                             <td>@parcel.Id</td>
                                             <td>
-                                                <strong>Name:</strong> @parcel.Merchant.Name <br />
-                                                <strong>Phone:</strong> @parcel.Merchant.ContactNumber
+                                                <strong>Name:</strong> @parcel.Merchant?.Name <br />
+
+                                                <strong>Phone:</strong> @parcel.Merchant?.ContactNumber
                                             </td>
                                             @if (parcel.RiderId == null)
                                             {
@@ -115,8 +117,8 @@
                                             {
                                                
                                                 <td>
-                                                    <strong>Name:</strong> @parcel.Rider.Name <br />
-                                                    <strong>Phone:</strong> @parcel.Rider.ContactNumber
+                                                    <strong>Name:</strong> @parcel.Rider?.Name <br />
+                                                    <strong>Phone:</strong> @parcel.Rider?.ContactNumber
                                                 </td>
                                             }
                                             <td>@parcel.PickupLocation</td>
@@ -194,6 +196,36 @@
                                                     </a>
                                                 }
                                             </td> *@
+
+                                            @if(AdminEmail == "flyerbd@gmail.com")
+                                            {
+                                                @if (parcel.RiderId == null)
+                                                {
+                                                    <td>
+                                                        <a asp-action="AssignParcelAdmin" asp-route-id="@parcel.Id" asp-controller="Admin" class="btn btn-sm btn-warning">
+                                                            <i class="fas fa-plus-circle"></i> Assign Pickup Rider
+
+                                                        </a>
+
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                  <td>
+                                                    
+
+                                                   @if (parcel.Status == "Parcel In Hub")
+                                                    {
+                                                        <a asp-action="AssignDeliveryRiderAdmin" asp-route-id="@parcel.Id" asp-controller="Admin" class="btn btn-sm btn-info">
+                                                            <i class="fas fa-plus-circle"></i> Assign Delivery Rider
+
+                                                        </a>
+                                                    }
+
+                                                 </td>
+                                                }
+
+                                        }
 
 
                                         
