@@ -209,7 +209,59 @@
 
                                                     </td>
                                                 }
+
                                                 else
+                                                {
+                                                    <td>
+                                                        @if (parcel.Status == "Picked Up")
+                                                        {
+                                                            <a asp-action="ParcelInHub" asp-route-id="@parcel.Id" asp-controller="Admin" class="btn btn-sm btn-info">
+                                                                <i class="fas fa-plus-circle"></i> Parcel Received
+
+                                                            </a>
+                                                        }
+
+                                                        else if (parcel.Status == "Parcel In Hub")
+                                                        {
+                                                            <a asp-action="AssignDeliveryRider" asp-route-id="@parcel.Id" asp-controller="Admin" class="btn btn-sm btn-info">
+                                                                <i class="fas fa-plus-circle"></i> Assign Delivery Rider
+
+                                                            </a>
+                                                        }
+
+                                                        else if (parcel.Status == "Returned")
+                                                        {
+                                                            <a asp-action="ReturnParcelHub" asp-controller="Admin" asp-route-id="@parcel.Id" class="btn btn-sm btn-danger">
+                                                                <i class="fas fa-plus-circle"></i> Returned Parcel In Hub
+
+                                                            </a>
+                                                        }
+
+                                                        else if (parcel.Status == "Return Parcel In Hub")
+                                                        {
+                                                            <a asp-action="AssignRiderToMerchant" asp-route-id="@parcel.Id" asp-controller="Admin" class="btn btn-sm btn-success">
+                                                                <i class="fas fa-plus-circle"></i> Assign Rider To Merchant
+
+                                                            </a>
+                                                        }
+                                                        else if (parcel.Status == "Exchanged" && parcel.PaymentStatus == "Delivery Charge Received By Rider")
+                                                        {
+                                                            <a asp-action="ExchangeParcelHub" asp-route-id="@parcel.Id" class="btn btn-sm btn-info">
+                                                                <i class="fas fa-plus-circle"></i> Exchanged Parcel In Hub
+
+                                                            </a>
+                                                        }
+                                                        else if (parcel.Status == "Exchange Parcel In Hub")
+                                                        {
+                                                            <a asp-action="RiderForExchange" asp-route-id="@parcel.Id" asp-controller="Admin" class="btn btn-sm btn-success">
+                                                                <i class="fas fa-plus-circle"></i> Rider For Exchange
+
+                                                            </a>
+                                                        }
+
+                                                    </td>
+                                                }
+                                                @* else
                                                 {
                                                   <td>
                                                     
@@ -222,8 +274,10 @@
                                                         </a>
                                                     }
 
+
+
                                                  </td>
-                                                }
+                                                } *@
 
                                         }
 

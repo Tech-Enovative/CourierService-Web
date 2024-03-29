@@ -1707,6 +1707,98 @@ namespace CourierService_Web.Controllers
             return RedirectToAction("Parcel", "Admin");
         }
 
+        //status change to Parcel In Hub
+        public IActionResult ParcelInHub(string id)
+        {
+            if (!IsAdminLoggedIn())
+            {
+
+                return RedirectToAction("Login", "Home");
+            }
+
+            //var riderId = HttpContext.Request.Cookies["RiderId"];
+            ////find rider by riderId
+            //var rider = _context.Riders.Find(riderId);
+            var parcel = _context.Parcels.Find(id);
+            parcel.Status = "Parcel In Hub";
+            parcel.DeliveryDate = DateTime.Now.Date;
+            //rider.State = "Available";
+            _context.Parcels.Update(parcel);
+            //_context.Riders.Update(rider);
+            _context.SaveChanges();
+            return RedirectToAction("Parcel");
+        }
+
+        //Status - ReturnParcelInHub
+        public IActionResult ReturnParcelHub(string id)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var returnParcel = _context.Parcels.Find(id);
+            returnParcel.Status = "Return Parcel In Hub";
+            _context.Parcels.Update(returnParcel);
+            _context.SaveChanges();
+            return RedirectToAction("Parcel");
+        }
+
+        //assignRiderToMerchant
+        public IActionResult AssignRiderToMerchant(string id)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            // Find the parcel by ID
+            var parcel = _context.Parcels.Where(p => p.Id == id).Include(m => m.Merchant).FirstOrDefault();
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+
+            // Get a list of available riders
+            var riders = _context.Riders.ToList();
+
+            // Pass the list of riders to the view
+            ViewBag.Riders = riders;
+
+
+            return View(parcel);
+
+        }
+
+        //status - ExchangeParcelHub
+        public IActionResult ExchangeParcelHub(string id)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var exchangeParcel = _context.Parcels.Find(id);
+            exchangeParcel.Status = "Exchange Parcel In Hub";
+            _context.Parcels.Update(exchangeParcel);
+            _context.SaveChanges();
+            return RedirectToAction("Parcel");
+        }
+
+        //RiderForExchnage
+        public IActionResult RiderForExchange(string id)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var parcel = _context.Parcels.Where(p => p.Id == id).Include(m => m.Merchant).FirstOrDefault();
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+            var riders = _context.Riders.Where(u => u.State == "Available");
+            ViewBag.Riders = riders;
+            return View(parcel);
+        }
+
 
 
     }
