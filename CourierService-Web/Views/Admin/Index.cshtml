@@ -9,7 +9,20 @@
 <!-- ============================================================== -->
 <!-- Start Page Content here -->
 <!-- ============================================================== -->
+<style>
+    /* Make all <i> tags black */
+    i {
+        color: black !important;
+    }
 
+    /* Remove text decoration from all <i> tags */
+    i {
+        text-decoration: none !important;
+    }
+</style>
+
+<!-- Your HTML code with <i> tags -->
+</style>
 <div class="content-page">
     <div class="content">
 
@@ -88,109 +101,131 @@
 
             <div class="row justify-content-center">
                 <div class="col-md-6 col-xl-3">
-                    <div class="card-box tilebox-one bg-warning d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Today Pickup Request</h6>
-                            <h3 class="my-3" data-plugin="counterup">@ViewBag.TodayPickupRequest</h3>
+                    <a href="@Url.Action("Parcel", "Admin")">
+                        <div class="card-box tilebox-one bg-warning d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="text-black font-weight-bold text-uppercase mt-0">Today Pickup Request</h6>
+                                <h3 class="my-3" data-plugin="counterup">@ViewBag.TodayPickupRequest</h3>
+                            </div>
+                            <i class="fas fa-truck-loading fa-3x text-black"></i>
                         </div>
-                        <i class="fas fa-truck-loading fa-3x text-black"></i>
-                    </div>
+                    </a>
                 </div>
 
                 <div class="col-md-6 col-xl-3">
-                    <div class="card-box tilebox-one bg-primary d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Today Delivery Complete</h6>
-                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TodayDelivered</span></h3>
+                    <a href="@Url.Action("Parcel", "Admin")">
+                        <div class="card-box tilebox-one bg-primary d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="text-black font-weight-bold text-uppercase mt-0">Today Delivery Complete</h6>
+                                <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TodayDelivered</span></h3>
+                            </div>
+                            <i class="fas fa-check-circle fa-3x text-black"></i>
                         </div>
-                        <i class="fas fa-check-circle fa-3x text-black"></i>
-                    </div>
-                </div>
-                <div class="col-md-6 col-xl-3">
-                    <div class="card-box tilebox-one bg-warning d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Assigned For Pickup</h6>
-                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.AssignedForPickup</span></h3>
-                        </div>
-                        <i class="fas fa-shopping-cart fa-3x text-black"></i>
-                    </div>
+                    </a>
                 </div>
 
+                <div class="col-md-6 col-xl-3">
+                    <a href="@Url.Action("Parcel", "Admin")">
+                        <div class="card-box tilebox-one bg-warning d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="text-black font-weight-bold text-uppercase mt-0">Assigned For Pickup</h6>
+                                <h3 class="my-3"><span data-plugin="counterup">@ViewBag.AssignedForPickup</span></h3>
+                            </div>
+                            <i class="fas fa-shopping-cart fa-3x text-black"></i>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Add more similar blocks here -->
 
             </div>
 
-           
-            <!-- end row -->
-            
-            <hr />
-            <!-- end row -->
+            <!-- Other blocks -->
 
             <div class="row justify-content-center">
                 <div class="col-md-6 col-xl-3">
-                    <div class="card-box tilebox-one bg-warning d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Parcel In Hub</h6>
-                            <h3 class="my-3" data-plugin="counterup">@ViewBag.InHub</h3>
+                    <a href="@Url.Action("Parcel", "Admin")">
+                        <div class="card-box tilebox-one bg-warning d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="text-black font-weight-bold text-uppercase mt-0">Parcel In Hub</h6>
+                                <h3 class="my-3" data-plugin="counterup">@ViewBag.InHub</h3>
+                            </div>
+                            <i class="fas fa-warehouse fa-3x text-black"></i>
                         </div>
-                        <i class="fas fa-warehouse fa-3x text-black"></i>
-                    </div>
+                    </a>
                 </div>
+
                 <div class="col-md-6 col-xl-3">
-                    <div class="card-box tilebox-one bg-success d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Parcel On The Way</h6>
-                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.OnTheWay</span></h3>
+                    <a href="@Url.Action("Parcel", "Admin")">
+                        <div class="card-box tilebox-one bg-success d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="text-black font-weight-bold text-uppercase mt-0">Parcel On The Way</h6>
+                                <h3 class="my-3"><span data-plugin="counterup">@ViewBag.OnTheWay</span></h3>
+                            </div>
+                            <i class="fas fa-shipping-fast fa-3x text-black"></i>
                         </div>
-                        <i class="fas fa-shipping-fast fa-3x text-black"></i>
-                    </div>
+                    </a>
                 </div>
+
                 <div class="col-md-6 col-xl-3">
-                    <div class="card-box tilebox-one bg-primary d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Assigned For Delivery</h6>
-                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.AssignedForDelivery</span></h3>
+                    <a href="@Url.Action("Parcel", "Admin")">
+                        <div class="card-box tilebox-one bg-primary d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="text-black font-weight-bold text-uppercase mt-0">Assigned For Delivery</h6>
+                                <h3 class="my-3"><span data-plugin="counterup">@ViewBag.AssignedForDelivery</span></h3>
+                            </div>
+                            <i class="fas fa-truck fa-3x text-black"></i>
                         </div>
-                        <i class="fas fa-truck fa-3x text-black"></i>
-                    </div>
+                    </a>
                 </div>
+
+                <!-- Add more similar blocks here -->
+
             </div>
 
-        </div>
-        <hr />
-            <!-- end row -->
+            <!-- Other blocks -->
 
-        <div class="row justify-content-center">
-
-            <div class="col-md-6 col-xl-3">
-                <div class="card-box tilebox-one bg-warning d-flex align-items-center justify-content-between">
-                    <div>
-                        <h6 class="text-black font-weight-bold text-uppercase mt-0">Total Delivery Complete</h6>
-                        <h3 class="my-3" data-plugin="counterup">@ViewBag.TotalDelivery</h3>
-                    </div>
-                    <i class="fas fa-check-circle fa-3x text-black"></i>
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-xl-3">
+                    <a href="@Url.Action("Parcel", "Admin")">
+                        <div class="card-box tilebox-one bg-warning d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="text-black font-weight-bold text-uppercase mt-0">Total Delivery Complete</h6>
+                                <h3 class="my-3" data-plugin="counterup">@ViewBag.TotalDelivery</h3>
+                            </div>
+                            <i class="fas fa-check-circle fa-3x text-black"></i>
+                        </div>
+                    </a>
                 </div>
+
+                <div class="col-md-6 col-xl-3">
+                    <a href="@Url.Action("Parcel", "Admin")">
+                        <div class="card-box tilebox-one bg-success d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="text-black font-weight-bold text-uppercase mt-0">Total Returned Parcel</h6>
+                                <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TotalReturn</span></h3>
+                            </div>
+                            <i class="fas fa-undo fa-3x text-black"></i>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-6 col-xl-3">
+                    <a href="@Url.Action("Parcel", "Admin")">
+                        <div class="card-box tilebox-one bg-primary d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="text-black font-weight-bold text-uppercase mt-0">Total Exchanged Parcel</h6>
+                                <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TotalExchange</span></h3>
+                            </div>
+                            <i class="fas fa-exchange-alt fa-3x text-black"></i>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Add more similar blocks here -->
+
             </div>
 
-            <div class="col-md-6 col-xl-3">
-                <div class="card-box tilebox-one bg-success d-flex align-items-center justify-content-between">
-                    <div>
-                        <h6 class="text-black font-weight-bold text-uppercase mt-0">Total Returned Parcel</h6>
-                        <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TotalReturn</span></h3>
-                    </div>
-                    <i class="fas fa-undo fa-3x text-black"></i>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-xl-3">
-                <div class="card-box tilebox-one bg-primary d-flex align-items-center justify-content-between">
-                    <div>
-                        <h6 class="text-black font-weight-bold text-uppercase mt-0"> Total Exchanged Parcel</h6>
-                        <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TotalExchange</span></h3>
-                    </div>
-                    <i class="fas fa-exchange-alt fa-3x text-black"></i>
-                </div>
-            </div>
-        </div>
 
         <div class="card mx-auto" style="max-width: 400px;">
             <div class="card-body">

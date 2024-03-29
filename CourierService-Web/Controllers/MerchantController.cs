@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Amazon;
 using System.Text;
+using System.Formats.Asn1;
+using CsvHelper;
 
 namespace CourierService_Web.Controllers
 {
@@ -518,6 +520,57 @@ namespace CourierService_Web.Controllers
             _context.SaveChanges();
             TempData["success"] = "Parcel Added Successfully";
             return RedirectToAction("Index");
+        }
+
+        //AddBulkParcels
+        public IActionResult AddBulkParcels()
+        {
+            if (!IsMerchantLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ImportParcels(IFormFile csvFile)
+        {
+            if (csvFile == null || csvFile.Length == 0)
+            {
+                ModelState.AddModelError(string.Empty, "Please select a file.");
+                return View("AddBulkParcels");
+            }
+
+            using (var reader = new StreamReader(csvFile.OpenReadStream()))
+            using (var csv = new CsvReader(reader, System.Globalization.CultureInfo.InvariantCulture))
+            {
+                var parcels = csv.GetRecords<Parcel>().ToList();
+
+                foreach (var parcel in parcels)
+                {
+                    // Additional validation if needed
+                    if (!ModelState.IsValid)
+                    {
+                        // Handle validation errors
+                        // For example: return View with errors
+                        return View("AddBulkParcels", parcel);
+                    }
+
+                    // Assign additional properties if needed
+                    parcel.Id = "P-" + Guid.NewGuid().ToString().Substring(0, 4);
+                    parcel.Status = "Pickup Request";
+                    parcel.PickupRequestDate = DateTime.Now;
+
+
+                    // Add parcel to database
+                    _context.Parcels.Add(parcel);
+                }
+
+                await _context.SaveChangesAsync();
+            }
+
+            TempData["success"] = "Parcels added successfully.";
+            return RedirectToAction("Index", "Merchant");
         }
 
         public IActionResult Parcels(DateTime? startDate, DateTime? endDate)

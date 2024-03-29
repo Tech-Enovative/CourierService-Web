@@ -1,0 +1,63 @@
+﻿@{
+    ViewData["Title"] = "Bulk Import Parcels";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row mt-5 justify-content-center align-content-center">
+                <div class="col-lg-6">
+                    <div>
+                        <h4 class="header-title">Bulk Import Parcels</h4>
+                        <button id="downloadBtn">Download CSV Template</button>
+
+                        <form method="post" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="csvFile">Upload CSV File</label>
+                                <input type="file" class="form-control-file" id="csvFile" name="csvFile" accept=".csv" required>
+                            </div>
+
+                            <div class="form-group text-right mb-0">
+                                <button asp-controller="Merchant" asp-action="ImportParcels" class="btn btn-primary waves-effect waves-light mr-1" type="submit">
+                                    Import
+                                </button>
+                                <button type="reset" class="btn btn-secondary waves-effect">
+                                    Reset
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('downloadBtn').addEventListener('click', function () {
+        // CSV content with headers and sample data
+        var csvContent = "ReceiverName,ReceiverAddress,ReceiverContactNumber,ReceiverEmail,ProductName,ProductWeight,ProductPrice,ProductQuantity,DeliveryCharge,PickupLocation,DeliveryType,COD\n";
+        csvContent += "John Doe,123 Main St,1234567890,johndoe@example.com,Example Product,2,100,1,70,Merchant Address,InsideDhaka,1\n";
+        csvContent += "Jane Smith,456 Elm St,0987654321,janesmith@example.com,Another Product,1,50,2,90,Merchant Address,SubDhaka,0\n";
+
+        // Create a Blob containing the CSV data
+        var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+
+        // Create a download link
+        var link = document.createElement("a");
+        if (link.download !== undefined) { // Feature detection
+            // Create a temporary link element
+            var url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", "parcel_template.csv");
+
+            // Trigger the download
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    });
+</script>

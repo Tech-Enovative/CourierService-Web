@@ -177,10 +177,19 @@
                                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                             </div>
 
-                            
+                            <div class="col-md-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="termsCheckbox">
+                                    <label class="form-check-label font-weight-bold" for="termsCheckbox">
+                                        I agree to the <a href="#">terms and conditions</a>
+                                    </label>
+                                </div>
+                            </div>
+
 
                             <div class="col-md-12 text-center">
-                                <button class="btn btn-primary" asp-controller="Home" asp-action="RegisterMerchant" type="submit">Register</button>
+                                <button id="registerButton" class="btn btn-primary" asp-controller="Home" asp-action="RegisterMerchant" type="submit" disabled>Register</button>
+
                                 <br />
                               <span>Already have an account?</span>
                               <a asp-action="Login" class="text-primary">Login</a>
@@ -308,6 +317,25 @@
 
 
     </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const termsCheckbox = document.getElementById("termsCheckbox");
+            const registerButton = document.getElementById("registerButton");
+
+            // Function to enable/disable the register button based on checkbox state
+            function toggleRegisterButton() {
+                registerButton.disabled = !termsCheckbox.checked;
+            }
+
+            // Event listener to toggle register button state when checkbox is clicked
+            termsCheckbox.addEventListener("change", toggleRegisterButton);
+
+            // Initialize button state
+            toggleRegisterButton();
+        });
+    </script>
+
     @{
         <partial name="_ValidationScriptsPartial" />
     }
