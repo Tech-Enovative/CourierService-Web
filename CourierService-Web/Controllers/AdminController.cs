@@ -661,6 +661,29 @@ namespace CourierService_Web.Controllers
             }
         }
 
+        //approve merchant
+        //public IActionResult ApproveMerchant(string? id)
+        //{
+        //    if (!IsAdminLoggedIn())
+        //    {
+        //        return RedirectToAction("Login", "Home");
+        //    }
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    var merchant = _context.Merchants.Find(id);
+        //    if (merchant == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    merchant.Status = "Approved";
+        //    _context.Merchants.Update(merchant);
+        //    _context.SaveChanges();
+        //    TempData["success"] = "Merchant Approved Successfully";
+        //    return RedirectToAction("Merchant");
+        //}
+
         public IActionResult DeleteRider(string? id)
         {
             if (!IsAdminLoggedIn() || Request.Cookies["AdminEmail"] != "flyerbd@gmail.com")

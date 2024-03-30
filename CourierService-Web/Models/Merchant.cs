@@ -72,6 +72,8 @@ namespace CourierService_Web.Models
         [RegularExpression(@"^[0-9]{12}$", ErrorMessage = "Please enter a valid TIN.")]
         public string? Tin { get; set; }
 
+
+
         public List<Parcel>? Parcels { get; set; }
 
         public List<DeliveredParcel>? DeliveredParcels { get; set; }

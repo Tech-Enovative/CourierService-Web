@@ -522,6 +522,22 @@ namespace CourierService_Web.Controllers
             return RedirectToAction("Index");
         }
 
+        public IActionResult DownloadTemplate()
+        {
+            // CSV content with headers and sample data
+            var csvContent = "ReceiverName,ReceiverAddress,ReceiverContactNumber,ReceiverEmail,ProductName,ProductWeight,ProductPrice,ProductQuantity,PickupLocation,DeliveryType,COD\n";
+            csvContent += "John Doe,123 Main St,1234567890,johndoe@example.com,Example Product,2,100,1,Merchant Address,InsideDhaka,1\n";
+            csvContent += "Jane Smith,456 Elm St,0987654321,janesmith@example.com,Another Product,1,50,2,Merchant Address,SubDhaka,0\n";
+
+            // Create a byte array from the CSV content
+            var bytes = Encoding.UTF8.GetBytes(csvContent);
+
+            // Return the CSV file as a downloadable file
+            return File(bytes, "text/csv", "parcel_template.csv");
+        }
+
+
+
         //AddBulkParcels
         public IActionResult AddBulkParcels()
         {
@@ -531,6 +547,171 @@ namespace CourierService_Web.Controllers
             }
             return View();
         }
+
+        // Method to calculate delivery charge based on product weight and delivery type
+        // Method to calculate delivery charge based on product weight and delivery type
+        private decimal CalculateDeliveryCharge(decimal productWeight, string deliveryType)
+        {
+            decimal deliveryCharge = 0;
+
+            // Define delivery charges based on delivery types
+            decimal insideDhakaChargePerKg = 15m;
+            decimal subDhakaChargePerKg = 20m;
+            decimal outsideDhakaChargePerKg = 25m;
+            decimal inDhakaEmergencyChargePerKg = 20m;
+            decimal p2pChargePerKg = 30m;
+
+            // Calculate delivery charge based on delivery type and product weight
+            if (deliveryType == "InsideDhaka")
+            {
+                deliveryCharge = 70m; // Base charge for Inside Dhaka
+                if (productWeight > 1)
+                {
+                    deliveryCharge += (productWeight - 1) * insideDhakaChargePerKg;
+                }
+            }
+            else if (deliveryType == "SubDhaka")
+            {
+                deliveryCharge = 90m; // Base charge for Sub Dhaka
+                if (productWeight > 1)
+                {
+                    deliveryCharge += (productWeight - 1) * subDhakaChargePerKg;
+                }
+            }
+            else if (deliveryType == "OutsideDhaka")
+            {
+                deliveryCharge = 120m; // Base charge for Outside Dhaka
+                if (productWeight > 1)
+                {
+                    deliveryCharge += (productWeight - 1) * outsideDhakaChargePerKg;
+                }
+            }
+            else if (deliveryType == "InDhakaEmergency")
+            {
+                deliveryCharge = 100m; // Base charge for In Dhaka Emergency
+                if (productWeight > 1)
+                {
+                    deliveryCharge += (productWeight - 1) * inDhakaEmergencyChargePerKg;
+                }
+            }
+            else if (deliveryType == "P2P")
+            {
+                deliveryCharge = 200m; // Base charge for P2P
+                if (productWeight > 1)
+                {
+                    deliveryCharge += (productWeight - 1) * p2pChargePerKg;
+                }
+            }
+
+            return deliveryCharge;
+        }
+
+
+        // Method to calculate COD charge based on product price
+        private decimal CalculateCOD(decimal productPrice)
+        {
+            // Calculate COD charge as a percentage of the product price
+            // Example calculation: 10% of the product price
+            decimal codCharge = productPrice * 0.01m;
+            return codCharge;
+        }
+
+        // Method to calculate total price including product price, delivery charge, and COD charge
+        private decimal CalculateTotalPrice(decimal productPrice, decimal codCharge, decimal deliveryCharge)
+        {
+            // Calculate total price by adding product price, delivery charge, and COD charge
+            decimal totalPrice = productPrice + deliveryCharge + codCharge;
+            return totalPrice;
+        }
+
+
+        [HttpPost]
+        public IActionResult Upload(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                ModelState.AddModelError("File", "Please select a file");
+                return View();
+            }
+
+            using (var reader = new StreamReader(file.OpenReadStream(), Encoding.UTF8))
+            {
+                List<ParcelImportViewModel> parcels = new List<ParcelImportViewModel>();
+                string line;
+                bool isFirstLine = true; // Flag to skip the first line
+
+                while ((line = reader.ReadLine()) != null)
+                {
+                    if (isFirstLine)
+                    {
+                        isFirstLine = false;
+                        continue; // Skip the first line
+                    }
+
+                    // Split the line by comma to get the values
+                    string[] values = line.Split(',');
+
+                    parcels.Add(new ParcelImportViewModel
+                    {
+                        ReceiverName = values[0],
+                        ReceiverAddress = values[1],
+                        ReceiverContactNumber = values[2],
+                        ReceiverEmail = values[3],
+                        ProductName = values[4],
+                        ProductWeight = decimal.Parse(values[5]),
+                        ProductPrice = int.Parse(values[6]),
+                        ProductQuantity = string.IsNullOrEmpty(values[7]) ? null : (int?)int.Parse(values[7]),
+                        PickupLocation = values[8],
+                        DeliveryType = values[9],
+                        COD = int.Parse(values[10])
+                    });
+                }
+
+                // Save parcels to the database
+                foreach (var parcel in parcels)
+                {
+                    // Calculate delivery charge
+                    var deliveryCharge = CalculateDeliveryCharge(parcel.ProductWeight, parcel.DeliveryType);
+
+                    // Calculate COD charge
+                    var codCharge = CalculateCOD(parcel.ProductPrice);
+
+                    // Calculate total price
+                    var totalPrice = CalculateTotalPrice(parcel.ProductPrice, codCharge, deliveryCharge);
+
+                    // Add parcel to the database
+                    _context.Parcels.Add(new Parcel
+                    {
+                        MerchantId = HttpContext.Request.Cookies["MerchantId"],
+                        ReceiverName = parcel.ReceiverName,
+                        ReceiverAddress = parcel.ReceiverAddress,
+                        ReceiverContactNumber = parcel.ReceiverContactNumber,
+                        ReceiverEmail = parcel.ReceiverEmail,
+                        ProductName = parcel.ProductName,
+                        ProductWeight = parcel.ProductWeight,
+                        ProductPrice = parcel.ProductPrice,
+                        ProductQuantity = parcel.ProductQuantity,
+                        PickupLocation = parcel.PickupLocation,
+                        DeliveryType = parcel.DeliveryType,
+                        DeliveryCharge = (int)deliveryCharge,
+                        COD = (int)codCharge,
+                        TotalPrice = (int)totalPrice
+                    });
+                }
+
+                _context.SaveChanges();
+
+                TempData["Message"] = "Parcels imported successfully";
+            }
+
+            return RedirectToAction("Index");
+        }
+
+
+
+
+
+
 
         [HttpPost]
         public async Task<IActionResult> ImportParcels(IFormFile csvFile)
