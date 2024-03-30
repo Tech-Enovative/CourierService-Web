@@ -74,11 +74,11 @@
                                         <th>ID</th>
                                         <th>Merchant</th>
                                         <th>Rider</th>
-                                        <th>Pickup Location</th>
-                                        <th>Pickup Request Date</th>
+                                       @*  <th>Pickup Location</th> *@
+                                       @*  <th>Pickup Request Date</th> *@
                                         <th>Receiver Information</th>
-                                        <th>Product</th>
-                                        <th>Delivery</th>
+                                       @*  <th>Product</th> *@
+                                       @*  <th>Delivery</th> *@
                                         <th>Total Price</th>
                                         
                                         <th>Status</th>                       
@@ -88,7 +88,9 @@
                                         @if(AdminEmail =="flyerbd@gmail.com")
                                         {
                                             <th>Action</th>
+                                            <th>View</th>
                                             <th>Delete</th>
+                                            
                                         }
                                        
                                     </tr>
@@ -105,9 +107,9 @@
                                             <td>@sl</td>
                                             <td>@parcel.Id</td>
                                             <td>
-                                                <strong>Name:</strong> @parcel.Merchant?.Name <br />
+                                                 @parcel.Merchant?.CompanyName
 
-                                                <strong>Phone:</strong> @parcel.Merchant?.ContactNumber
+                                                @* <strong>Phone:</strong> @parcel.Merchant?.ContactNumber *@
                                             </td>
                                             @if (parcel.RiderId == null)
                                             {
@@ -121,25 +123,25 @@
                                                     <strong>Phone:</strong> @parcel.Rider?.ContactNumber
                                                 </td>
                                             }
-                                            <td>@parcel.PickupLocation</td>
-                                            <td>@(parcel.PickupRequestDate?.Date.ToShortDateString())</td>
+                                            @* <td>@parcel.PickupLocation</td> *@
+                                            @* <td>@(parcel.PickupRequestDate?.Date.ToShortDateString())</td> *@
                                             <td>
                                                 <strong>Name:</strong> @parcel.ReceiverName<br>
                                                 <strong>Address:</strong> @parcel.ReceiverAddress<br>
                                                 <strong>Contact:</strong> @parcel.ReceiverContactNumber
                                             </td>
                                            
-                                          <td>
+                                         @*  <td>
                                                  <strong>Name:</strong> @parcel.ProductName <br />
                                                 <strong>Weight:</strong> @parcel.ProductWeight KG <br />
                                                 <strong>Price:</strong> @parcel.ProductPrice TK<br />
                                                 <strong>Quantity:</strong> @parcel.ProductQuantity <br />
-                                          </td>
+                                          </td> *@
                                             
-                                          <td>
+                                          @* <td>
                                                 <strong>Type:</strong> @parcel.DeliveryType <br />
                                                 <strong>Charge:</strong> @parcel.DeliveryCharge TK <br />
-                                          </td> 
+                                          </td>  *@
 
                                            
                                             <td>@parcel.TotalPrice TK</td>
@@ -281,6 +283,42 @@
 
                                         }
 
+                                            <td>
+                                                <!-- Button trigger modal -->
+                                                <button class="btn btn-sm btn-primary waves-effect waves-light" data-toggle="modal" data-target="#viewModal_@parcel.Id">
+                                                    <i class="fas fa-eye"></i>
+                                                    View
+                                                </button>
+
+                                                <!-- Modal -->
+                                                <div id="viewModal_@parcel.Id" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="viewModalLabel">View Parcel Details</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <!-- Display parcel details here -->
+                                                                <h5 class="font-16">Parcel ID: @parcel.Id</h5>
+                                                                <p><strong>Merchant Name:</strong> @parcel.Merchant?.Name</p>
+                                                                <p><strong>Phone:</strong> @parcel.Merchant?.ContactNumber</p>
+
+                                                                <p><strong>Product:</strong> @parcel.ProductName</p>
+                                                                <p><strong>Pickup Request Date:</strong> @(parcel.PickupRequestDate.HasValue ? parcel.PickupRequestDate.Value.ToShortDateString() : "N/A")</p>
+
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </td>
+
 
                                         
                                             @if(AdminEmail == "flyerbd@gmail.com")
@@ -320,6 +358,7 @@
                                                 </td>
                                             }
                                             
+
 
 
                                            

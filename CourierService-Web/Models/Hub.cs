@@ -24,14 +24,14 @@ namespace CourierService_Web.Models
        
         [RegularExpression(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$", ErrorMessage = "Please enter a valid email address.")]
         public string? Email { get; set; }
-        [Required(ErrorMessage = "Password is required.")]
-        public string Password { get; set; }
+        
+        public string? Password { get; set; }
 
         
-        [Required(ErrorMessage = "Confirm Password is required.")]
+       
         [NotMapped]
         [ValidateNever]
-        public string ConfirmPassword { get; set; }
+        public string? ConfirmPassword { get; set; }
         public int Status { get; set; } = 1;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public string? CreatedBy { get; set; } 

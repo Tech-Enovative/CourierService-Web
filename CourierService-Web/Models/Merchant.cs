@@ -49,12 +49,12 @@ namespace CourierService_Web.Models
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Password is required.")]
-        public string Password { get; set; }
+        public string? Password { get; set; }
         
         [Required(ErrorMessage = "Confirm Password is required.")]
         [NotMapped]
         [ValidateNever]
-        public string ConfirmPassword { get; set; }
+        public string? ConfirmPassword { get; set; }
 
         
         //nid should be 10 digit or 13 digit
