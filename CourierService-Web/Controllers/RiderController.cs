@@ -273,6 +273,7 @@ namespace CourierService_Web.Controllers
             var riderId = HttpContext.Request.Cookies["RiderId"];
             var parcel = _context.Parcels.Find(id);
             parcel.Status = "Picked Up";
+            parcel.PickedUpAt = DateTime.Now;
             //find rider by riderId
             var rider = _context.Riders.Find(riderId);
             //rider.State = "Busy";
@@ -292,6 +293,7 @@ namespace CourierService_Web.Controllers
             var riderId = HttpContext.Request.Cookies["RiderId"];
             var parcel = _context.Parcels.Find(id);
             parcel.Status = "Parcel On The Way";
+            parcel.OnTheWayAt = DateTime.Now;
            
             _context.Parcels.Update(parcel);
             _context.SaveChanges();
@@ -320,7 +322,7 @@ namespace CourierService_Web.Controllers
                 MerchantId = parcel.MerchantId
             };
             parcel.Status = "Delivered";
-            parcel.DeliveryDate = DateTime.Now.Date;
+            parcel.DeliveryDate = DateTime.Now;
             rider.State = "Available";
             _context.Parcels.Update(parcel);
             _context.Riders.Update(rider);
@@ -364,7 +366,7 @@ namespace CourierService_Web.Controllers
             var rider = _context.Riders.Find(riderId);
             var parcel = _context.Parcels.Find(id);
             parcel.Status = "Cancelled";
-            parcel.CancelDate = DateTime.Now.Date;
+           
             rider.State = "Available";
             _context.Parcels.Update(parcel);
             _context.Riders.Update(rider);

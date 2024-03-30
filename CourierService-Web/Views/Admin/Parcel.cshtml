@@ -225,7 +225,7 @@
 
                                                         else if (parcel.Status == "Parcel In Hub")
                                                         {
-                                                            <a asp-action="AssignDeliveryRider" asp-route-id="@parcel.Id" asp-controller="Admin" class="btn btn-sm btn-info">
+                                                            <a asp-action="AssignDeliveryRiderAdmin" asp-route-id="@parcel.Id" asp-controller="Admin" class="btn btn-sm btn-info">
                                                                 <i class="fas fa-plus-circle"></i> Assign Delivery Rider
 
                                                             </a>
@@ -295,20 +295,54 @@
                                                     <div class="modal-dialog modal-dialog-centered modal-lg">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title" id="viewModalLabel">View Parcel Details</h5>
+                                                                <h5 class="modal-title" id="viewModalLabel"><i class="fas fa-box"></i> View Parcel Details</h5>
                                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                     <span aria-hidden="true">&times;</span>
                                                                 </button>
                                                             </div>
                                                             <div class="modal-body">
                                                                 <!-- Display parcel details here -->
-                                                                <h5 class="font-16">Parcel ID: @parcel.Id</h5>
-                                                                <p><strong>Merchant Name:</strong> @parcel.Merchant?.Name</p>
-                                                                <p><strong>Phone:</strong> @parcel.Merchant?.ContactNumber</p>
+                                                                <h5 class="font-16"><i class="fas fa-barcode"></i> Parcel ID: @parcel.Id</h5>
+                                                                <p><strong><i class="fas fa-store"></i> Merchant Name:</strong> @parcel.Merchant?.Name</p>
+                                                                <p><strong><i class="fas fa-phone"></i> Merchant Phone:</strong> @parcel.Merchant?.ContactNumber</p>
 
-                                                                <p><strong>Product:</strong> @parcel.ProductName</p>
-                                                                <p><strong>Pickup Request Date:</strong> @(parcel.PickupRequestDate.HasValue ? parcel.PickupRequestDate.Value.ToShortDateString() : "N/A")</p>
+                                                                <p><strong><i class="fas fa-box-open"></i> Product:</strong> @parcel.ProductName</p>
+                                                                <p><strong><i class="far fa-calendar-alt"></i> Parcel Created At:</strong> @(parcel.PickupRequestDate.HasValue ? parcel.PickupRequestDate.Value.ToString("g") : "N/A")</p>
 
+                                                                @if (parcel.DispatchDate != null)
+                                                                {
+                                                                    <p><strong><i class="fas fa-motorcycle"></i> Rider Assigned:</strong> @(parcel.DispatchDate.HasValue ? parcel.DispatchDate.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if (parcel.PickedUpAt != null)
+                                                                {
+                                                                    <p><strong><i class="fas fa-truck-loading"></i> Rider Pickedup:</strong> @(parcel.PickedUpAt.HasValue ? parcel.PickedUpAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if (parcel.InHubAt != null)
+                                                                {
+                                                                    <p><strong><i class="fas fa-warehouse"></i> Hub Entry Date:</strong> @(parcel.InHubAt.HasValue ? parcel.InHubAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if (parcel.DeliveryRiderAssignedAt != null)
+                                                                {
+                                                                    <p><strong><i class="fas fa-user-tag"></i> Delivery Rider Assigned:</strong> @(parcel.DeliveryRiderAssignedAt.HasValue ? parcel.DeliveryRiderAssignedAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if (parcel.OnTheWayAt != null)
+                                                                {
+                                                                    <p><strong><i class="fas fa-shipping-fast"></i> On The Way:</strong> @(parcel.OnTheWayAt.HasValue ? parcel.OnTheWayAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if (parcel.DeliveryDate != null)
+                                                                {
+                                                                    <p><strong><i class="fas fa-truck"></i> Delivery:</strong> @(parcel.DeliveryDate.Value.ToString("t"))</p>
+                                                                }
+
+                                                                @if (parcel.ReturnParcel != null && parcel.ReturnParcel.ReturnDate != null)
+                                                                {
+                                                                    <p><strong><i class="fas fa-undo"></i> Return:</strong> @(parcel.ReturnParcel.ReturnDate.ToString("t"))</p>
+                                                                }
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -318,6 +352,9 @@
                                                 </div>
 
                                             </td>
+
+
+
 
 
                                         

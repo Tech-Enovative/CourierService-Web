@@ -47,7 +47,11 @@ namespace CourierService_Web.Models
         public DateTime? PickupRequestDate { get; set; } = DateTime.Now;
         public DateTime? DispatchDate  { get; set; }
         public DateTime? DeliveryDate { get; set; }
-        public DateTime? CancelDate { get; set; }
+        public DateTime? PickedUpAt { get; set; }
+        public DateTime? InHubAt { get; set; }
+        public DateTime? DeliveryRiderAssignedAt { get; set; }
+        public DateTime? OnTheWayAt { get; set; }
+        public DateTime? PaymentInHubAt { get; set; }
         public DateTime? ReturnDate { get; set; }
         public string? PaymentStatus { get; set; }
         public string? PaymentInHand { get; set; }

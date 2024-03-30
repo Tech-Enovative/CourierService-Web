@@ -107,10 +107,10 @@ namespace CourierService_Web.Controllers
 
 
             // Today Cancelled
-            var todayCancelled = _context.Parcels
-                .Where(p => p.CancelDate >= todayStart && p.CancelDate < tomorrowStart)
-                .Count();
-            ViewBag.TodayCancelled = todayCancelled;
+            //var todayCancelled = _context.Parcels
+            //    .Where(p => p.CancelDate >= todayStart && p.CancelDate < tomorrowStart)
+            //    .Count();
+            //ViewBag.TodayCancelled = todayCancelled;
 
             // Today Returned
             var todayReturned = _context.Parcels
@@ -1683,7 +1683,7 @@ namespace CourierService_Web.Controllers
             // Assign the rider to the parcel
             parcel.Rider = rider;
             parcel.Status = "Assigned A Rider For Pickup";
-            parcel.DispatchDate = DateTime.Now.Date;
+            parcel.DispatchDate = DateTime.Now;
 
 
             // Save changes to the database
@@ -1692,6 +1692,8 @@ namespace CourierService_Web.Controllers
             // Redirect to the parcel details page or any other desired page
             return RedirectToAction("Parcel", "Admin");
         }
+
+        
 
         [HttpPost]
         public IActionResult AssignDeliveryRider(string id, string riderId)
@@ -1720,7 +1722,8 @@ namespace CourierService_Web.Controllers
             // Assign the rider to the parcel
             parcel.Rider = rider;
             parcel.Status = "Assigned For Delivery";
-            //parcel.DispatchDate = DateTime.Now.Date;
+            parcel.DeliveryRiderAssignedAt = DateTime.Now;
+            
 
 
             // Save changes to the database
@@ -1739,12 +1742,10 @@ namespace CourierService_Web.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-            //var riderId = HttpContext.Request.Cookies["RiderId"];
-            ////find rider by riderId
-            //var rider = _context.Riders.Find(riderId);
+            
             var parcel = _context.Parcels.Find(id);
             parcel.Status = "Parcel In Hub";
-            parcel.DeliveryDate = DateTime.Now.Date;
+            parcel.InHubAt = DateTime.Now;
             //rider.State = "Available";
             _context.Parcels.Update(parcel);
             //_context.Riders.Update(rider);

@@ -79,10 +79,10 @@ namespace CourierService_Web.Controllers
             ViewBag.TodayDelivered = todayDelivered;
 
             // Today Cancelled
-            var todayCancelled = _context.Parcels
-                .Where(p => p.CancelDate >= todayStart && p.CancelDate < tomorrowStart)
-                .Count();
-            ViewBag.TodayCancelled = todayCancelled;
+            //var todayCancelled = _context.Parcels
+            //    .Where(p => p.CancelDate >= todayStart && p.CancelDate < tomorrowStart)
+            //    .Count();
+            //ViewBag.TodayCancelled = todayCancelled;
 
             // Today Returned
             var todayReturned = _context.Parcels
