@@ -242,6 +242,14 @@
             return codCharge;
         }
 
+        //calculate weight price
+        function calculateWeightPrice() {
+            var productWeight = parseInt(productWeightSelect.value);
+            var productPrice = parseInt(productPriceInput.value);
+            var weightPrice = productWeight * productPrice;
+            return weightPrice;
+        }
+
         function calculateTotalPrice() {
             var deliveryCharge = calculateDeliveryCharge();
             var codCharge = calculateCOD();

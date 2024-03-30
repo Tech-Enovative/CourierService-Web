@@ -628,6 +628,11 @@ namespace CourierService_Web.Controllers
         [HttpPost]
         public IActionResult Upload(IFormFile file)
         {
+
+            //find merchant area
+            var merchantId = HttpContext.Request.Cookies["MerchantId"];
+            var merchant = _context.Merchants.Find(merchantId);
+            var merchantArea = merchant.Area;
             if (file == null || file.Length == 0)
             {
                 ModelState.AddModelError("File", "Please select a file");
@@ -683,6 +688,7 @@ namespace CourierService_Web.Controllers
                     _context.Parcels.Add(new Parcel
                     {
                         MerchantId = HttpContext.Request.Cookies["MerchantId"],
+                        HubId = _context.Hubs.FirstOrDefault(x => x.Area == merchantArea).Id,
                         ReceiverName = parcel.ReceiverName,
                         ReceiverAddress = parcel.ReceiverAddress,
                         ReceiverContactNumber = parcel.ReceiverContactNumber,
@@ -704,7 +710,7 @@ namespace CourierService_Web.Controllers
                 TempData["Message"] = "Parcels imported successfully";
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Parcels");
         }
 
 
