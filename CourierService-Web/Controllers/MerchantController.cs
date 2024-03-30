@@ -640,6 +640,8 @@ namespace CourierService_Web.Controllers
                 return View();
             }
 
+
+
             using (var reader = new StreamReader(file.OpenReadStream(), Encoding.UTF8))
             {
                 List<ParcelImportViewModel> parcels = new List<ParcelImportViewModel>();
