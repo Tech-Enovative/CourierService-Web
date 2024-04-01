@@ -1,0 +1,35 @@
+﻿@model CourierService_Web.Models.District
+
+@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    string AdminId = Context.Request.Cookies["AdminId"];
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row mt-5 justify-content-center align-content-center">
+                <div class="col-lg-6">
+                    <div>
+                        <h4 class="header-title">Create a New District</h4>
+
+                        <form asp-action="CreateDistrict" method="post">
+                            <div class="form-group">
+                                <label asp-for="Name">District Name</label>
+                                <input asp-for="Name" class="form-control" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Create District</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

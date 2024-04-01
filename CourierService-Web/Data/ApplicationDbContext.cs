@@ -30,7 +30,11 @@ namespace CourierService_Web.Data
         public DbSet<RiderPayment> riderPayments { get; set; }
 
         public DbSet<HubPayment> HubPayments { get; set; }
-        public DbSet<MerchantPayment> MerchantPayments { get; set; }    
+        public DbSet<MerchantPayment> MerchantPayments { get; set; }  
+        
+        public DbSet<Area> Areas { get; set; }
+        public DbSet<Zone> Zone { get; set; }
+        public DbSet<District> District { get; set; }
 
 
 
@@ -85,7 +89,7 @@ namespace CourierService_Web.Data
             //relationship between hub and parcel
             modelBuilder.Entity<Parcel>()
                 .HasOne(p => p.Hub)
-                .WithMany(h => h.parcels)
+                .WithMany(h => h.Parcels)
                 .HasForeignKey(p => p.HubId);
 
             //relationship between hub and delivered parcel
@@ -166,75 +170,171 @@ namespace CourierService_Web.Data
                 .WithMany(m => m.MerchantPayments)
                 .HasForeignKey(m => m.MerchantId);
 
+            //relationship between hub and district
+            modelBuilder.Entity<Hub>()
+                .HasOne(h => h.District)
+                .WithMany(d => d.Hubs)
+                .HasForeignKey(h => h.DistrictId);
+
+            //relationship between hub and area
+            modelBuilder.Entity<Area>()
+                .HasOne(a => a.Hub)
+                .WithMany(h => h.Areas)
+                .HasForeignKey(a => a.HubId);
+
+            //relationship between zone and area
+            modelBuilder.Entity<Area>()
+                .HasOne(a => a.Zone)
+                .WithMany(z => z.Areas)
+                .HasForeignKey(a => a.ZoneId);
+
+            //relationship between district and area
+            modelBuilder.Entity<Area>()
+                .HasOne(a => a.District)
+                .WithMany(d => d.Areas)
+                .HasForeignKey(a => a.DistrictId);
+
+            //relationship between zone and district
+            modelBuilder.Entity<Zone>()
+                .HasOne(z => z.District)
+                .WithMany(d => d.Zones)
+                .HasForeignKey(z => z.DistrictId);
+
            
+
+            modelBuilder.Entity<Area>()
+         .HasOne(a => a.Hub)
+         .WithMany(h => h.Areas)
+         .HasForeignKey(a => a.HubId)
+         .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Area>()
+                .HasOne(a => a.District)
+                .WithMany(d => d.Areas)
+                .HasForeignKey(a => a.DistrictId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Zone>()
+                .HasOne(d => d.District)
+                .WithMany(z => z.Zones)
+                .HasForeignKey(d => d.DistrictId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Zone>()
+                .HasMany(z => z.Areas)
+                .WithOne(a => a.Zone)
+                .HasForeignKey(a => a.ZoneId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+            //seed district data
+            modelBuilder.Entity<District>().HasData(
+                               new District
+                               {
+                    Id = "DIS-123",
+                    Name = "Dhaka"
+                });
+           
+            //seed zone data
+            modelBuilder.Entity<Zone>().HasData(
+                                                                            new Zone
+                                                                            {
+                    Id = "ZONE-123",
+                    Name = "Dhaka",
+                    DistrictId = "DIS-123"
+                });
+           
+
+            //seed area data
+            modelBuilder.Entity<Area>().HasData(
+                                                             new Area
+                                                             {
+                    Id = "AREA-123",
+                    Name = "Mirpur",
+                    DistrictId = "DIS-123",
+                    ZoneId = "ZONE-123",
+                    HubId = "HUB-123"
+                });
+
+            //seed hub data
+            modelBuilder.Entity<Hub>().HasData(
+                                                             new Hub
+                                                             {
+                    Id = "HUB-123",
+                    Name = "Mirpur Hub",
+                    DistrictId = "DIS-123",
+                    ZoneId = "ZONE-123",
+                   
+                });
+
 
 
             //seed admin data
-            modelBuilder.Entity<Admin>().HasData(
-                               new Admin
-                               {
-                                   Id = "A-123",
-                                   Name = "Admin",
-                                   Email = "flyerbd@gmail.com",
-                                   Password = "1111"
+            //modelBuilder.Entity<Admin>().HasData(
+            //                   new Admin
+            //                   {
+            //                       Id = "A-123",
+            //                       Name = "Admin",
+            //                       Email = "flyerbd@gmail.com",
+            //                       Password = "1111"
 
-                               });
+            //                   });
 
             //seed merchant data
-            modelBuilder.Entity<Merchant>().HasData(
-                               new Merchant
-                               {
-                                   Id = "M-123",
-                                   Name = "Merchant",
-                                   Email = "merchant@gmail.com",
-                                   Password = "1111",
-                                   ConfirmPassword = "1111",
-                                   ContactNumber = "01837730317",
-                                   CompanyName = "Merchant Company",
-                                   FullAddress = "Dhaka, Bangladesh",
-                                   Area = "Mirpur"
+            //modelBuilder.Entity<Merchant>().HasData(
+            //                   new Merchant
+            //                   {
+            //                       Id = "M-123",
+            //                       Name = "Merchant",
+            //                       Email = "merchant@gmail.com",
+            //                       Password = "1111",
+            //                       ConfirmPassword = "1111",
+            //                       ContactNumber = "01837730317",
+            //                       CompanyName = "Merchant Company",
+            //                       FullAddress = "Dhaka, Bangladesh",
+            //                       Area = "Mirpur"
 
                                    
 
 
-                               });
+            //                   });
 
             //seed hub data
-            modelBuilder.Entity<Hub>().HasData(
-                                              new Hub
-                                              {
-                                                  Id = "H-123",
-                                                  Name = "Hub",
-                                                  Email = "hub@gmail.com",
-                                                  Password = "1111",
-                                                  PhoneNumber = "01837730317",
-                                                  Area = "Mirpur",
-                                                  Address = "Dhaka, Bangladesh",
-                                                  Status = 1,
-                                                  CreatedAt = DateTime.Now,
-                                                  CreatedBy = "Admin",
-                                                  AdminId = "A-123",
-                                                  District = "Dhaka"
+            //modelBuilder.Entity<Hub>().HasData(
+            //                                  new Hub
+            //                                  {
+            //                                      Id = "H-123",
+            //                                      Name = "Hub",
+            //                                      Email = "hub@gmail.com",
+            //                                      Password = "1111",
+            //                                      PhoneNumber = "01837730317",
+            //                                      Area = "Mirpur",
+            //                                      Address = "Dhaka, Bangladesh",
+            //                                      Status = 1,
+            //                                      CreatedAt = DateTime.Now,
+            //                                      CreatedBy = "Admin",
+            //                                      AdminId = "A-123",
+            //                                      District = "Dhaka"
 
-                                              });
+            //                                  });
 
             //seed rider data
-            modelBuilder.Entity<Rider>().HasData(
-                                                             new Rider
-                                                             {
-                                                                 Id = "R-123",
-                                                                 Name = "Rider",
-                                                                 Email = "rider@gmail.com",
-                                                                 Password = "1111",
-                                                                 ContactNumber = "01837730317",
-                                                                 Area = "Dhaka",
-                                                                 Salary = 10000,
-                                                                 NID = "0123456789",
-                                                                 District = "Dhaka",
-                                                                 FullAddress = "Dhaka, Bangladesh",
-                                                                 HubId = "H-123"
+            //modelBuilder.Entity<Rider>().HasData(
+            //                                                 new Rider
+            //                                                 {
+            //                                                     Id = "R-123",
+            //                                                     Name = "Rider",
+            //                                                     Email = "rider@gmail.com",
+            //                                                     Password = "1111",
+            //                                                     ContactNumber = "01837730317",
+            //                                                     Area = "Dhaka",
+            //                                                     Salary = 10000,
+            //                                                     NID = "0123456789",
+            //                                                     District = "Dhaka",
+            //                                                     FullAddress = "Dhaka, Bangladesh",
+            //                                                     HubId = "H-123"
 
-                                                             });
+            //                                                 });
 
         }
 

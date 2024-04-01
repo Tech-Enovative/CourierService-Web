@@ -1398,9 +1398,100 @@ namespace CourierService_Web.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
+
+            ViewBag.Districts = _context.District.ToList();
+            ViewBag.Zones = _context.Zone.ToList();
+            ViewBag.Areas = _context.Areas.ToList();
             return View();
         }
 
+        public IActionResult CreateDistrict()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult CreateDistrict(District district)
+        {
+            var name = _context.District.FirstOrDefault(a => a.Name == district.Name);
+            if (name != null)
+            {
+                TempData["error"] = "District Name Already Exists";
+                return View(district);
+            }
+            if (ModelState.IsValid)
+            {
+                _context.District.Add(district);
+                _context.SaveChanges();
+                return RedirectToAction("Index", "Home"); // Redirect to a suitable action
+            }
+            return View(district);
+        }
+
+        //create zone
+        public IActionResult CreateZone()
+        {
+            ViewBag.Districts = _context.District.ToList();
+            return View();
+        }
+        [HttpPost]
+        public IActionResult CreateZone(Zone zone)
+        {
+            //check exists or not
+            var name = _context.Zone.FirstOrDefault(a => a.Name == zone.Name);
+            if (name != null)
+            {
+                TempData["error"] = "Zone Name Already Exists";
+                return View(zone);
+            }
+            if (ModelState.IsValid)
+            {
+                _context.Zone.Add(zone);
+                _context.SaveChanges();
+                return RedirectToAction("Index", "Home"); 
+            }
+            return View(zone);
+        }
+
+
+        public IActionResult CreateArea()
+        {
+            ViewBag.Districts = _context.District.ToList();
+            ViewBag.Zones = _context.Zone.ToList();
+            ViewBag.Hubs = _context.Hubs.ToList();
+            return View();
+        }
+
+        //create area
+        [HttpPost]
+        public IActionResult CreateArea(Area area)
+        {
+            ViewBag.Districts = _context.District.ToList();
+            ViewBag.Zones = _context.Zone.ToList();
+            ViewBag.Hubs = _context.Hubs.ToList();
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            //check exists or not
+            var name = _context.Areas.FirstOrDefault(a => a.Name == area.Name);
+            if (name != null)
+            {
+                TempData["error"] = "Area Name Already Exists";
+                return View(area);
+            }
+            if (ModelState.IsValid)
+            {
+                _context.Areas.Add(area);
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(area);
+        }
+
+
+
+        //create hub
         [HttpPost]
         public IActionResult CreateHub(Hub hub)
         {
@@ -1412,30 +1503,15 @@ namespace CourierService_Web.Controllers
             {
                 return NotFound();
             }
+            //check name already exists
+            var name = _context.Hubs.FirstOrDefault(a => a.Name == hub.Name);
+            if (name != null)
+            {
+                TempData["error"] = "Hub Name Already Exists";
+                return View(hub);
+            }
             if (ModelState.IsValid)
             {
-                //check name already exist
-                var name = _context.Hubs.FirstOrDefault(a => a.Name == hub.Name);
-                if (name != null)
-                {
-                    TempData["error"] = "Hub Name Already Exists";
-                    return View(hub);
-                }
-                //check email already exist
-                var email = _context.Hubs.FirstOrDefault(a => a.Email == hub.Email);
-                if (email != null)
-                {
-                    TempData["error"] = "Email Already Exists";
-                    return View(hub);
-                }
-                //check password and confirm password
-                if (hub.Password != hub.ConfirmPassword)
-                {
-                    TempData["error"] = "Password and Confirm Password does not match";
-                    return View(hub);
-                }
-                hub.AdminId = Request.Cookies["AdminId"];
-                hub.CreatedBy = Request.Cookies["AdminEmail"];
                 _context.Hubs.Add(hub);
                 _context.SaveChanges();
                 TempData["success"] = "Hub Created Successfully";

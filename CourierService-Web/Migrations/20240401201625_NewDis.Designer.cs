@@ -4,6 +4,7 @@ using CourierService_Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CourierService_Web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240401201625_NewDis")]
+    partial class NewDis
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -229,6 +232,10 @@ namespace CourierService_Web.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("AreaId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("DistrictId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -253,6 +260,7 @@ namespace CourierService_Web.Migrations
                         new
                         {
                             Id = "HUB-123",
+                            AreaId = "AREA-123",
                             DistrictId = "DIS-123",
                             Name = "Mirpur Hub",
                             ZoneId = "ZONE-123"
@@ -715,6 +723,7 @@ namespace CourierService_Web.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("DistrictId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
@@ -985,7 +994,8 @@ namespace CourierService_Web.Migrations
                     b.HasOne("CourierService_Web.Models.District", "District")
                         .WithMany("Zones")
                         .HasForeignKey("DistrictId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("District");
                 });

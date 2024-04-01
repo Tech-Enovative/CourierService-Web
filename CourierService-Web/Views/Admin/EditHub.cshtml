@@ -14,10 +14,7 @@
 
                         <form method="post" enctype="multipart/form-data">
                             <input type="hidden" asp-for="Id" />
-                            <input type="hidden" asp-for="Password" />
-                            <input type="hidden" asp-for="AdminId" />
                             
-                            <input type="hidden" asp-for="CreatedBy" />
                             <div class="form-group">
                                 <label asp-for="Name" for="Name">Name<span class="text-danger">*</span></label>
                                 <input asp-for="Name" type="text" name="Name" parsley-trigger="change" required
@@ -29,29 +26,10 @@
                                 <input asp-for="District" class="form-control" />
                                 <span asp-validation-for="District" class="text-danger"></span>
                             </div>
-                            <div class="form-group">
-                                <label asp-for="Area">Area</label>
-                                <input asp-for="Area" class="form-control" />
-                                <span asp-validation-for="Area" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="Address" for="Address">Address<span class="text-danger">*</span></label>
-                                <input asp-for="Address" type="text" name="Address" parsley-trigger="change" required
-                                       placeholder="Enter Address" class="form-control" id="Address">
-                                <span asp-validation-for="Address" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="PhoneNumber" for="PhoneNumber">Phone Number<span class="text-danger">*</span></label>
-                                <input asp-for="PhoneNumber" type="text" name="PhoneNumber" parsley-trigger="change" required
-                                       placeholder="Enter Phone Number" class="form-control" id="PhoneNumber">
-                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="Email" for="Email">Email<span class="text-danger">*</span></label>
-                                <input asp-for="Email" type="email" name="Email" parsley-trigger="change" required
-                                       placeholder="Enter Email" class="form-control" id="Email">
-                                <span asp-validation-for="Email" class="text-danger"></span>
-                            </div>
+                            
+                            
+                           
+                            
                             <div class="form-group text-right mb-0">
                                 <button asp-controller="Admin" asp-action="EditHub" class="btn btn-primary waves-effect waves-light mr-1" type="submit">
                                     Update Hub

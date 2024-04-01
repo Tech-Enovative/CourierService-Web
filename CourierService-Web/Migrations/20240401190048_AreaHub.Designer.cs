@@ -4,6 +4,7 @@ using CourierService_Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CourierService_Web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240401190048_AreaHub")]
+    partial class AreaHub
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -181,7 +184,13 @@ namespace CourierService_Web.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ZoneId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ZoneId");
 
                     b.ToTable("District");
 
@@ -189,7 +198,8 @@ namespace CourierService_Web.Migrations
                         new
                         {
                             Id = "DIS-123",
-                            Name = "Dhaka"
+                            Name = "Dhaka",
+                            ZoneId = "ZONE-123"
                         });
                 });
 
@@ -229,6 +239,10 @@ namespace CourierService_Web.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("AreaId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("DistrictId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -253,6 +267,7 @@ namespace CourierService_Web.Migrations
                         new
                         {
                             Id = "HUB-123",
+                            AreaId = "AREA-123",
                             DistrictId = "DIS-123",
                             Name = "Mirpur Hub",
                             ZoneId = "ZONE-123"
@@ -714,16 +729,11 @@ namespace CourierService_Web.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("DistrictId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DistrictId");
 
                     b.ToTable("Zone");
 
@@ -731,7 +741,6 @@ namespace CourierService_Web.Migrations
                         new
                         {
                             Id = "ZONE-123",
-                            DistrictId = "DIS-123",
                             Name = "Dhaka"
                         });
                 });
@@ -791,6 +800,17 @@ namespace CourierService_Web.Migrations
                     b.Navigation("Merchant");
 
                     b.Navigation("Rider");
+                });
+
+            modelBuilder.Entity("CourierService_Web.Models.District", b =>
+                {
+                    b.HasOne("CourierService_Web.Models.Zone", "Zone")
+                        .WithMany("Districts")
+                        .HasForeignKey("ZoneId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Zone");
                 });
 
             modelBuilder.Entity("CourierService_Web.Models.ExchangeParcel", b =>
@@ -980,16 +1000,6 @@ namespace CourierService_Web.Migrations
                     b.Navigation("Rider");
                 });
 
-            modelBuilder.Entity("CourierService_Web.Models.Zone", b =>
-                {
-                    b.HasOne("CourierService_Web.Models.District", "District")
-                        .WithMany("Zones")
-                        .HasForeignKey("DistrictId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("District");
-                });
-
             modelBuilder.Entity("CourierService_Web.Models.DeliveredParcel", b =>
                 {
                     b.Navigation("Parcel")
@@ -1001,8 +1011,6 @@ namespace CourierService_Web.Migrations
                     b.Navigation("Areas");
 
                     b.Navigation("Hubs");
-
-                    b.Navigation("Zones");
                 });
 
             modelBuilder.Entity("CourierService_Web.Models.ExchangeParcel", b =>
@@ -1076,6 +1084,8 @@ namespace CourierService_Web.Migrations
             modelBuilder.Entity("CourierService_Web.Models.Zone", b =>
                 {
                     b.Navigation("Areas");
+
+                    b.Navigation("Districts");
 
                     b.Navigation("Hubs");
                 });

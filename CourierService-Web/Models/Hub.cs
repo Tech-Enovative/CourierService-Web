@@ -7,50 +7,31 @@ namespace CourierService_Web.Models
     public class Hub
     {
         [Key]
-        public string Id { get; set; } = "H-" + Guid.NewGuid().ToString().Substring(0, 4);
-        [Required(ErrorMessage = "Name is required.")]
+        public string Id { get; set; } = "HUB-" + Guid.NewGuid().ToString().Substring(0, 5);
+
+        [Required(ErrorMessage = "Hub name is required.")]
         public string Name { get; set; }
-        
-        [Required(ErrorMessage = "District is required.")]
-        public string District { get; set; }
-        [Required(ErrorMessage = "Area is required.")]
-        public string Area { get; set; }
-       
-        public string? Address { get; set; }
 
-        
-        [RegularExpression(@"^(\+88)?01[0-9]{9}$", ErrorMessage = "Please enter a valid phone number.")]
-        public string? PhoneNumber { get; set; }
-       
-        [RegularExpression(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$", ErrorMessage = "Please enter a valid email address.")]
-        public string? Email { get; set; }
-        
-        public string? Password { get; set; }
+        [ForeignKey("DistrictId")]
+        public string DistrictId { get; set; }
+        public District? District { get; set; }
 
-        
-       
-        [NotMapped]
-        [ValidateNever]
-        public string? ConfirmPassword { get; set; }
-        public int Status { get; set; } = 1;
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public string? CreatedBy { get; set; } 
+        [ForeignKey("ZoneId")]
+        public string ZoneId { get; set; }
+        public Zone? Zone { get; set; }
 
-        [ForeignKey("AdminId")]
-        public string? AdminId { get; set; }
-        public Admin? Admin { get; set; }
-        
+        public List<Area>? Areas { get; set; }
+
         public List<Rider>? Riders { get; set; }
 
-        public List<Parcel>? parcels { get; set; }
+        public List<Parcel>? Parcels { get; set; }
 
         public List<DeliveredParcel>? DeliveredParcels { get; set; }
 
         public List<ExchangeParcel>? ExchangeParcels { get; set; }
 
         public List<ReturnParcel>? ReturnParcels { get; set; }
+
         public List<Merchant>? Merchants { get; set; }
-
-
     }
 }

@@ -633,7 +633,7 @@ namespace CourierService_Web.Controllers
             //find hub
             var merchantId = HttpContext.Request.Cookies["MerchantId"];
             var merchant = _context.Merchants.Find(merchantId);
-            var hub = _context.Hubs.FirstOrDefault(x => x.Area == merchant.Area);
+            //var hub = _context.Hubs.FirstOrDefault(x => x.Area == merchant.Area);
             if (file == null || file.Length == 0)
             {
                 ModelState.AddModelError("File", "Please select a file");
@@ -691,7 +691,7 @@ namespace CourierService_Web.Controllers
                     _context.Parcels.Add(new Parcel
                     {
                         MerchantId = HttpContext.Request.Cookies["MerchantId"],
-                        HubId = hub.Id,
+                        //HubId = hub.Id,
                         ReceiverName = parcel.ReceiverName,
                         ReceiverAddress = parcel.ReceiverAddress,
                         ReceiverContactNumber = parcel.ReceiverContactNumber,

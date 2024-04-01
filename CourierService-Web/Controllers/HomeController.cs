@@ -226,22 +226,22 @@ namespace CourierService_Web.Controllers
             }
 
             //for hub login
-            var hub = _context.Hubs.FirstOrDefault(a => a.Email == email && a.Password == password);
-            if (hub != null)
-            {
-                TempData["success"] = "Login Successful";
-                if (IsRememberME == "on")
-                {
-                    options.Expires = DateTime.Now.AddDays(7);
-                }
-                else
-                {
-                    options.Expires = DateTime.Now.AddDays(1);
-                }
-                Response.Cookies.Append("HubId", hub.Id, options);
-                Response.Cookies.Append("HubEmail", hub.Email, options);
-                return RedirectToAction("Index", "Hub");
-            }
+            //var hub = _context.Hubs.FirstOrDefault(a => a.Email == email && a.Password == password);
+            //if (hub != null)
+            //{
+            //    TempData["success"] = "Login Successful";
+            //    if (IsRememberME == "on")
+            //    {
+            //        options.Expires = DateTime.Now.AddDays(7);
+            //    }
+            //    else
+            //    {
+            //        options.Expires = DateTime.Now.AddDays(1);
+            //    }
+            //    Response.Cookies.Append("HubId", hub.Id, options);
+            //    Response.Cookies.Append("HubEmail", hub.Email, options);
+            //    return RedirectToAction("Index", "Hub");
+            //}
             else
             {
                 TempData["error"] = "Invalid Email or Password";
