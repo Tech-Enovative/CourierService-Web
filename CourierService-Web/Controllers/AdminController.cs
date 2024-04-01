@@ -1382,7 +1382,7 @@ namespace CourierService_Web.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
-            var hubs = _context.Hubs.ToList();
+            var hubs = _context.Hubs.Include(h=>h.Areas).Include(d=>d.District).Include(z=>z.Zone).ToList();
             if (hubs == null)
             {
                 return NotFound();
