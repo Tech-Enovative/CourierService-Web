@@ -2,6 +2,7 @@
 
 @{
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    string AdminId = Context.Request.Cookies["AdminId"];
 }
 
 <div class="content-page">
@@ -12,31 +13,40 @@
                     <div>
                         <h4 class="header-title">Edit Hub</h4>
 
-                        <form method="post" enctype="multipart/form-data">
+                        <form method="post" enctype="multipart/form-data" action="@Url.Action("EditHub", "Admin")">
+
                             <input type="hidden" asp-for="Id" />
-                            
+
+                            <!-- Hub creation form fields -->
                             <div class="form-group">
                                 <label asp-for="Name" for="Name">Name<span class="text-danger">*</span></label>
                                 <input asp-for="Name" type="text" name="Name" parsley-trigger="change" required
                                        placeholder="Enter Name" class="form-control" id="Name">
                                 <span asp-validation-for="Name" class="text-danger"></span>
                             </div>
+
                             <div class="form-group">
-                                <label asp-for="District">District</label>
-                                <input asp-for="District" class="form-control" />
-                                <span asp-validation-for="District" class="text-danger"></span>
+                                <label for="DistrictId">Select District<span class="text-danger">*</span></label>
+                                <select name="DistrictId" class="form-control">
+                                    @foreach (var district in ViewBag.Districts)
+                                    {
+                                        @if(district.Id == Model.DistrictId)
+                                        {
+                                            <option value="@district.Id" selected>@district.Name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@district.Id">@district.Name</option>
+                                        }
+                                    }
+                                </select>
                             </div>
-                            
-                            
-                           
-                            
+
                             <div class="form-group text-right mb-0">
                                 <button asp-controller="Admin" asp-action="EditHub" class="btn btn-primary waves-effect waves-light mr-1" type="submit">
                                     Update Hub
                                 </button>
-                                <button type="reset" class="btn btn-secondary waves-effect">
-                                    Reset
-                                </button>
+                                <a asp-action="Index" asp-controller="Admin" class="btn btn-secondary waves-effect">Cancel</a>
                             </div>
                         </form>
                     </div>
@@ -48,11 +58,5 @@
 </div>
 
 @section Scripts {
-    @{
-        <partial name="_ValidationScriptsPartial" />
-    }
+    @* Add scripts if needed *@
 }
-
-
-
-

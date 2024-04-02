@@ -1444,6 +1444,46 @@ namespace CourierService_Web.Controllers
             return View(district);
         }
 
+        //edit district
+        public IActionResult EditDistrict(string? id)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var district = _context.District.Find(id);
+            if (district == null)
+            {
+                return NotFound();
+            }
+            return View(district);
+        }
+
+        [HttpPost]
+        public IActionResult EditDistrict(District district)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (district == null)
+            {
+                return NotFound();
+            }
+            if (ModelState.IsValid)
+            {
+                _context.District.Update(district);
+                _context.SaveChanges();
+                TempData["success"] = "District Updated Successfully";
+                return RedirectToAction("District");
+            }
+            return View(district);
+        }
+
         //delete district
         public IActionResult DeleteDistrict(string? id)
         {
@@ -1781,6 +1821,9 @@ namespace CourierService_Web.Controllers
             {
                 return NotFound();
             }
+            ViewBag.Districts = _context.District.ToList();
+            ViewBag.Zones = _context.Zone.ToList();
+            ViewBag.Areas = _context.Areas.ToList();
             return View(hub);
         }
 
@@ -1791,6 +1834,9 @@ namespace CourierService_Web.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
+            ViewBag.Districts = _context.District.ToList();
+            ViewBag.Zones = _context.Zone.ToList();
+            ViewBag.Areas = _context.Areas.ToList();
             if (hub == null)
             {
                 return NotFound();
