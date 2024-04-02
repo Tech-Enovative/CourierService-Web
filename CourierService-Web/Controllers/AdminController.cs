@@ -6,6 +6,7 @@ using CourierService_Web.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Text;
 
 namespace CourierService_Web.Controllers
@@ -1629,6 +1630,96 @@ namespace CourierService_Web.Controllers
             }
             return View(area);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> BulkCreateArea(Area model, IFormFile csvFile)
+        {
+            ModelState.Remove("Name"); // Remove validation for the Name field
+            if (csvFile == null || csvFile.Length <= 0)
+            {
+                ModelState.AddModelError("", "Please select a file.");
+                return View(); // You can return the view with an error message
+            }
+
+            try
+            {
+                using (var reader = new StreamReader(csvFile.OpenReadStream()))
+                {
+                    var areas = new List<Area>();
+                    string line;
+                    bool isFirstLine = true;
+                    while ((line = await reader.ReadLineAsync()) != null)
+                    {
+                        if (isFirstLine)
+                        {
+                            isFirstLine = false;
+                            continue; // Skip the first line
+                        }
+                        var values = line.Split(',');
+
+                        //check if the area already exists
+                        var name = _context.Areas.FirstOrDefault(a => a.Name == values[0]);
+                        if (name != null)
+                        {
+                            TempData["error"] = "Area Name Already Exists";
+                            return RedirectToAction("CreateArea");
+                        }
+
+                        var area = new Area
+                        {
+                            Name = values[0], // Assuming the first column is Name
+                            DistrictId = model.DistrictId, // Assuming the second column is DistrictId
+                            ZoneId = model.ZoneId, // Assuming the third column is ZoneId
+                            HubId = model.HubId, // Assuming the fourth column is HubId
+                        };
+                        areas.Add(area);
+                    }
+
+                    // Add areas to the database
+                    await _context.Areas.AddRangeAsync(areas);
+                    await _context.SaveChangesAsync();
+
+                    TempData["success"] = "Areas created successfully.";
+                    return RedirectToAction("Area"); // Redirect to the desired page
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "An error occurred while processing the file.");
+                // Log the exception
+                return RedirectToAction("Area"); // Redirect to the desired page
+            }
+        }
+
+
+
+        public IActionResult DownloadAreaCsv()
+        {
+            // Define the CSV content
+            // CSV content with headers and sample data
+            var csvContent = "Name";
+            
+
+            // Create a byte array from the CSV content
+            var bytes = Encoding.UTF8.GetBytes(csvContent);
+
+            // Return the CSV file as a downloadable file
+            return File(bytes, "text/csv", "Area_Bulk.csv");
+        }
+
+        [HttpPost]
+        public IActionResult DeleteAreas(List<string> selectedAreas)
+        {
+            if (selectedAreas != null && selectedAreas.Any())
+            {
+                var areasToDelete = _context.Areas.Where(a => selectedAreas.Contains(a.Id));
+                _context.Areas.RemoveRange(areasToDelete);
+                _context.SaveChanges();
+                TempData["success"] = "Selected areas deleted successfully.";
+            }
+            return RedirectToAction("Index"); // Redirect to the page where the table is displayed
+        }
+
 
         //delete area
         public IActionResult DeleteArea(string? id)

@@ -13,10 +13,10 @@
                     <div>
                         <h4 class="header-title">Create a New Area</h4>
 
-                        <form method="post" enctype="multipart/form-data">
+                        <form method="post" enctype="multipart/form-data" action="@Url.Action("CreateArea", "Admin")">
                             <div class="form-group">
                                 <label asp-for="Name" for="Name">Name<span class="text-danger">*</span></label>
-                                <input asp-for="Name" type="text" name="Name" parsley-trigger="change" required
+                                <input asp-for="Name" type="text" name="Name" parsley-trigger="change"
                                        placeholder="Enter Name" class="form-control" id="Name">
                                 <span asp-validation-for="Name" class="text-danger"></span>
                             </div>
@@ -53,13 +53,78 @@
                                 <span asp-validation-for="HubId" class="text-danger"></span>
                             </div>
 
+                            
+
                             <div class="form-group text-right mb-0">
-                                <button asp-controller="Admin" asp-action="CreateArea" class="btn btn-primary waves-effect waves-light mr-1" type="submit">
+                                <button type="submit" class="btn btn-primary waves-effect waves-light mr-1">
                                     Create Area
                                 </button>
                                 <button type="reset" class="btn btn-secondary waves-effect">
                                     Reset
                                 </button>
+
+                                
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div>
+                        <h4 class="header-title">Create Bulk</h4>
+
+                        <form method="post" enctype="multipart/form-data" action="@Url.Action("BulkCreateArea", "Admin")">
+                            
+
+                            <div class="form-group">
+                                <label for="DistrictId">Select District<span class="text-danger">*</span></label>
+                                <select name="DistrictId" class="form-control">
+                                    @foreach (var district in ViewBag.Districts)
+                                    {
+                                        <option value="@district.Id">@district.Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <br />
+
+                            <div class="form-group">
+                                <label for="ZoneId">Select Zone<span class="text-danger">*</span></label>
+                                <select name="ZoneId" class="form-control">
+                                    @foreach (var zone in ViewBag.Zones)
+                                    {
+                                        <option value="@zone.Id">@zone.Name</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="HubId" for="HubId">Hub</label>
+                                <select asp-for="HubId" class="form-control">
+                                    @foreach (var hub in ViewBag.Hubs)
+                                    {
+                                        <option value="@hub.Id">@hub.Name</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="HubId" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="CsvFile">Upload CSV File<span class="text-danger">*</span></label>
+                                <input type="file" name="csvFile" class="form-control-file" accept=".csv">
+                            </div>
+
+                            <div class="form-group text-right mb-0">
+                                <button type="submit" class="btn btn-primary waves-effect waves-light mr-1">
+                                    Import
+                                </button>
+                                <button type="reset" class="btn btn-secondary waves-effect">
+                                    Reset
+                                </button>
+
+                                <!-- Add Download Template CSV button -->
+                                <a href="@Url.Action("DownloadAreaCsv", "Admin")" class="btn btn-info waves-effect waves-light">
+                                    Download Template CSV
+                                </a>
                             </div>
                         </form>
                     </div>

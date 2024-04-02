@@ -42,9 +42,29 @@
                                             <th scope="row">@hub.Id</th>
                                             <td>@hub.Name</td>
                                             <td>@hub.District.Name</td>
-                                            
-                                            <td>@(hub.Zones != null ? string.Join(", ", hub.Zones.Select(a => a.Name)) : "")</td>
-                                            <td>@(hub.Areas != null ? string.Join(", ", hub.Areas.Select(a => a.Name)) : "")</td>
+
+                                            <td>
+                                                @(hub.Zones != null ? string.Join(", ", hub.Zones.Take(5).Select(a => a.Name)) : "")
+                                                @if (hub.Zones.Count() > 5)
+                                                {
+                                                    <div id="zoneDetails_@hub.Id" class="more-details" style="display: none;">
+                                                        @string.Join(", ", hub.Zones.Skip(5).Select(a => a.Name))
+                                                    </div>
+                                                    <a href="#" class="text-primary see-more" data-target="#zoneDetails_@hub.Id">Expand</a>
+                                                    
+                                                }
+                                            </td>
+                                            <td>
+                                                @(hub.Areas != null ? string.Join(", ", hub.Areas.Take(5).Select(a => a.Name)) : "")
+                                                @if (hub.Areas.Count() > 5)
+                                                {
+                                                    <div id="areaDetails_@hub.Id" class="more-details" style="display: none;">
+                                                        @string.Join(", ", hub.Areas.Skip(5).Select(a => a.Name))
+                                                    </div>
+                                                    <a href="#" class="text-primary see-more" data-target="#areaDetails_@hub.Id">Expand</a>
+                                                    
+                                                }
+                                            </td>
 
                                             <td>
                                                 <a asp-action="EditHub" asp-route-id="@hub.Id" asp-controller="Admin" class="btn btn-primary">
@@ -98,3 +118,19 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.see-more').click(function (e) {
+                e.preventDefault();
+                var target = $(this).data('target');
+                $(target).toggle();
+                // Change the text of the link based on visibility state
+                $(this).text(function (_, text) {
+                    return text === "Expand" ? "Collapse" : "Expand";
+                });
+            });
+        });
+    </script>
+}
