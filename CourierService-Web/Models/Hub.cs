@@ -7,7 +7,7 @@ namespace CourierService_Web.Models
     public class Hub
     {
         [Key]
-        public string Id { get; set; } = "HUB-" + Guid.NewGuid().ToString().Substring(0, 5);
+        public string Id { get; set; } = "H-" + Guid.NewGuid().ToString().Substring(0, 5);
 
         [Required(ErrorMessage = "Hub name is required.")]
         public string Name { get; set; }
@@ -16,9 +16,7 @@ namespace CourierService_Web.Models
         public string DistrictId { get; set; }
         public District? District { get; set; }
 
-        [ForeignKey("ZoneId")]
-        public string ZoneId { get; set; }
-        public Zone? Zone { get; set; }
+        public List<Zone>? Zones { get; set; }
 
         public List<Area>? Areas { get; set; }
 

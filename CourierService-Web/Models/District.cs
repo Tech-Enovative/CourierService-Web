@@ -8,7 +8,7 @@ namespace CourierService_Web.Models
     public class District
     {
         [Key]
-        public string Id { get; set; } = "DIS-" + Guid.NewGuid().ToString().Substring(0, 5);
+        public string Id { get; set; } = "DI-" + Guid.NewGuid().ToString().Substring(0, 5);
 
         [Required(ErrorMessage = "District name is required.")]
         public string Name { get; set; }

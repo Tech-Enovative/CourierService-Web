@@ -6,7 +6,7 @@ namespace CourierService_Web.Models
     public class Area
     {
         [Key]
-        public string Id { get; set; } = "AREA-" + Guid.NewGuid().ToString().Substring(0, 5);
+        public string Id { get; set; } = "A-" + Guid.NewGuid().ToString().Substring(0, 5);
 
         [Required(ErrorMessage = "Area name is required.")]
         public string Name { get; set; }

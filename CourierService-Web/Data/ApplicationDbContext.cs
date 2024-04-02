@@ -182,6 +182,12 @@ namespace CourierService_Web.Data
                 .WithMany(h => h.Areas)
                 .HasForeignKey(a => a.HubId);
 
+            //relationship between hub and zone
+            modelBuilder.Entity<Zone>()
+                .HasOne(z => z.Hub)
+                .WithMany(h => h.Zones)
+                .HasForeignKey(z => z.HubId);
+
             //relationship between zone and area
             modelBuilder.Entity<Area>()
                 .HasOne(a => a.Zone)
@@ -241,7 +247,8 @@ namespace CourierService_Web.Data
                                                                             {
                     Id = "ZONE-123",
                     Name = "Dhaka",
-                    DistrictId = "DIS-123"
+                    DistrictId = "DIS-123",
+                    HubId = "HUB-123"
                 });
            
 
@@ -263,7 +270,7 @@ namespace CourierService_Web.Data
                     Id = "HUB-123",
                     Name = "Mirpur Hub",
                     DistrictId = "DIS-123",
-                    ZoneId = "ZONE-123",
+                    
                    
                 });
 

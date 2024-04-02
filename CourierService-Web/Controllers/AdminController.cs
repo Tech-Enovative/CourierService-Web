@@ -1378,11 +1378,12 @@ namespace CourierService_Web.Controllers
 
         public IActionResult Hub()
         {
+
             if (!IsAdminLoggedIn())
             {
                 return RedirectToAction("Login", "Home");
             }
-            var hubs = _context.Hubs.Include(h=>h.Areas).Include(d=>d.District).Include(z=>z.Zone).ToList();
+            var hubs = _context.Hubs.Include(h=>h.Areas).Include(d=>d.District).Include(z=>z.Zones).ToList();
             if (hubs == null)
             {
                 return NotFound();
@@ -1405,6 +1406,21 @@ namespace CourierService_Web.Controllers
             return View();
         }
 
+        //district
+        public IActionResult District()
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var districts = _context.District.ToList();
+            if (districts == null)
+            {
+                return NotFound();
+            }
+            return View(districts);
+        }
+
         public IActionResult CreateDistrict()
         {
             return View();
@@ -1423,21 +1439,91 @@ namespace CourierService_Web.Controllers
             {
                 _context.District.Add(district);
                 _context.SaveChanges();
-                return RedirectToAction("Index", "Home"); // Redirect to a suitable action
+                return RedirectToAction("District"); // Redirect to a suitable action
             }
             return View(district);
+        }
+
+        //delete district
+        public IActionResult DeleteDistrict(string? id)
+        {
+            if (!IsAdminLoggedIn() || Request.Cookies["AdminEmail"] != "flyerbd@gmail.com")
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var district = _context.District.Find(id);
+            if (district == null)
+            {
+                return NotFound();
+            }
+            var zonesToRemove = _context.Zone.Where(z => z.DistrictId == id).ToList();
+            _context.Zone.RemoveRange(zonesToRemove);
+            _context.District.Remove(district);
+            _context.SaveChanges();
+            TempData["error"] = "District Deleted Successfully";
+            return RedirectToAction("District");
+        }
+
+        //zone
+        public IActionResult Zone()
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var zones = _context.Zone.Include(d => d.District).Include(h => h.Hub).ToList();
+            if (zones == null)
+            {
+                return NotFound();
+            }
+            return View(zones);
+        }
+
+        //delete zone
+        
+        public IActionResult DeleteZone(string? id)
+        {
+            if (!IsAdminLoggedIn() || Request.Cookies["AdminEmail"] != "flyerbd@gmail.com")
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var zone = _context.Zone.Find(id);
+            if (zone == null)
+            {
+                return NotFound();
+            }
+            var areasToRemove = _context.Areas.Where(a => a.ZoneId == id).ToList();
+            _context.Areas.RemoveRange(areasToRemove);
+            _context.Zone.Remove(zone);
+            _context.SaveChanges();
+            TempData["error"] = "Zone Deleted Successfully";
+            return RedirectToAction("Zone");
         }
 
         //create zone
         public IActionResult CreateZone()
         {
             ViewBag.Districts = _context.District.ToList();
+            ViewBag.Zones = _context.Zone.ToList();
+            ViewBag.Hub = _context.Hubs.ToList();
             return View();
         }
         [HttpPost]
         public IActionResult CreateZone(Zone zone)
         {
+            ViewBag.Districts = _context.District.ToList();
+            ViewBag.Zones = _context.Zone.ToList();
+            ViewBag.Hub = _context.Hubs.ToList();
             //check exists or not
+
             var name = _context.Zone.FirstOrDefault(a => a.Name == zone.Name);
             if (name != null)
             {
@@ -1448,9 +1534,24 @@ namespace CourierService_Web.Controllers
             {
                 _context.Zone.Add(zone);
                 _context.SaveChanges();
-                return RedirectToAction("Index", "Home"); 
+                return RedirectToAction("Zone"); 
             }
             return View(zone);
+        }
+
+        //Area
+        public IActionResult Area()
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var areas = _context.Areas.Include(z => z.Zone).Include(d => d.District).Include(h => h.Hub).ToList();
+            if (areas == null)
+            {
+                return NotFound();
+            }
+            return View(areas);
         }
 
 
@@ -1484,9 +1585,31 @@ namespace CourierService_Web.Controllers
             {
                 _context.Areas.Add(area);
                 _context.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Area");
             }
             return View(area);
+        }
+
+        //delete area
+        public IActionResult DeleteArea(string? id)
+        {
+            if (!IsAdminLoggedIn() || Request.Cookies["AdminEmail"] != "flyerbd@gmail.com")
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var area = _context.Areas.Find(id);
+            if (area == null)
+            {
+                return NotFound();
+            }
+            _context.Areas.Remove(area);
+            _context.SaveChanges();
+            TempData["error"] = "Area Deleted Successfully";
+            return RedirectToAction("Area");
         }
 
 
@@ -1495,6 +1618,9 @@ namespace CourierService_Web.Controllers
         [HttpPost]
         public IActionResult CreateHub(Hub hub)
         {
+            ViewBag.Districts = _context.District.ToList();
+            ViewBag.Zones = _context.Zone.ToList();
+            ViewBag.Hub = _context.Hubs.ToList();
             if (!IsAdminLoggedIn())
             {
                 return RedirectToAction("Login", "Home");
@@ -1515,7 +1641,7 @@ namespace CourierService_Web.Controllers
                 _context.Hubs.Add(hub);
                 _context.SaveChanges();
                 TempData["success"] = "Hub Created Successfully";
-                return RedirectToAction("Index");
+                return RedirectToAction("Hub");
             }
             else
             {

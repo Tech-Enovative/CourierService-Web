@@ -20,12 +20,25 @@
                                 <span asp-validation-for="Name" class="text-danger"></span>
                             </div>
 
-                            <div class="form-group asp-validation-for="DistrictId">
-                                <label asp-for="DistrictId">District</label>
-                                <select asp-for="DistrictId" id="DistrictId" class="form-control" asp-items="@(new SelectList(ViewBag.Districts, "Id", "Name"))">
-                                    <option value="">-- Select District --</option>
+                            <div class="form-group">
+                                <label for="DistrictId">Select District<span class="text-danger">*</span></label>
+                                <select name="DistrictId" class="form-control">
+                                    @foreach (var district in ViewBag.Districts)
+                                    {
+                                        <option value="@district.Id">@district.Name</option>
+                                    }
                                 </select>
-                                <span asp-validation-for="DistrictId" class="text-danger"></span>
+                            </div>
+
+                                <div class="form-group">
+                                <label for="HubId">Select Hub<span class="text-danger">*</span></label>
+                                <select name="HubId" class="form-control">
+                                @foreach (var hub in ViewBag.Hub)
+                                {
+                                <option value="@hub.Id">@hub.Name</option>
+                                }
+                                </select>
+                                </div>
                             <button type="submit" class="btn btn-primary">Create Zone</button>
                         </form>
                     </div>
