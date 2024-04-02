@@ -1854,6 +1854,104 @@ namespace CourierService_Web.Controllers
             }
         }
 
+        //edit area
+        public IActionResult EditArea(string? id)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var area = _context.Areas.Find(id);
+            if (area == null)
+            {
+                return NotFound();
+            }
+            ViewBag.Districts = _context.District.ToList();
+            ViewBag.Zones = _context.Zone.ToList();
+            ViewBag.Hubs = _context.Hubs.ToList();
+            return View(area);
+        }
+
+        [HttpPost]
+        public IActionResult EditArea(Area area)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            ViewBag.Districts = _context.District.ToList();
+            ViewBag.Zones = _context.Zone.ToList();
+            ViewBag.Hubs = _context.Hubs.ToList();
+            if (area == null)
+            {
+                return NotFound();
+            }
+            if (ModelState.IsValid)
+            {
+                _context.Areas.Update(area);
+                _context.SaveChanges();
+                TempData["success"] = "Area Updated Successfully";
+                return RedirectToAction("Area");
+            }
+            else
+            {
+                return View(area);
+            }
+        }
+
+        //edit zone
+        public IActionResult EditZone(string? id)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var zone = _context.Zone.Find(id);
+            if (zone == null)
+            {
+                return NotFound();
+            }
+            ViewBag.Districts = _context.District.ToList();
+           
+            ViewBag.Hub = _context.Hubs.ToList();
+            return View(zone);
+        }
+
+        [HttpPost]
+        public IActionResult EditZone(Zone zone)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            ViewBag.Districts = _context.District.ToList();
+            
+            ViewBag.Hub = _context.Hubs.ToList();
+            if (zone == null)
+            {
+                return NotFound();
+            }
+            if (ModelState.IsValid)
+            {
+                _context.Zone.Update(zone);
+                _context.SaveChanges();
+                TempData["success"] = "Zone Updated Successfully";
+                return RedirectToAction("Zone");
+            }
+            else
+            {
+                return View(zone);
+            }
+        }
+
         public IActionResult AssignParcelAdmin(string id)
         {
 
