@@ -43,25 +43,22 @@
 
                            
                               
-                                  <div class="form-group mt-3">
+                                 @*  <div class="form-group mt-3">
                                     <label for="HubId">Select Hub<span class="text-danger">*</span></label>
                                     <select name="HubId" class="form-control" id="">
                                     @foreach (var hub in ViewBag.HubList)
                                     {
-                                        //check area
+                                        
                                         if (hub.Area == ViewBag.MerchantArea)
                                         {
                                             <option value="@hub.Id" >@hub.Name</option>
 
                                         }
-                                        @* else if(hub.Area != ViewBag.MerchantArea)
-                                        {
-                                            <option value="@hub.Id" disabled>@hub.Name</option>
-                                        } *@
+                                        
                                     }
 
                                     </select>
-                                   </div>
+                                   </div> *@
                             
                             <div class="form-group">
                                 <label asp-for="PickupLocation" for="PickupLocation">Pickup Location<span class="text-danger">*</span></label>
@@ -93,12 +90,20 @@
                                        placeholder="Enter Receiver Contact Number" class="form-control" id="ReceiverContactNumber">
                                 <span asp-validation-for="ReceiverContactNumber" class="text-danger"></span>
                             </div>
-                            <div class="form-group">
+                            <div id="parcelDeliveryCounts" style="color: green; display: none; font-weight: bold;">
+                                @* Parcel: <span id="parcelCount"></span> | *@ Total Delivery: <span id="deliveryCount"></span> | Total Cancel : <span id="returnCount"></span> | Delivery Success Rate: <span id="deliverySuccessRate"></span>
+                            </div>
+
+
+
+
+
+                            @* <div class="form-group">
                                 <label asp-for="ReceiverEmail" for="ReceiverEmail">Receiver Email<span class="text-danger"></span></label>
                                 <input asp-for="ReceiverEmail" type="email" name="ReceiverEmail" parsley-trigger="change" 
                                        placeholder="Enter Receiver Email" class="form-control" id="ReceiverEmail">
                                 <span asp-validation-for="ReceiverEmail" class="text-danger"></span>
-                            </div>
+                            </div> *@
                             <div class="form-group">
                                 <label asp-for="ProductName" for="ProductName">Product Name<span class="text-danger">*</span></label>
                                 <input asp-for="ProductName" type="text" name="ProductName" parsley-trigger="change" required
@@ -314,35 +319,33 @@
 
 
 @section Scripts {
-
-    <button id="downloadBtn" class="btn btn-primary">Download CSV Template</button>
-
-    @* <script>
-        document.getElementById('downloadBtn').addEventListener('click', function () {
-            // CSV content with headers and sample data
-            var csvContent = "Id,ReceiverName,ReceiverAddress,ReceiverContactNumber,ReceiverEmail,ProductName,ProductWeight,ProductPrice,ProductQuantity,DeliveryCharge,Status,PickupRequestDate,DispatchDate,DeliveryDate,CancelDate,ReturnDate,PaymentStatus,PaymentInHand,PickupLocation,DeliveryType,TotalPrice,MerchantId,RiderId,HubId,ReturnId,DeliveryId,ExchangeId,COD\n";
-            csvContent += "P-1234,John Doe,123 Main St,0123456789,johndoe@example.com,Sample Product,2,50,1,10,Pickup Request,2024-03-29T12:00:00,2024-03-30T12:00:00,2024-04-02T12:00:00,,2024-04-03T12:00:00,Success,Completed,My Office,InsideDhaka,60,123,R123,H123,RID123,DID123,EID123,20\n";
-            csvContent += "P-5678,Jane Smith,456 Elm St,9876543210,janesmith@example.com,Another Product,1,30,2,15,Pickup Request,2024-03-30T12:00:00,2024-03-31T12:00:00,2024-04-03T12:00:00,2024-04-04T12:00:00,2024-04-06T12:00:00,Pending,Not Received,Home,SubDhaka,45,456,R456,H456,RID456,DID456,EID456,10\n";
-
-            // Create a Blob containing the CSV data
-            var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-
-            // Create a download link
-            var link = document.createElement("a");
-            if (link.download !== undefined) { // Feature detection
-                // Create a temporary link element
-                var url = URL.createObjectURL(blob);
-                link.setAttribute("href", url);
-                link.setAttribute("download", "parcel_template.csv");
-
-                // Trigger the download
-                link.style.visibility = 'hidden';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }
+    <script>
+        $(document).ready(function () {
+            $('#ReceiverContactNumber').change(function () {
+                var receiverContactNumber = $(this).val();
+                $.ajax({
+                    url: '@Url.Action("GetParcelDeliveryCounts", "Merchant")',
+                    type: 'GET',
+                    data: { receiverContactNumber: receiverContactNumber },
+                    success: function (result) {
+                        $('#parcelCount').text(result.parcelCount);
+                        $('#deliveryCount').text(result.deliveryCount);
+                        $('#deliverySuccessRate').text(result.successRate.toFixed(2) + "%"); // Display success rate with percentage
+                        $('#returnCount').text(result.returnCount);
+                        $('#parcelDeliveryCounts').show(); // Show the div
+                    },
+                    error: function () {
+                        alert('Error occurred while fetching parcel and delivery counts.');
+                    }
+                });
+            });
         });
-    </script> *@
+    </script>
+}
+
+
+
+
 
     @{
             <partial name="_ValidationScriptsPartial" />

@@ -499,9 +499,37 @@ namespace CourierService_Web.Controllers
             ViewBag.MerchantArea = merchant.Area;
             //merhcant full address
             ViewBag.MerchantFullAddress = merchant.FullAddress;
+
+            //count total percel and delivery count according to ReceiverContactNumber
+            var parcelCount = _context.Parcels.Count(x => x.ReceiverContactNumber == merchant.ContactNumber);
+            ViewBag.ParcelCount = parcelCount;
+            var deliveryCount = _context.Parcels.Count(x => x.ReceiverContactNumber == merchant.ContactNumber && x.DeliveryId != null);
+            ViewBag.DeliveryCount = deliveryCount;
             return View();
 
             
+        }
+
+        [HttpGet]
+        public IActionResult GetParcelDeliveryCounts(string receiverContactNumber)
+        {
+            var parcelCount = _context.Parcels.Count(x => x.ReceiverContactNumber == receiverContactNumber);
+            var deliveryCount = _context.Parcels.Count(x => x.ReceiverContactNumber == receiverContactNumber && x.DeliveryId != null);
+
+            //calulate delivery success rate based on return count
+            var returnCount = _context.Parcels.Count(x => x.ReceiverContactNumber == receiverContactNumber && x.ReturnId != null);
+            var successRate = 0;
+            if (parcelCount > 0)
+            {
+                successRate = ((parcelCount - returnCount) * 100) / parcelCount; // Exclude returned parcels from success rate calculation
+            }
+
+            receiverContactNumber = receiverContactNumber.Substring(0, 3) + "*****" + receiverContactNumber.Substring(receiverContactNumber.Length - 3);
+            return Json(new { parcelCount, deliveryCount, successRate, returnCount, receiverContactNumber });
+
+            
+
+           
         }
         [HttpPost]
         public IActionResult AddParcel(Parcel parcel)
