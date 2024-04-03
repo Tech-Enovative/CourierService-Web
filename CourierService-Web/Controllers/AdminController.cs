@@ -1717,7 +1717,7 @@ namespace CourierService_Web.Controllers
                 _context.SaveChanges();
                 TempData["success"] = "Selected areas deleted successfully.";
             }
-            return RedirectToAction("Index"); // Redirect to the page where the table is displayed
+            return RedirectToAction("Area"); // Redirect to the page where the table is displayed
         }
 
 
