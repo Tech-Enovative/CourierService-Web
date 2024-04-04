@@ -32,15 +32,14 @@
                
                 <div class="col-lg-12">
                     <div class="col-lg-3">
-                        <label for="statusFilter">Filter by Status:</label>
+                        <label for="statusFilter">Parcel Status:</label>
                         <select id="statusFilter" class="form-control">
                             <option value="">All</option>
-                            <option value="Pickup Request">Pickup Request</option>
-                            @*  <option value="Dispatched">Dispatched</option>
-                            <option value="Transit">Transit</option> *@
-                            <option value="Delivered">Delivered</option>
-                            <option value="Exchanged">Exchanged</option>
-                            <option value="Returned">Returned</option>
+                            <option value="Pending">Pending</option>
+                            <option value="At The Sorting Hub">At Sorting Hub</option>
+                            <option value="Assigned A Delivery Rider">Assigned For Delivery</option>
+                            <option value="Last Mile Hub">Last Mile Hub</option>
+                            <option value="Parcel On The Way">On The Way</option>
 
                             <!-- Add more options as needed -->
                         </select>
@@ -350,18 +349,21 @@
     </script>
 
     <script>
+        // JavaScript function to filter table rows based on search input and status filter
         document.addEventListener("DOMContentLoaded", function () {
-            // Get the input element, status filter, and table rows
+            // Get the input element
             var searchInput = document.getElementById('searchInput');
+            // Get the select element for status filter
             var statusFilter = document.getElementById('statusFilter');
+            // Get the table rows
             var rows = document.querySelectorAll("#parcelTable tbody tr");
 
             // Add event listener for input event on search input
             searchInput.addEventListener('input', filterRows);
-            // Add event listener for change event on status filter dropdown
+            // Add event listener for change event on status filter
             statusFilter.addEventListener('change', filterRows);
 
-            // Function to filter table rows based on search input and selected status
+            // Function to filter rows based on search input and status filter
             function filterRows() {
                 var searchText = searchInput.value.toLowerCase();
                 var selectedStatus = statusFilter.value.toLowerCase();
@@ -369,19 +371,16 @@
                 // Loop through all table rows
                 rows.forEach(function (row) {
                     var shouldDisplay = false;
-                    var statusCell = row.querySelectorAll('td')[10]; // Assuming status is at index 10
-                    var statusText = statusCell.textContent.toLowerCase();
-
-                    // Check if the row contains the search text in any cell
-                    var containsSearchText = Array.from(row.querySelectorAll('td')).some(function (cell) {
-                        return cell.textContent.toLowerCase().indexOf(searchText) !== -1;
+                    // Loop through all columns in each row
+                    row.querySelectorAll('td').forEach(function (cell) {
+                        // Check if the cell text contains search text and matches selected status
+                        if ((cell.textContent.toLowerCase().indexOf(searchText) !== -1) &&
+                            (selectedStatus === '' || cell.textContent.toLowerCase().includes(selectedStatus))) {
+                            shouldDisplay = true;
+                        }
                     });
-
-                    // Check if the row matches the selected status
-                    var matchesStatus = selectedStatus === "" || statusText === selectedStatus;
-
                     // Display or hide row based on search text and selected status
-                    if (matchesStatus && (searchText === "" || containsSearchText)) {
+                    if (shouldDisplay) {
                         row.style.display = '';
                     } else {
                         row.style.display = 'none';
@@ -390,6 +389,7 @@
             }
         });
     </script>
+
 
     <script>
         function copyToClipboard(text) {
