@@ -181,20 +181,20 @@
                             </div>
                             <div class="form-group">
                                 <label asp-for="DeliveryCharge" for="DeliveryCharge">Delivery Charge<span class="text-danger">*</span></label>
-                                <input asp-for="DeliveryCharge" type="number" name="DeliveryCharge" parsley-trigger="change" required
+                                <input asp-for="DeliveryCharge" type="number" name="DeliveryCharge" parsley-trigger="change" 
                                        placeholder="Enter Delivery Charge" class="form-control" id="DeliveryCharge" readonly>
                                 <span asp-validation-for="DeliveryCharge" class="text-danger"></span>
                             </div>
 
                             <div class="form-group">
                                 <label asp-for="COD" for="COD">COD Charge<span class="text-danger">*</span></label>
-                                <input asp-for="COD" type="number" name="COD" parsley-trigger="change" required
+                                <input asp-for="COD" type="number" name="COD" parsley-trigger="change" 
                                        placeholder="Enter COD" class="form-control" id="COD" readonly>
                                 <span asp-validation-for="COD" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label asp-for="TotalPrice"  for="TotalPrice">Total Price<span class="text-danger"></span></label>
-                                <input asp-for="TotalPrice" type="number" name="TotalPrice" parsley-trigger="change" required
+                                <input asp-for="TotalPrice" type="number" name="TotalPrice" parsley-trigger="change" 
                                        placeholder="Total Price" class="form-control" id="TotalPrice" readonly>
                                 <span asp-validation-for="TotalPrice" class="text-danger"></span>
                             </div>
@@ -348,7 +348,7 @@
         var totalPriceInput = document.getElementById("TotalPrice");
 
         function calculateDeliveryCharge() {
-            var productWeight = parseFloat(productWeightSelect.value);
+            var productWeight = parseInt(productWeightSelect.value);
             var deliveryType = deliveryTypeSelect.value;
             var deliveryCharge = 0;
 
@@ -357,31 +357,31 @@
                 if (productWeight <= 1) {
                     deliveryCharge = 70;
                 } else {
-                    deliveryCharge = 70 + (productWeight - 1) * 10;
+                    deliveryCharge = 70 + (productWeight - 1) * 15;
                 }
             } else if (deliveryType === "SubDhaka") {
                 if (productWeight <= 1) {
                     deliveryCharge = 90;
                 } else {
-                    deliveryCharge = 90 + (productWeight - 1) * 10;
+                    deliveryCharge = 90 + (productWeight - 1) * 15;
                 }
             } else if (deliveryType === "OutsideDhaka") {
                 if (productWeight <= 1) {
                     deliveryCharge = 120;
                 } else {
-                    deliveryCharge = 120 + (productWeight - 1) * 10;
+                    deliveryCharge = 120 + (productWeight - 1) * 15;
                 }
             } else if (deliveryType === "InDhakaEmergency") {
                 if (productWeight <= 1) {
                     deliveryCharge = 100;
                 } else {
-                    deliveryCharge = 100 + (productWeight - 1) * 10;
+                    deliveryCharge = 100 + (productWeight - 1) * 15;
                 }
             } else if (deliveryType === "P2P") {
                 if (productWeight <= 1) {
                     deliveryCharge = 200;
                 } else {
-                    deliveryCharge = 200 + (productWeight - 1) * 10;
+                    deliveryCharge = 200 + (productWeight - 1) * 15;
                 }
             }
 
@@ -389,17 +389,25 @@
         }
 
         function calculateCOD() {
-            var productPrice = parseFloat(productPriceInput.value);
-            var codCharge = productPrice * 0.01; // Calculate COD charge (1% of product price)
+            var productPrice = parseInt(productPriceInput.value);
+            var codCharge = Math.round(productPrice * 0.01); // Calculate COD charge (1% of product price)
             return codCharge;
+        }
+
+        //calculate weight price
+        function calculateWeightPrice() {
+            var productWeight = parseInt(productWeightSelect.value);
+            var productPrice = parseInt(productPriceInput.value);
+            var weightPrice = productWeight * productPrice;
+            return weightPrice;
         }
 
         function calculateTotalPrice() {
             var deliveryCharge = calculateDeliveryCharge();
             var codCharge = calculateCOD();
-            var productPrice = parseFloat(productPriceInput.value);
+            var productPrice = parseInt(productPriceInput.value);
             var productQuantity = parseInt(productQuantityInput.value);
-            var totalPrice = productPrice  + codCharge + deliveryCharge;
+            var totalPrice = (productPrice + codCharge) + deliveryCharge;
             return totalPrice;
         }
 
@@ -409,9 +417,9 @@
             var totalPrice = calculateTotalPrice();
 
             // Set the calculated delivery charge, COD charge, and total price to the input fields
-            deliveryChargeInput.value = deliveryCharge.toFixed(2);
-            codInput.value = codCharge.toFixed(2);
-            totalPriceInput.value = totalPrice.toFixed(2);
+            deliveryChargeInput.value = deliveryCharge;
+            codInput.value = codCharge;
+            totalPriceInput.value = totalPrice;
         }
 
         // Call the function initially
@@ -420,8 +428,8 @@
         // Call the function whenever inputs change
         productWeightSelect.addEventListener("change", updatePrices);
         deliveryTypeSelect.addEventListener("change", updatePrices);
-        productPriceInput.addEventListener("input", updatePrices);
-        productQuantityInput.addEventListener("input", updatePrices);
+        productPriceInput.addEventListener("change", updatePrices);
+        productQuantityInput.addEventListener("change", updatePrices);
     });
 </script>
 

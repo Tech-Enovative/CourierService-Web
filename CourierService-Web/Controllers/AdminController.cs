@@ -205,7 +205,7 @@ namespace CourierService_Web.Controllers
             _context.Parcels.Update(parcel);
             _context.SaveChanges();
             TempData["success"] = "Pickup Request Accepted";
-            return RedirectToAction("PickupRequest");
+            return RedirectToAction("Parcel");
         }
 
        

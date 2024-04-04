@@ -578,7 +578,7 @@ namespace CourierService_Web.Controllers
 
             if (!ModelState.IsValid)
             {
-                return View(parcel);
+                return RedirectToAction("AddNewParcel");    
             }
 
             // Add the parcel to the context and save changes

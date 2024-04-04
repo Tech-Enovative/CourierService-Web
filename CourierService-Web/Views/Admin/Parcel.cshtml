@@ -201,7 +201,18 @@
 
                                             @if(AdminEmail == "flyerbd@gmail.com")
                                             {
-                                                @if (parcel.RiderId == null)
+
+                                                @if (parcel.Status == "Pending")
+                                                {
+                                                    <td>
+                                                        <a asp-action="AcceptPickupRequest" asp-route-id="@parcel.Id" asp-controller="Admin" class="btn btn-sm btn-info">
+                                                            <i class="fas fa-check-circle"></i> Approve
+                                                        </a>
+                                                    </td>
+                                                    
+
+                                                }
+                                                @*  @if (parcel.RiderId == null)
                                                 {
                                                     <td>
                                                         <a asp-action="AssignParcelAdmin" asp-route-id="@parcel.Id" asp-controller="Admin" class="btn btn-sm btn-warning">
@@ -209,12 +220,24 @@
 
                                                         </a>
 
-                                                    </td>
-                                                }
+                                                    </td> 
+                                                } *@
 
                                                 else
                                                 {
                                                     <td>
+
+                                                        @if (parcel.Status == "Pickup Requested")
+                                                        {
+                                                            <a asp-action="AssignParcelAdmin" asp-route-id="@parcel.Id" asp-controller="Admin" class="btn btn-sm btn-warning">
+                                                                <i class="fas fa-plus-circle"></i> Assign Pickup Rider
+
+                                                            </a>
+
+                                                        }
+
+
+
                                                         @if (parcel.Status == "Picked Up")
                                                         {
                                                             <a asp-action="ParcelInHub" asp-route-id="@parcel.Id" asp-controller="Admin" class="btn btn-sm btn-info">
