@@ -61,8 +61,8 @@
                                    </div> *@
                             
                             <div class="form-group">
-                                <label for="StoreId">Select Store<span class="text-danger">*</span></label>
-                                <select name="StoreId" id="StoreId" class="form-control">
+                                <label asp-for="StoreId" for="StoreId">Select Store<span class="text-danger">*</span></label>
+                                <select asp-for="StoreId" name="StoreId" id="StoreId" class="form-control" required>
                                     <option value="" selected>Select Store</option>
                                     @foreach (var store in ViewBag.Stores)
                                     {
@@ -71,6 +71,7 @@
                                         <option value="@store.Id">@store.Name</option>
                                     }
                                 </select>
+                                <span asp-validation-for="StoreId" class="text-danger"></span>
                             </div>
 
                             <div class="form-group">
@@ -174,7 +175,7 @@
                             </div>
                             <div class="form-group">
                                 <label asp-for="ProductQuantity" for="ProductQuantity">Product Quantity<span class="text-danger"></span></label>
-                                <input asp-for="ProductQuantity" type="number" name="ProductQuantity" parsley-trigger="change" 
+                                <input asp-for="ProductQuantity" type="number" name="ProductQuantity" parsley-trigger="change" required
                                        placeholder="Enter Product Quantity" class="form-control" id="ProductQuantity">
                                 <span asp-validation-for="ProductQuantity" class="text-danger"></span>
                             </div>
@@ -263,33 +264,33 @@
             // Calculate delivery fee based on product weight and delivery type
             if (deliveryType === "InsideDhaka") {
                 if (productWeight <= 1) {
-                    deliveryFee = 60;
+                    deliveryFee = 70;
                 } else {
-                    deliveryFee = 60 + (productWeight - 1) * 10;
+                    deliveryFee = 70 + (productWeight - 1) * 10;
                 }
             } else if (deliveryType === "SubDhaka") {
-                if (productWeight <= 1) {
-                    deliveryFee = 80;
-                } else {
-                    deliveryFee = 80 + (productWeight - 1) * 10;
-                }
-            } else if (deliveryType === "OutsideDhaka") {
-                if (productWeight <= 1) {
-                    deliveryFee = 100;
-                } else {
-                    deliveryFee = 100 + (productWeight - 1) * 10;
-                }
-            } else if (deliveryType === "InDhakaEmergency") {
                 if (productWeight <= 1) {
                     deliveryFee = 90;
                 } else {
                     deliveryFee = 90 + (productWeight - 1) * 10;
                 }
+            } else if (deliveryType === "OutsideDhaka") {
+                if (productWeight <= 1) {
+                    deliveryFee = 120;
+                } else {
+                    deliveryFee = 120 + (productWeight - 1) * 10;
+                }
+            } else if (deliveryType === "InDhakaEmergency") {
+                if (productWeight <= 1) {
+                    deliveryFee = 100;
+                } else {
+                    deliveryFee = 100 + (productWeight - 1) * 10;
+                }
             } else if (deliveryType === "P2P") {
                 if (productWeight <= 1) {
-                    deliveryFee = 150;
+                    deliveryFee = 200;
                 } else {
-                    deliveryFee = 150 + (productWeight - 1) * 10;
+                    deliveryFee = 200 + (productWeight - 1) * 10;
                 }
             }
 
@@ -354,33 +355,33 @@
             // Calculate delivery charge based on product weight and delivery type
             if (deliveryType === "InsideDhaka") {
                 if (productWeight <= 1) {
-                    deliveryCharge = 60;
+                    deliveryCharge = 70;
                 } else {
-                    deliveryCharge = 60 + (productWeight - 1) * 10;
+                    deliveryCharge = 70 + (productWeight - 1) * 10;
                 }
             } else if (deliveryType === "SubDhaka") {
-                if (productWeight <= 1) {
-                    deliveryCharge = 80;
-                } else {
-                    deliveryCharge = 80 + (productWeight - 1) * 10;
-                }
-            } else if (deliveryType === "OutsideDhaka") {
-                if (productWeight <= 1) {
-                    deliveryCharge = 100;
-                } else {
-                    deliveryCharge = 100 + (productWeight - 1) * 10;
-                }
-            } else if (deliveryType === "InDhakaEmergency") {
                 if (productWeight <= 1) {
                     deliveryCharge = 90;
                 } else {
                     deliveryCharge = 90 + (productWeight - 1) * 10;
                 }
+            } else if (deliveryType === "OutsideDhaka") {
+                if (productWeight <= 1) {
+                    deliveryCharge = 120;
+                } else {
+                    deliveryCharge = 120 + (productWeight - 1) * 10;
+                }
+            } else if (deliveryType === "InDhakaEmergency") {
+                if (productWeight <= 1) {
+                    deliveryCharge = 100;
+                } else {
+                    deliveryCharge = 100 + (productWeight - 1) * 10;
+                }
             } else if (deliveryType === "P2P") {
                 if (productWeight <= 1) {
-                    deliveryCharge = 150;
+                    deliveryCharge = 200;
                 } else {
-                    deliveryCharge = 150 + (productWeight - 1) * 10;
+                    deliveryCharge = 200 + (productWeight - 1) * 10;
                 }
             }
 
@@ -398,7 +399,7 @@
             var codCharge = calculateCOD();
             var productPrice = parseFloat(productPriceInput.value);
             var productQuantity = parseInt(productQuantityInput.value);
-            var totalPrice = (productPrice * productQuantity) + codCharge + deliveryCharge;
+            var totalPrice = productPrice  + codCharge + deliveryCharge;
             return totalPrice;
         }
 
@@ -535,12 +536,7 @@
 
 
 }
-
-
-
-
-
-    @{
+@{
             <partial name="_ValidationScriptsPartial" />
     }
 }
