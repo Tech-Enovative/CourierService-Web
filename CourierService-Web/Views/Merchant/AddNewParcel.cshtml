@@ -211,12 +211,130 @@
                         </form>
                     </div>
                 </div>
+
+                <div class="col-lg-6 align-items-center justify-content-center">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="header-title">Cost Details</h4>
+            <ul class="list-unstyled">
+                <li>
+                    <strong>Delivery Fee:</strong>
+                    <span id="deliveryFee">৳ 0</span>
+                </li>
+                <li>
+                    <strong>COD Fee:</strong>
+                    <span id="codFee">৳ 0</span>
+                </li>
+                <li>
+                    <strong>Total Cost:</strong>
+                    <span id="totalCost">৳ 0</span>
+                </li>
+            </ul>
+            <!-- <p class="mb-0">Cost might vary depending upon the delivery situations and other circumstances. For details, check the <a href="#">Pricing Plan</a>.</p> -->
+            <p class="mb-0"><strong>Pickup Last Entry Time:</strong> 4 pm</p>
+            <!-- <p class="mb-0"><strong>On Demand / Express / Fragile Last Entry Time:</strong> 12:30 pm, Maximum size of any product should not be over 2CFT (In general)</p>
+            <p class="mb-0"><strong>Use Fragile Type for:</strong> Cosmetics, Liquid grocery, Herbals, Gift Items, Electronic gadgets, Lights, Glass items, Food items (dry)</p>
+            <p class="mb-0"><strong>Use Express Delivery Inside Dhaka (2-3 hours) for:</strong> Cooked Foods and other emergency delivery</p>
+            <p><strong>Inside Dhaka Normal Delivery:</strong> will take 24-48 hours, On Demand & Fragile take 8 hours, Outside Dhaka it may take 3-5 days</p> -->
+        </div>
+    </div>
+</div>
+
+
+
             </div>
             <!-- end row -->
         </div>
     </div>
 </div>
 
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var deliveryFeeSpan = document.getElementById("deliveryFee");
+        var codFeeSpan = document.getElementById("codFee");
+        var totalCostSpan = document.getElementById("totalCost");
+
+        function calculateDeliveryFee() {
+            var productWeight = parseFloat(document.getElementById("ProductWeight").value);
+            var deliveryType = document.getElementById("DeliveryType").value;
+            var deliveryFee = 0;
+
+            // Calculate delivery fee based on product weight and delivery type
+            if (deliveryType === "InsideDhaka") {
+                if (productWeight <= 1) {
+                    deliveryFee = 60;
+                } else {
+                    deliveryFee = 60 + (productWeight - 1) * 10;
+                }
+            } else if (deliveryType === "SubDhaka") {
+                if (productWeight <= 1) {
+                    deliveryFee = 80;
+                } else {
+                    deliveryFee = 80 + (productWeight - 1) * 10;
+                }
+            } else if (deliveryType === "OutsideDhaka") {
+                if (productWeight <= 1) {
+                    deliveryFee = 100;
+                } else {
+                    deliveryFee = 100 + (productWeight - 1) * 10;
+                }
+            } else if (deliveryType === "InDhakaEmergency") {
+                if (productWeight <= 1) {
+                    deliveryFee = 90;
+                } else {
+                    deliveryFee = 90 + (productWeight - 1) * 10;
+                }
+            } else if (deliveryType === "P2P") {
+                if (productWeight <= 1) {
+                    deliveryFee = 150;
+                } else {
+                    deliveryFee = 150 + (productWeight - 1) * 10;
+                }
+            }
+
+            return deliveryFee;
+        }
+
+        function calculateCODFee() {
+            var productPrice = parseFloat(document.getElementById("ProductPrice").value);
+            if (isNaN(productPrice)) {
+                return 0; // If product price is not a valid number, return 0 for COD fee
+            }
+            var codFee = productPrice * 0.01; // Calculate COD fee (1% of product price)
+            return codFee;
+        }
+
+        function calculateTotalCost() {
+            var deliveryFee = calculateDeliveryFee();
+            var codFee = calculateCODFee();
+            if (isNaN(deliveryFee) || isNaN(codFee)) {
+                return 0; // If either delivery fee or COD fee is not a valid number, return 0 for total cost
+            }
+            var totalCost = deliveryFee + codFee;
+            return totalCost;
+        }
+
+        function updateCostDetails() {
+            var deliveryFee = calculateDeliveryFee();
+            var codFee = calculateCODFee();
+            var totalCost = calculateTotalCost();
+
+            // Update spans with the calculated values
+            deliveryFeeSpan.textContent = '৳ ' + deliveryFee.toFixed(2);
+            codFeeSpan.textContent = '৳ ' + codFee.toFixed(2);
+            totalCostSpan.textContent = '৳ ' + totalCost.toFixed(2);
+        }
+
+        // Call the function initially
+        updateCostDetails();
+
+        // Call the function whenever inputs change
+        document.getElementById("ProductWeight").addEventListener("change", updateCostDetails);
+        document.getElementById("DeliveryType").addEventListener("change", updateCostDetails);
+        document.getElementById("ProductPrice").addEventListener("input", updateCostDetails);
+    });
+</script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -229,40 +347,40 @@
         var totalPriceInput = document.getElementById("TotalPrice");
 
         function calculateDeliveryCharge() {
-            var productWeight = parseInt(productWeightSelect.value);
+            var productWeight = parseFloat(productWeightSelect.value);
             var deliveryType = deliveryTypeSelect.value;
             var deliveryCharge = 0;
 
             // Calculate delivery charge based on product weight and delivery type
             if (deliveryType === "InsideDhaka") {
                 if (productWeight <= 1) {
-                    deliveryCharge = 70;
+                    deliveryCharge = 60;
                 } else {
-                    deliveryCharge = 70 + (productWeight - 1) * 15;
+                    deliveryCharge = 60 + (productWeight - 1) * 10;
                 }
             } else if (deliveryType === "SubDhaka") {
                 if (productWeight <= 1) {
-                    deliveryCharge = 90;
+                    deliveryCharge = 80;
                 } else {
-                    deliveryCharge = 90 + (productWeight - 1) * 15;
+                    deliveryCharge = 80 + (productWeight - 1) * 10;
                 }
             } else if (deliveryType === "OutsideDhaka") {
                 if (productWeight <= 1) {
-                    deliveryCharge = 120;
+                    deliveryCharge = 100;
                 } else {
-                    deliveryCharge = 120 + (productWeight - 1) * 15;
+                    deliveryCharge = 100 + (productWeight - 1) * 10;
                 }
             } else if (deliveryType === "InDhakaEmergency") {
                 if (productWeight <= 1) {
-                    deliveryCharge = 100;
+                    deliveryCharge = 90;
                 } else {
-                    deliveryCharge = 100 + (productWeight - 1) * 15;
+                    deliveryCharge = 90 + (productWeight - 1) * 10;
                 }
             } else if (deliveryType === "P2P") {
                 if (productWeight <= 1) {
-                    deliveryCharge = 200;
+                    deliveryCharge = 150;
                 } else {
-                    deliveryCharge = 200 + (productWeight - 1) * 15;
+                    deliveryCharge = 150 + (productWeight - 1) * 10;
                 }
             }
 
@@ -270,25 +388,17 @@
         }
 
         function calculateCOD() {
-            var productPrice = parseInt(productPriceInput.value);
-            var codCharge = Math.round(productPrice * 0.01); // Calculate COD charge (1% of product price)
+            var productPrice = parseFloat(productPriceInput.value);
+            var codCharge = productPrice * 0.01; // Calculate COD charge (1% of product price)
             return codCharge;
-        }
-
-        //calculate weight price
-        function calculateWeightPrice() {
-            var productWeight = parseInt(productWeightSelect.value);
-            var productPrice = parseInt(productPriceInput.value);
-            var weightPrice = productWeight * productPrice;
-            return weightPrice;
         }
 
         function calculateTotalPrice() {
             var deliveryCharge = calculateDeliveryCharge();
             var codCharge = calculateCOD();
-            var productPrice = parseInt(productPriceInput.value);
+            var productPrice = parseFloat(productPriceInput.value);
             var productQuantity = parseInt(productQuantityInput.value);
-            var totalPrice = (productPrice + codCharge)  + deliveryCharge;
+            var totalPrice = (productPrice * productQuantity) + codCharge + deliveryCharge;
             return totalPrice;
         }
 
@@ -298,9 +408,9 @@
             var totalPrice = calculateTotalPrice();
 
             // Set the calculated delivery charge, COD charge, and total price to the input fields
-            deliveryChargeInput.value = deliveryCharge;
-            codInput.value = codCharge;
-            totalPriceInput.value = totalPrice;
+            deliveryChargeInput.value = deliveryCharge.toFixed(2);
+            codInput.value = codCharge.toFixed(2);
+            totalPriceInput.value = totalPrice.toFixed(2);
         }
 
         // Call the function initially
@@ -309,10 +419,13 @@
         // Call the function whenever inputs change
         productWeightSelect.addEventListener("change", updatePrices);
         deliveryTypeSelect.addEventListener("change", updatePrices);
-        productPriceInput.addEventListener("change", updatePrices);
-        productQuantityInput.addEventListener("change", updatePrices);
+        productPriceInput.addEventListener("input", updatePrices);
+        productQuantityInput.addEventListener("input", updatePrices);
     });
 </script>
+
+
+
 
 
 <script>
