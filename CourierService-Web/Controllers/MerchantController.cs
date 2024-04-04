@@ -159,7 +159,7 @@ namespace CourierService_Web.Controllers
         }
         public bool IsMerchantLoggedIn()
         {
-            if (Request.Cookies["MerchantId"] != null)
+            if (Request != null && Request.Cookies["MerchantId"] != null)
             {
                 return true;
             }

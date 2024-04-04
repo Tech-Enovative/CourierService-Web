@@ -676,47 +676,54 @@
     <!-- Include the required libraries for barcode generation -->
     <script src="https://cdn.jsdelivr.net/jsbarcode/3.6.0/JsBarcode.all.min.js"></script>
 
-    <!-- Script to generate barcode and handle printing -->
+
     <script>
         $(document).ready(function () {
-            $('.print-btn').click(function () {
+            console.log('Document ready');
+
+            $('.print-btn').on('click', function () {
+                console.log('Print button clicked');
                 var parcelId = $(this).data('id');
-                var printContent = $('#parcelTable_' + parcelId).clone();
-                var barcodeCanvas = document.createElement('canvas');
-                JsBarcode(barcodeCanvas, parcelId, {
-                    format: 'CODE128',
-                    displayValue: false
-                });
+                console.log('Parcel ID:', parcelId);
 
-                // Append barcode to the print content
-                var barcodeDiv = $('<div>').addClass('barcode').append(barcodeCanvas);
-                printContent.find('.barcode-container').append(barcodeDiv);
-
-                // Create a container for printing
-                var printContainer = $('<div>').addClass('print-container').append(printContent);
-                $('body').empty().append(printContainer);
-
-                // Print the content
-                window.print();
-
-                // Restore the original content
-                $('body').html('');
-
-                // Update the parcel status
                 $.ajax({
-                    url: '/Admin/AtTheSortingHub',
-                    type: 'POST',
-                    data: { id: parcelId },
+                    url: '@Url.Action("GenerateBarcode", "Admin")',
+                    type: 'GET',
                     success: function (response) {
-                        console.log('Parcel status updated successfully.');
+                        console.log('GenerateBarcode success');
+                        console.log('Response:', response);
+
+                        var blob = new Blob([response], { type: 'application/zip' });
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = 'BarcodeDetails.zip';
+                        document.body.appendChild(link);
+                        link.click();
+
+                        $.ajax({
+                            url: '@Url.Action("AtTheSortingHub", "Admin")',
+                            type: 'POST',
+                            data: { id: parcelId },
+                            success: function (response) {
+                                console.log('AtTheSortingHub success');
+                                console.log('Response:', response);
+                            },
+                            error: function (xhr, status, error) {
+                                console.log('AtTheSortingHub error');
+                                console.log('Error:', xhr.responseText);
+                            }
+                        });
                     },
                     error: function (xhr, status, error) {
-                        console.error('Error updating parcel status:', error);
+                        console.log('GenerateBarcode error');
+                        console.log('Error:', xhr.responseText);
                     }
                 });
             });
         });
     </script>
+
+
 
 
 

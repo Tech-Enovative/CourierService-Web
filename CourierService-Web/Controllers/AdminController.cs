@@ -3,11 +3,15 @@ using Amazon.S3;
 using Amazon.S3.Transfer;
 using CourierService_Web.Data;
 using CourierService_Web.Models;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using System.Text;
+using Xceed.Words.NET;
+using ZXing;
+using ZXing.Common;
+using SkiaSharp;
+using System.IO.Compression;
+using Xceed.Document.NET;
 
 namespace CourierService_Web.Controllers
 {
@@ -363,6 +367,92 @@ namespace CourierService_Web.Controllers
             TempData["success"] = "Parcel Status Changed to At The Sorting Hub";
             return RedirectToAction("Parcel");
 
+        }
+
+        //generate barcode using barcodelib
+        [HttpGet]
+        public IActionResult GenerateBarcode()
+        {
+            // Generate barcode using ZXing.Net
+            BarcodeWriter<SKBitmap> writer = new BarcodeWriter<SKBitmap>
+            {
+                Format = BarcodeFormat.CODE_128,
+                Options = new EncodingOptions
+                {
+                    Height = 150,
+                    Width = 300,
+                    Margin = 10 // Set margin if needed
+                }
+            };
+
+            SKBitmap barcodeBitmap = writer.Write("123456789");
+
+            // Convert SKBitmap to PNG byte array
+            byte[] imageBytes;
+            using (SKImage image = SKImage.FromBitmap(barcodeBitmap))
+            using (SKData encoded = image.Encode(SKEncodedImageFormat.Png, 100))
+            using (MemoryStream ms = new MemoryStream())
+            {
+                encoded.SaveTo(ms);
+                imageBytes = ms.ToArray();
+            }
+
+            // Create DOCX file using DocX library
+            using (DocX doc = DocX.Create("BarcodeDetails.docx"))
+            {
+                // Add content to the document
+                Paragraph paragraph = doc.InsertParagraph();
+                paragraph.AppendLine("Barcode Details:");
+                paragraph.AppendLine("Parcel ID: 123456789"); // Update with actual parcel ID
+
+                // Save the document
+                doc.Save();
+            }
+
+            // Return the barcode image and the DOCX file as a ZIP file
+            using (MemoryStream zipStream = new MemoryStream())
+            {
+                using (ZipArchive zip = new ZipArchive(zipStream, ZipArchiveMode.Create, true))
+                {
+                    // Add barcode image to the ZIP file
+                    ZipArchiveEntry barcodeEntry = zip.CreateEntry("barcode.png");
+                    using (Stream barcodeStream = barcodeEntry.Open())
+                    {
+                        barcodeStream.Write(imageBytes, 0, imageBytes.Length);
+                    }
+
+                    // Add DOCX file to the ZIP file
+                    ZipArchiveEntry docxEntry = zip.CreateEntry("BarcodeDetails.docx");
+                    using (Stream docxStream = docxEntry.Open())
+                    {
+                        byte[] docxBytes = System.IO.File.ReadAllBytes("BarcodeDetails.docx");
+                        docxStream.Write(docxBytes, 0, docxBytes.Length);
+                    }
+                }
+
+                byte[] zipBytes = zipStream.ToArray();
+                return File(zipBytes, "application/zip", "BarcodeDetails.zip");
+            }
+        }
+
+
+        public IActionResult DownloadDocx(string id)
+        {
+            // Create .docx file logic using a library like DocX or NPOI
+
+            // For example, using DocX library:
+            using DocX doc = DocX.Create("ParcelDetails.docx");
+            // Add content to the document
+            doc.InsertParagraph("Parcel Details:");
+            doc.InsertParagraph($"Parcel ID: {id}");
+            // Add more content as needed
+
+            // Save the document to a specific location
+            doc.Save();
+
+            // Return the file for download
+            byte[] fileBytes = System.IO.File.ReadAllBytes("ParcelDetails.docx");
+            return File(fileBytes, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "ParcelDetails.docx");
         }
 
         //On The Way To Last Mile Hub
