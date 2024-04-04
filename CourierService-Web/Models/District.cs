@@ -20,5 +20,7 @@ namespace CourierService_Web.Models
         public List<Hub>? Hubs { get; set; }
 
         public List<Store>? Stores { get; set; }
+
+        public List<Parcel>? Parcels { get; set; }
     }
 }

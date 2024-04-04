@@ -44,7 +44,7 @@ namespace CourierService_Web.Models
 
         [Required(ErrorMessage = "Status is required")]
         public string Status { get; set; } = "Pending";
-        public DateTime? PickupRequestDate { get; set; } = DateTime.Now;
+        public DateTime? PickupRequestDate { get; set; } 
         public DateTime? DispatchDate  { get; set; }
         public DateTime? DeliveryDate { get; set; }
         public DateTime? PickedUpAt { get; set; }
@@ -102,6 +102,20 @@ namespace CourierService_Web.Models
         public string? StoreId { get; set; }
 
         public Store? Store { get; set; }
+
+        [ForeignKey("DistrictId")]
+        public string? DistrictId { get; set; }
+        public District? District { get; set; }
+
+        [ForeignKey("ZoneId")]
+        public string? ZoneId { get; set; }
+        public Zone? Zone { get; set; }
+
+        [ForeignKey("AreaId")]
+        public string? AreaId { get; set; }
+        public Area? Area { get; set; }
+
+        public DateTime? UpdatedAt { get; set; }
 
 
     }

@@ -595,6 +595,19 @@ namespace CourierService_Web.Controllers
             var hub = _context.Hubs.Find(store.HubId);
             //find hub id and set
             parcel.HubId = hub.Id;
+            //find area id and set
+            var area = _context.Areas.Find(parcel.AreaId);
+            parcel.AreaId = area.Id;
+
+            //find zone id and set
+            var zone = _context.Zone.Find(parcel.ZoneId);
+            parcel.ZoneId = zone.Id;
+
+            //find district id and set
+            var district = _context.District.Find(parcel.DistrictId);
+            parcel.DistrictId = district.Id;
+
+            parcel.PickupRequestDate = DateTime.Now;
 
 
             if (!ModelState.IsValid)
@@ -608,6 +621,93 @@ namespace CourierService_Web.Controllers
 
             TempData["success"] = "Parcel Added Successfully";
             return RedirectToAction("Index");
+        }
+
+        //Edit Parcel
+        public IActionResult EditParcel(string id)
+        {
+            if (!IsMerchantLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return RedirectToAction("Parcels");
+            }
+
+            //parcel with hub information
+            ViewBag.HubList = _context.Hubs.ToList();
+            var merchantId = HttpContext.Request.Cookies["MerchantId"];
+            //merchant area
+            var merchant = _context.Merchants.Find(merchantId);
+            ViewBag.MerchantArea = merchant.Area;
+            //merhcant full address
+            ViewBag.MerchantFullAddress = merchant.FullAddress;
+
+            //count total percel and delivery count according to ReceiverContactNumber
+            var parcelCount = _context.Parcels.Count(x => x.ReceiverContactNumber == merchant.ContactNumber);
+            ViewBag.ParcelCount = parcelCount;
+            var deliveryCount = _context.Parcels.Count(x => x.ReceiverContactNumber == merchant.ContactNumber && x.DeliveryId != null);
+            ViewBag.DeliveryCount = deliveryCount;
+
+            ViewBag.Districts = _context.District.ToList();
+            ViewBag.Zones = _context.Zone.ToList();
+            ViewBag.Area = _context.Areas.ToList();
+
+            //find stores of the merchant
+            ViewBag.Stores = _context.Stores.Where(x => x.MerchantId == merchantId).ToList();
+
+            return View(parcel);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateParcel(Parcel parcel)
+        {
+            if (!IsMerchantLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            // Get the merchant's ID
+            var merchantId = HttpContext.Request.Cookies["MerchantId"];
+
+            // Find the merchant
+            var merchant = _context.Merchants.Find(merchantId);
+
+            parcel.MerchantId = merchant.Id;
+
+            //find hub according to store id
+            var store = _context.Stores.Find(parcel.StoreId);
+            var hub = _context.Hubs.Find(store.HubId);
+            //find hub id and set
+            parcel.HubId = hub.Id;
+            //find area id and set
+            var area = _context.Areas.Find(parcel.AreaId);
+            parcel.AreaId = area.Id;
+
+            //find zone id and set
+            var zone = _context.Zone.Find(parcel.ZoneId);
+            parcel.ZoneId = zone.Id;
+
+            //find district id and set
+            var district = _context.District.Find(parcel.DistrictId);
+            parcel.DistrictId = district.Id;
+
+            parcel.UpdatedAt = DateTime.Now;
+
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("EditParcel", new { id = parcel.Id });
+            }
+
+            // Update the parcel in the context and save changes
+            _context.Parcels.Update(parcel);
+            _context.SaveChanges();
+
+            TempData["success"] = "Parcel Updated Successfully";
+            return RedirectToAction("Parcels");
         }
 
 

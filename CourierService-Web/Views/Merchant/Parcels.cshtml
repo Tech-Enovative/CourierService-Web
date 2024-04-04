@@ -190,6 +190,15 @@
                                                     <i class="fas fa-eye"></i>
                                                     View
                                                 </button>
+                                                @if (parcel.Status == "Pending" || parcel.Status == "Pickup Requested" || parcel.Status == "Assigned A Rider For Pickup")
+                                                {
+                                                    <a asp-action="EditParcel" asp-route-id="@parcel.Id" asp-controller="Merchant" class="btn btn-primary">
+                                                        <i class="fas fa-edit"></i>
+                                                        Edit
+                                                    </a>
+                                                }
+                                                
+
 
                                                 <!-- Modal -->
                                                 <div id="viewModal_@parcel.Id" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
@@ -204,12 +213,15 @@
                                                             <div class="modal-body">
                                                                 <!-- Display parcel details here -->
                                                                 <h5 class="font-16"><i class="fas fa-barcode"></i> Parcel ID: @parcel.Id</h5>
-                                                                <p><strong><i class="fas fa-store"></i> Merchant Name:</strong> @parcel.Merchant?.Name</p>
-                                                                <p><strong><i class="fas fa-phone"></i> Merchant Phone:</strong> @parcel.Merchant?.ContactNumber</p>
+                                                                @* <p><strong><i class="fas fa-store"></i> Merchant Name:</strong> @parcel.Merchant?.Name</p>
+                                                                <p><strong><i class="fas fa-phone"></i> Merchant Phone:</strong> @parcel.Merchant?.ContactNumber</p> *@
 
                                                                 <p><strong><i class="fas fa-box-open"></i> Product:</strong> @parcel.ProductName</p>
                                                                 <p><strong><i class="far fa-calendar-alt"></i> Parcel Created At:</strong> @(parcel.PickupRequestDate.HasValue ? parcel.PickupRequestDate.Value.ToString("g") : "N/A")</p>
-
+                                                                @if(parcel.UpdatedAt !=null)
+                                                                {
+                                                                    <p><strong><i class="far fa-calendar-alt"></i> Parcel Updated At:</strong> @(parcel.UpdatedAt.HasValue ? parcel.UpdatedAt.Value.ToString("g") : "N/A")</p>
+                                                                }
                                                                 @if (parcel.DispatchDate != null)
                                                                 {
                                                                     <p><strong><i class="fas fa-motorcycle"></i> Rider Assigned:</strong> @(parcel.DispatchDate.HasValue ? parcel.DispatchDate.Value.ToString("t") : "N/A")</p>

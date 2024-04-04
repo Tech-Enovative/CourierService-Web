@@ -244,6 +244,24 @@ namespace CourierService_Web.Data
                 .WithOne(p => p.Store)
                 .HasForeignKey(p => p.StoreId);
 
+            //relationship between parcel and area
+            modelBuilder.Entity<Parcel>()
+                .HasOne(p => p.Area)
+                .WithMany(a => a.Parcels)
+                .HasForeignKey(p => p.AreaId);
+
+            //relationship between parcel and zone
+            modelBuilder.Entity<Parcel>()
+                .HasOne(p => p.Zone)
+                .WithMany(z => z.Parcels)
+                .HasForeignKey(p => p.ZoneId);
+
+            //relationship between parcel and district
+            modelBuilder.Entity<Parcel>()
+                .HasOne(p => p.District)
+                .WithMany(d => d.Parcels)
+                .HasForeignKey(p => p.DistrictId);
+
            
 
             modelBuilder.Entity<Area>()
