@@ -238,6 +238,12 @@ namespace CourierService_Web.Data
                 .WithMany(m => m.Stores)
                 .HasForeignKey(s => s.MerchantId);
 
+            //relationship between store and parcel
+            modelBuilder.Entity<Store>()
+                .HasMany(s => s.Parcels)
+                .WithOne(p => p.Store)
+                .HasForeignKey(p => p.StoreId);
+
            
 
             modelBuilder.Entity<Area>()

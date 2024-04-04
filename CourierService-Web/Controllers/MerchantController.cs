@@ -510,6 +510,11 @@ namespace CourierService_Web.Controllers
             ViewBag.Districts = _context.District.ToList();
             ViewBag.Zones = _context.Zone.ToList();
             ViewBag.Area = _context.Areas.ToList();
+
+            //find stores of the merchant
+            ViewBag.Stores = _context.Stores.Where(x => x.MerchantId == merchantId).ToList();
+
+
             return View();
 
             
@@ -564,18 +569,12 @@ namespace CourierService_Web.Controllers
             // Find the merchant
             var merchant = _context.Merchants.Find(merchantId);
 
-            // Find the hub based on the pickup location matching any of the areas associated with the hub
-            //var hub = _context.Hubs.FirstOrDefault(h => h.Areas.Contains(parcel.PickupLocation));
+            //find hub according to store id
+            var store = _context.Stores.Find(parcel.StoreId);
+            var hub = _context.Hubs.Find(store.HubId);
+            //find hub id and set
+            parcel.HubId = hub.Id;
 
-            // If no hub is found, handle the situation accordingly (e.g., return an error message)
-            //if (hub == null)
-            //{
-            //    TempData["error"] = "No hub found for the merchant's area. Please contact support.";
-            //    return RedirectToAction("Index");
-            //}
-
-            //// Assign the found hub ID to the parcel
-            //parcel.HubId = hub.Id;
 
             if (!ModelState.IsValid)
             {

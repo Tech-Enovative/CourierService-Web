@@ -55,8 +55,8 @@ namespace CourierService_Web.Models
         public DateTime? ReturnDate { get; set; }
         public string? PaymentStatus { get; set; }
         public string? PaymentInHand { get; set; }
-        [Required(ErrorMessage = "Pickup location is required")]
-        public string PickupLocation { get; set; }
+       
+        public string? PickupLocation { get; set; }
         public string DeliveryType { get; set; }
         public int TotalPrice { get; set; }
 
@@ -97,6 +97,11 @@ namespace CourierService_Web.Models
         public List<RequestPermission>? Notifications { get; set; }
 
         public List<RiderPayment>? riderPayments { get; set; }
+
+        [ForeignKey("StoreId")]
+        public string? StoreId { get; set; }
+
+        public Store? Store { get; set; }
 
 
     }

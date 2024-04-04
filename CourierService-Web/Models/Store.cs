@@ -38,5 +38,7 @@ namespace CourierService_Web.Models
 
         public Merchant? Merchant { get; set; }
         public string Address { get; set; }
+
+        public List<Parcel>? Parcels { get; set; }
     }
 }

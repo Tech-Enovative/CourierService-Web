@@ -61,15 +61,16 @@
                                    </div> *@
                             
                             <div class="form-group">
-                                <label asp-for="PickupLocation" for="PickupLocation">Pickup Location<span class="text-danger">*</span></label>
-                                <select name="PickupOption" id="PickupOption" class="form-control">
-                                    <option value="Self">Self</option>
-                                    <option value="Other">Other</option>
+                                <label for="StoreId">Select Store<span class="text-danger">*</span></label>
+                                <select name="StoreId" id="StoreId" class="form-control">
+                                    <option value="" selected>Select Store</option>
+                                    @foreach (var store in ViewBag.Stores)
+                                    {
+
+
+                                        <option value="@store.Id">@store.Name</option>
+                                    }
                                 </select>
-                               
-                                <input asp-for="PickupLocation" type="text" name="PickupLocation" parsley-trigger="change" required
-                                       placeholder="Enter Pickup Location" class="form-control" id="PickupLocation">
-                                <span asp-validation-for="PickupLocation" class="text-danger"></span>
                             </div>
 
                             <div class="form-group">
@@ -105,6 +106,7 @@
                                     }
                                 </select>
                             </div>
+                            
 
                             <div class="form-group">
                                 <label for="ZoneId">Select Zone<span class="text-danger">*</span></label>
