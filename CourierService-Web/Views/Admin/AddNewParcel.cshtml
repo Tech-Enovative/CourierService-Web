@@ -8,7 +8,7 @@
 @{
     string RiderId = Context.Request.Cookies["RiderId"];
     string AdminId = Context.Request.Cookies["AdminId"];
-    string MerchantId = Context.Request.Cookies["MerchantId"];
+    
 
 
 }
@@ -39,7 +39,7 @@
                             
 
                             
-                            <input asp-for="MerchantId" type="hidden" name="MerchantId" value="@MerchantId" />
+                            
 
                            
                               
@@ -216,7 +216,7 @@
                             
 
                             <div class="form-group text-right mb-0">
-                                <button asp-controller="Merchant" asp-action="AddParcel" class="btn btn-primary waves-effect waves-light mr-1" type="submit">
+                                <button asp-controller="Admin" asp-action="AddParcel" class="btn btn-primary waves-effect waves-light mr-1" type="submit">
                                     Submit
                                 </button>
                                 <button type="reset" class="btn btn-secondary waves-effect">

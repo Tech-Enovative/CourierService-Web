@@ -157,19 +157,16 @@ namespace CourierService_Web.Controllers
             ViewBag.DueAmount = ViewBag.TotalPriceSum - ViewBag.AmountPaid;
 
         }
-        private bool IsMerchantLoggedIn()
+        public bool IsMerchantLoggedIn()
         {
-            var merchantId = HttpContext.Request.Cookies["MerchantId"];
-            if (string.IsNullOrEmpty(merchantId))
+            if (Request.Cookies["MerchantId"] != null)
+            {
+                return true;
+            }
+            else
             {
                 return false;
             }
-            var merchant = _context.Merchants.Find(merchantId);
-            if (merchant == null)
-            {
-                return false;
-            }
-            return true;
         }
         public IActionResult Index()
         {
@@ -178,7 +175,6 @@ namespace CourierService_Web.Controllers
                 return RedirectToAction("Login", "Home");
             }
             UpdateLayout();
-            //TriggerBackgroundJob();
             return View();
         }
 
