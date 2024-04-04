@@ -1,0 +1,138 @@
+﻿@model CourierService_Web.Models.Store
+
+@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    string AdminId = Context.Request.Cookies["AdminId"];
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row mt-5 justify-content-center align-content-center">
+                <div class="col-lg-6">
+                    <div>
+                        <h4 class="header-title">Create a New Store</h4>
+
+                        <form method="post" enctype="multipart/form-data" action="@Url.Action("CreateStore", "Merchant")">
+                            <div class="form-group">
+                                <label asp-for="Name" for="Name">Store Name<span class="text-danger">*</span></label>
+                                <input asp-for="Name" type="text" name="Name" class="form-control" id="Name">
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="Contact" for="Contact">Contact<span class="text-danger">*</span></label>
+                                <input asp-for="Contact" type="text" name="Contact" class="form-control" id="Contact">
+                                <span asp-validation-for="Contact" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="SecondaryContact" for="SecondaryContact">Secondary Contact</label>
+                                <input asp-for="SecondaryContact" type="text" name="SecondaryContact" class="form-control" id="SecondaryContact">
+                                <span asp-validation-for="SecondaryContact" class="text-danger"></span>
+                            </div>
+
+                            <!-- Add dropdowns for District, Zone, Area, and Hub here -->
+                            <!-- Make sure to populate dropdowns using ViewBag or ViewData -->
+                             <div class="form-group">
+                            <label for="DistrictId">Select District<span class="text-danger">*</span></label>
+                            <select name="DistrictId" id="districtId" class="form-control">
+                            <option value="" selected>Select District</option>
+                            @foreach (var district in ViewBag.Districts)
+                            {
+
+
+                            <option value="@district.Id">@district.Name</option>
+                            }
+                            </select>
+                            </div>
+
+                            <div class="form-group">
+                            <label for="ZoneId">Select Zone<span class="text-danger">*</span></label>
+                            <select name="ZoneId" id="zoneId" class="form-control">
+                            <option value="">Select Zone</option>
+                            </select>
+                            </div>
+
+                            <div class="form-group">
+                            <label for="AreaId">Select Area<span class="text-danger">*</span></label>
+                            <select name="AreaId" id="areaId" class="form-control">
+                            <option value="">Select Area</option>
+                            </select>
+                            </div> 
+                           
+
+                            <div class="form-group">
+                                <label asp-for="Address" for="Address">Address</label>
+                                <textarea asp-for="Address" name="Address" class="form-control" id="Address"></textarea>
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group text-right mb-0">
+                                <button type="submit" class="btn btn-primary waves-effect waves-light mr-1">
+                                    Create Store
+                                </button>
+                                <button type="reset" class="btn btn-secondary waves-effect">
+                                    Reset
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @* Add any scripts here if needed *@
+    <script>
+        $(document).ready(function () {
+            $('#districtId').change(function () {
+                var districtId = $(this).val();
+                if (districtId) {
+                    $.ajax({
+                        url: '@Url.Action("GetZonesByDistrict", "Merchant")',
+                        type: 'GET',
+                        data: { districtId: districtId },
+                        success: function (data) {
+                            $('#zoneId').empty().append('<option value="">Select Zone</option>');
+                            $.each(data, function (index, zone) {
+                                $('#zoneId').append($('<option>', {
+                                    value: zone.id, // Ensure that zone.id is correct
+                                    text: zone.name
+                                }));
+                            });
+                        }
+                    });
+                } else {
+                    $('#zoneId').empty().append('<option value="">Select Zone</option>');
+                    $('#areaId').empty().append('<option value="">Select Area</option>');
+                }
+            });
+
+            $('#zoneId').change(function () {
+                var zoneId = $(this).val();
+                if (zoneId) {
+                    $.ajax({
+                        url: '@Url.Action("GetAreasByZone", "Merchant")',
+                        type: 'GET',
+                        data: { zoneId: zoneId },
+                        success: function (data) {
+                            $('#areaId').empty().append('<option value="">Select Area</option>');
+                            $.each(data, function (index, area) {
+                                $('#areaId').append($('<option>', {
+                                    value: area.id, // Ensure that area.id is correct
+                                    text: area.name
+                                }));
+                            });
+                        }
+                    });
+                } else {
+                    $('#areaId').empty().append('<option value="">Select Area</option>');
+                }
+            });
+        });
+    </script>
+}

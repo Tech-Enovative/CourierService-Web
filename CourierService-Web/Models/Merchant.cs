@@ -88,6 +88,8 @@ namespace CourierService_Web.Models
         // Navigation property to MerchantPayments
         public List<MerchantPayment>? MerchantPayments { get; set; }
 
+        public List<Store>? Stores { get; set; }
+
 
     }
 }

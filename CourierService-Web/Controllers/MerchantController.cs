@@ -8,6 +8,7 @@ using Amazon;
 using System.Text;
 using System.Formats.Asn1;
 using CsvHelper;
+using System.Linq;
 
 namespace CourierService_Web.Controllers
 {
@@ -505,9 +506,27 @@ namespace CourierService_Web.Controllers
             ViewBag.ParcelCount = parcelCount;
             var deliveryCount = _context.Parcels.Count(x => x.ReceiverContactNumber == merchant.ContactNumber && x.DeliveryId != null);
             ViewBag.DeliveryCount = deliveryCount;
+
+            ViewBag.Districts = _context.District.ToList();
+            ViewBag.Zones = _context.Zone.ToList();
+            ViewBag.Area = _context.Areas.ToList();
             return View();
 
             
+        }
+
+        [HttpGet]
+        public IActionResult GetZonesByDistrict(string districtId)
+        {
+            var zones = _context.Zone.Where(z => z.DistrictId == districtId).ToList();
+            return Json(zones);
+        }
+
+        [HttpGet]
+        public IActionResult GetAreasByZone(string zoneId)
+        {
+            var areas = _context.Areas.Where(a => a.ZoneId == zoneId).ToList();
+            return Json(areas);
         }
 
         [HttpGet]
@@ -539,16 +558,38 @@ namespace CourierService_Web.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
+            // Get the merchant's ID
+            var merchantId = HttpContext.Request.Cookies["MerchantId"];
+
+            // Find the merchant
+            var merchant = _context.Merchants.Find(merchantId);
+
+            // Find the hub based on the pickup location matching any of the areas associated with the hub
+            //var hub = _context.Hubs.FirstOrDefault(h => h.Areas.Contains(parcel.PickupLocation));
+
+            // If no hub is found, handle the situation accordingly (e.g., return an error message)
+            //if (hub == null)
+            //{
+            //    TempData["error"] = "No hub found for the merchant's area. Please contact support.";
+            //    return RedirectToAction("Index");
+            //}
+
+            //// Assign the found hub ID to the parcel
+            //parcel.HubId = hub.Id;
+
             if (!ModelState.IsValid)
             {
                 return View(parcel);
             }
 
+            // Add the parcel to the context and save changes
             _context.Parcels.Add(parcel);
             _context.SaveChanges();
+
             TempData["success"] = "Parcel Added Successfully";
             return RedirectToAction("Index");
         }
+
 
         public IActionResult DownloadTemplate()
         {
@@ -1049,6 +1090,127 @@ namespace CourierService_Web.Controllers
 
             
             return RedirectToAction("Index");
+        }
+
+        //Store list
+        public IActionResult StoreList()
+        {
+            if (!IsMerchantLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var merchantId = HttpContext.Request.Cookies["MerchantId"];
+            var stores = _context.Stores.Where(x => x.MerchantId == merchantId).Include(d=>d.District).Include(d => d.Area).Include(d => d.Zone).Include(d => d.Hub).ToList();
+            return View(stores);
+        }
+        
+        //create store
+        public IActionResult CreateStore()
+        {
+            if (!IsMerchantLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            //district list,zone list,area list
+            ViewBag.Districts = _context.District.ToList();
+            ViewBag.Zones = _context.Zone.ToList();
+            ViewBag.Areas = _context.Areas.ToList();
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult CreateStore(Store store)
+        {
+            if (!IsMerchantLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (!ModelState.IsValid)
+            {
+                return View(store);
+            }
+            var merchantId = HttpContext.Request.Cookies["MerchantId"];
+            store.MerchantId = merchantId;
+            // Find the hub based on the district, zone, and area associated with the store
+            var hub = _context.Hubs.FirstOrDefault(h => h.Areas.Any(a => a.Id == store.AreaId));
+            if (hub == null)
+            {
+                TempData["error"] = "No hub found for the specified district, zone, and area. Please contact support.";
+                return RedirectToAction("StoreList");
+            }
+
+            // Assign the found hub ID to the store
+            store.HubId = hub.Id;
+
+
+            _context.Stores.Add(store);
+            _context.SaveChanges();
+            TempData["success"] = "Store Added Successfully";
+            return RedirectToAction("StoreList");
+        }
+
+        //edit store
+        public IActionResult EditStore(string id)
+        {
+            if (!IsMerchantLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var store = _context.Stores.Find(id);
+            if (store == null)
+            {
+                return NotFound();
+            }
+            ViewBag.Districts = _context.District.ToList();
+            ViewBag.Zones = _context.Zone.ToList();
+            ViewBag.Areas = _context.Areas.ToList();
+            return View(store);
+        }
+
+        [HttpPost]
+        public IActionResult EditStore(Store store)
+        {
+            if (!IsMerchantLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (!ModelState.IsValid)
+            {
+                return View(store);
+            }
+            var merchantId = HttpContext.Request.Cookies["MerchantId"];
+            store.MerchantId = merchantId;
+
+            //var hub = _context.Hubs.FirstOrDefault(h => h.Areas.Any(a => a.Id == store.AreaId));
+            //if (hub == null)
+            //{
+            //    TempData["error"] = "No hub found for the specified district, zone, and area. Please contact support.";
+            //    return RedirectToAction("StoreList");
+            //}
+
+            //store.HubId = hub.Id;
+
+            _context.Stores.Update(store);
+            _context.SaveChanges();
+            TempData["success"] = "Store Updated Successfully";
+            return RedirectToAction("StoreList");
+        }
+
+        public IActionResult DeleteStore(string id)
+        {
+            if(!IsMerchantLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var store = _context.Stores.Find(id);
+            if(store == null)
+            {
+                return NotFound();
+            }
+            _context.Stores.Remove(store);
+            _context.SaveChanges();
+            TempData["success"] = "Store Deleted Successfully";
+            return RedirectToAction("StoreList");
         }
 
     }

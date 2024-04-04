@@ -185,6 +185,29 @@ namespace CourierService_Web.Controllers
             }
         }
 
+        //accept pickup request
+        public IActionResult AcceptPickupRequest(string? id)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+            parcel.Status = "Pickup Requested";
+            _context.Parcels.Update(parcel);
+            _context.SaveChanges();
+            TempData["success"] = "Pickup Request Accepted";
+            return RedirectToAction("PickupRequest");
+        }
+
        
 
         //Return Parcel List
@@ -1235,6 +1258,27 @@ namespace CourierService_Web.Controllers
             // Return CSV file
             return File(Encoding.UTF8.GetBytes(csvContent.ToString()), "text/csv", $"Parcels_{startDate?.ToString("yyyy-MM-dd")}_{endDate?.ToString("yyyy-MM-dd")}.csv");
         }
+
+
+        [HttpPost]
+        public IActionResult DeleteSelectedParcels(List<string> parcelIds)
+        {
+            try
+            {
+                // Find and remove selected parcels from the database
+                var parcelsToRemove = _context.Parcels.Where(p => parcelIds.Contains(p.Id)).ToList();
+                _context.Parcels.RemoveRange(parcelsToRemove);
+                _context.SaveChanges();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // Log the error or handle it as needed
+                return StatusCode(500, "An error occurred while deleting selected parcels.");
+            }
+        }
+
 
 
 

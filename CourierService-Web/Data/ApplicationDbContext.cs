@@ -36,6 +36,8 @@ namespace CourierService_Web.Data
         public DbSet<Zone> Zone { get; set; }
         public DbSet<District> District { get; set; }
 
+        public DbSet<Store> Stores { get; set; }
+
 
 
 
@@ -205,6 +207,36 @@ namespace CourierService_Web.Data
                 .HasOne(z => z.District)
                 .WithMany(d => d.Zones)
                 .HasForeignKey(z => z.DistrictId);
+
+            //relationship between store and district
+            modelBuilder.Entity<Store>()
+                .HasOne(s => s.District)
+                .WithMany(d => d.Stores)
+                .HasForeignKey(s => s.DistrictId);
+
+            //relationship between store and zone
+            modelBuilder.Entity<Store>()
+                .HasOne(s => s.Zone)
+                .WithMany(z => z.Stores)
+                .HasForeignKey(s => s.ZoneId);
+
+            //relationship between store and area
+            modelBuilder.Entity<Store>()
+                .HasOne(s => s.Area)
+                .WithMany(a => a.Stores)
+                .HasForeignKey(s => s.AreaId);
+
+            //relationship between store and hub
+            modelBuilder.Entity<Store>()
+                .HasOne(s => s.Hub)
+                .WithMany(h => h.Stores)
+                .HasForeignKey(s => s.HubId);
+
+            //relationship between store and merchant
+            modelBuilder.Entity<Store>()
+                .HasOne(s => s.Merchant)
+                .WithMany(m => m.Stores)
+                .HasForeignKey(s => s.MerchantId);
 
            
 

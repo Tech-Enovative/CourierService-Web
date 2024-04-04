@@ -1,0 +1,94 @@
+﻿@model CourierService_Web.Models.Store
+
+@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    string AdminId = Context.Request.Cookies["AdminId"];
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row mt-5 justify-content-center align-content-center">
+                <div class="col-lg-6">
+                    <div>
+                        <h4 class="header-title">Edit Store</h4>
+
+                        <form method="post" enctype="multipart/form-data" action="@Url.Action("EditStore", "Merchant")">
+                            <input type="hidden" asp-for="Id" />
+                            <div class="form-group">
+                                <label asp-for="Name" for="Name">Store Name<span class="text-danger">*</span></label>
+                                <input asp-for="Name" type="text" name="Name" class="form-control" id="Name">
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="Contact" for="Contact">Contact<span class="text-danger">*</span></label>
+                                <input asp-for="Contact" type="text" name="Contact" class="form-control" id="Contact">
+                                <span asp-validation-for="Contact" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="SecondaryContact" for="SecondaryContact">Secondary Contact</label>
+                                <input asp-for="SecondaryContact" type="text" name="SecondaryContact" class="form-control" id="SecondaryContact">
+                                <span asp-validation-for="SecondaryContact" class="text-danger"></span>
+                            </div>
+
+                            <!-- Add dropdowns for District, Zone, Area, and Hub here -->
+                            <!-- Make sure to populate dropdowns using ViewBag or ViewData -->
+                            @* <div class="form-group">
+                                <label for="DistrictId">Select District<span class="text-danger">*</span></label>
+                                <select name="DistrictId" class="form-control">
+                                    @foreach (var district in ViewBag.Districts)
+                                    {
+                                        <option value="@district.Id">@district.Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <br />
+
+                            <div class="form-group">
+                                <label for="ZoneId">Select Zone<span class="text-danger">*</span></label>
+                                <select name="ZoneId" class="form-control">
+                                    @foreach (var zone in ViewBag.Zones)
+                                    {
+                                        <option value="@zone.Id">@zone.Name</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="AreaId">Select Area<span class="text-danger">*</span></label>
+                                <select name="AreaId" class="form-control">
+                                    @foreach (var area in ViewBag.Areas)
+                                    {
+                                        <option value="@area.Id">@area.Name</option>
+                                    }
+                                </select>
+                            </div> *@
+
+                            <div class="form-group">
+                                <label asp-for="Address" for="Address">Address</label>
+                                <textarea asp-for="Address" name="Address" class="form-control" id="Address"></textarea>
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group text-right mb-0">
+                                <button type="submit" class="btn btn-primary waves-effect waves-light mr-1">
+                                    Save Changes
+                                </button>
+                                <a href="@Url.Action("StoreList", "Merchant")" class="btn btn-secondary waves-effect">
+                                    Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @* Add any scripts here if needed *@
+}
