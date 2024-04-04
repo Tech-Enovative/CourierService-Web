@@ -1,0 +1,564 @@
+﻿@model Parcel
+
+
+@{
+    ViewData["Title"] = "Add Parcel";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+@{
+    string RiderId = Context.Request.Cookies["RiderId"];
+    string AdminId = Context.Request.Cookies["AdminId"];
+    string MerchantId = Context.Request.Cookies["MerchantId"];
+
+
+}
+
+<style>
+    
+    input[readonly] {
+        background-color: #f8f9fa; 
+        color: black; 
+        border-color: #ced4da; 
+    }
+
+    
+    label[for="DeliveryCharge"], label[for="TotalPrice"] {
+        color: #007bff; 
+    }
+</style>
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row mt-5 justify-content-center align-content-center">
+                <div class="col-lg-6">
+                    <div>
+                        <h4 class="header-title">Add a New Parcel</h4>
+
+                        <form method="post" enctype="multipart/form-data">
+                            
+
+                            
+                            <input asp-for="MerchantId" type="hidden" name="MerchantId" value="@MerchantId" />
+
+                           
+                              
+                                 @*  <div class="form-group mt-3">
+                                    <label for="HubId">Select Hub<span class="text-danger">*</span></label>
+                                    <select name="HubId" class="form-control" id="">
+                                    @foreach (var hub in ViewBag.HubList)
+                                    {
+                                        
+                                        if (hub.Area == ViewBag.MerchantArea)
+                                        {
+                                            <option value="@hub.Id" >@hub.Name</option>
+
+                                        }
+                                        
+                                    }
+
+                                    </select>
+                                   </div> *@
+
+                            <div class="form-group">
+                                <label asp-for="MerchantId" for="MerchantId">Select Merchant<span class="text-danger">*</span></label>
+                                <select asp-for="MerchantId" name="MerchantId" id="MerchantId" class="form-control" required>
+                                    <option value="" selected>Select Merchant</option>
+                                    @foreach (var merchant in ViewBag.Merchants)
+                                    {
+
+
+                                        <option value="@merchant.Id">@merchant.Name</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="MerchantId" class="text-danger"></span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label asp-for="StoreId" for="StoreId">Select Store<span class="text-danger">*</span></label>
+                                <select asp-for="StoreId" name="StoreId" id="StoreId" class="form-control" required>
+                                    <option value="" selected>Select Store</option>
+                                    @foreach (var store in ViewBag.Stores)
+                                    {
+
+
+                                        <option value="@store.Id">@store.Name</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="StoreId" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="ReceiverName" for="ReceiverName">Receiver Name<span class="text-danger">*</span></label>
+                                <input asp-for="ReceiverName" type="text" name="ReceiverName" parsley-trigger="change" required
+                                       placeholder="Enter Receiver Name" class="form-control" id="ReceiverName">
+                                <span asp-validation-for="ReceiverName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="ReceiverAddress" for="ReceiverAddress">Receiver Address<span class="text-danger">*</span></label>
+                                <input asp-for="ReceiverAddress" type="text" name="ReceiverAddress" parsley-trigger="change" required
+                                       placeholder="Enter Receiver Address" class="form-control" id="ReceiverAddress">
+                                <span asp-validation-for="ReceiverAddress" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="ReceiverContactNumber" for="ReceiverContactNumber">Receiver Contact Number<span class="text-danger">*</span></label>
+                                <input asp-for="ReceiverContactNumber" type="text" name="ReceiverContactNumber" parsley-trigger="change" required
+                                       placeholder="Enter Receiver Contact Number" class="form-control" id="ReceiverContactNumber">
+                                <span asp-validation-for="ReceiverContactNumber" class="text-danger"></span>
+                            </div>
+                            <div id="parcelDeliveryCounts" style="color: green; display: none; font-weight: bold;">
+                                @* Parcel: <span id="parcelCount"></span> | *@ Total Delivery: <span id="deliveryCount"></span> | Total Cancel : <span id="returnCount"></span> | Delivery Success Rate: <span id="deliverySuccessRate"></span>
+                            </div>
+                            @* <div class="form-group">
+                                <label for="DistrictId">Select District<span class="text-danger">*</span></label>
+                                <select name="DistrictId" id="districtId" class="form-control">
+                                    <option value="" selected>Select District</option>
+                                    @foreach (var district in ViewBag.Districts)
+                                    {
+                                        
+                                       
+                                        <option value="@district.Id">@district.Name</option>
+                                    }
+                                </select>
+                            </div>
+                            
+
+                            <div class="form-group">
+                                <label for="ZoneId">Select Zone<span class="text-danger">*</span></label>
+                                <select name="ZoneId" id="zoneId" class="form-control">
+                                    <option value="">Select Zone</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="AreaId">Select Area<span class="text-danger">*</span></label>
+                                <select name="AreaId" id="areaId" class="form-control">
+                                    <option value="">Select Area</option>
+                                </select>
+                            </div> *@
+
+
+
+
+
+                            @* <div class="form-group">
+                                <label asp-for="ReceiverEmail" for="ReceiverEmail">Receiver Email<span class="text-danger"></span></label>
+                                <input asp-for="ReceiverEmail" type="email" name="ReceiverEmail" parsley-trigger="change" 
+                                       placeholder="Enter Receiver Email" class="form-control" id="ReceiverEmail">
+                                <span asp-validation-for="ReceiverEmail" class="text-danger"></span>
+                            </div> *@
+                            <div class="form-group">
+                                <label asp-for="ProductName" for="ProductName">Product Name<span class="text-danger">*</span></label>
+                                <input asp-for="ProductName" type="text" name="ProductName" parsley-trigger="change" required
+                                       placeholder="Enter Product Name" class="form-control" id="ProductName">
+                                <span asp-validation-for="ProductName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="ProductWeight" for="ProductWeight">Product Weight<span class="text-danger">*</span></label>
+                                <select asp-for="ProductWeight" name="ProductWeight" class="form-control" id="ProductWeight">
+                                    <option value="0.5">0.5 KG</option>
+                                    <option value="1">1 KG</option>
+                                    <option value="2">2 KG</option>
+                                    <option value="3">3 KG</option>
+                                    <option value="4">4 KG</option>
+                                    <option value="5">5 KG</option>
+                                    <option value="6">6 KG</option>
+                                    <option value="7">7 KG</option>
+                                    <option value="8">8 KG</option>
+                                    <option value="9">9 KG</option>
+                                    <option value="10">10 KG</option>
+                                   
+                                </select>
+                                <span asp-validation-for="ProductWeight" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="DeliveryType" for="DeliveryType">Delivery Type<span class="text-danger">*</span></label>
+                                <select asp-for="DeliveryType" name="DeliveryType" id="DeliveryType" class="form-control">
+                                    <option value="InsideDhaka">Inside Dhaka</option>
+                                    <option value="SubDhaka">Sub Dhaka</option>
+                                    <option value="OutsideDhaka">Outside Dhaka</option>
+                                    <option value="InDhakaEmergency">In Dhaka Emergency</option>
+                                    <option value="P2P">P2P Parcel</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="ProductPrice" for="ProductPrice">Product Price<span class="text-danger">*</span></label>
+                                <input asp-for="ProductPrice" type="number" name="ProductPrice" parsley-trigger="change" required
+                                       placeholder="Enter Product Price" class="form-control" id="ProductPrice">
+                                <span asp-validation-for="ProductPrice" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="ProductQuantity" for="ProductQuantity">Product Quantity<span class="text-danger"></span></label>
+                                <input asp-for="ProductQuantity" type="number" name="ProductQuantity" parsley-trigger="change" required
+                                       placeholder="Enter Product Quantity" class="form-control" id="ProductQuantity">
+                                <span asp-validation-for="ProductQuantity" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="DeliveryCharge" for="DeliveryCharge">Delivery Charge<span class="text-danger">*</span></label>
+                                <input asp-for="DeliveryCharge" type="number" name="DeliveryCharge" parsley-trigger="change" 
+                                       placeholder="Enter Delivery Charge" class="form-control" id="DeliveryCharge" readonly>
+                                <span asp-validation-for="DeliveryCharge" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="COD" for="COD">COD Charge<span class="text-danger">*</span></label>
+                                <input asp-for="COD" type="number" name="COD" parsley-trigger="change" 
+                                       placeholder="Enter COD" class="form-control" id="COD" readonly>
+                                <span asp-validation-for="COD" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="TotalPrice"  for="TotalPrice">Total Price<span class="text-danger"></span></label>
+                                <input asp-for="TotalPrice" type="number" name="TotalPrice" parsley-trigger="change" 
+                                       placeholder="Total Price" class="form-control" id="TotalPrice" readonly>
+                                <span asp-validation-for="TotalPrice" class="text-danger"></span>
+                            </div>
+
+                            
+
+                            <div class="form-group text-right mb-0">
+                                <button asp-controller="Merchant" asp-action="AddParcel" class="btn btn-primary waves-effect waves-light mr-1" type="submit">
+                                    Submit
+                                </button>
+                                <button type="reset" class="btn btn-secondary waves-effect">
+                                    Reset
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 align-items-center justify-content-center">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="header-title">Cost Details</h4>
+            <ul class="list-unstyled">
+                <li>
+                    <strong>Delivery Fee:</strong>
+                    <span id="deliveryFee">৳ 0</span>
+                </li>
+                <li>
+                    <strong>COD Fee:</strong>
+                    <span id="codFee">৳ 0</span>
+                </li>
+                <li>
+                    <strong>Total Cost:</strong>
+                    <span id="totalCost">৳ 0</span>
+                </li>
+            </ul>
+            <!-- <p class="mb-0">Cost might vary depending upon the delivery situations and other circumstances. For details, check the <a href="#">Pricing Plan</a>.</p> -->
+            <p class="mb-0"><strong>Pickup Last Entry Time:</strong> 4 pm</p>
+            <!-- <p class="mb-0"><strong>On Demand / Express / Fragile Last Entry Time:</strong> 12:30 pm, Maximum size of any product should not be over 2CFT (In general)</p>
+            <p class="mb-0"><strong>Use Fragile Type for:</strong> Cosmetics, Liquid grocery, Herbals, Gift Items, Electronic gadgets, Lights, Glass items, Food items (dry)</p>
+            <p class="mb-0"><strong>Use Express Delivery Inside Dhaka (2-3 hours) for:</strong> Cooked Foods and other emergency delivery</p>
+            <p><strong>Inside Dhaka Normal Delivery:</strong> will take 24-48 hours, On Demand & Fragile take 8 hours, Outside Dhaka it may take 3-5 days</p> -->
+        </div>
+    </div>
+</div>
+
+
+
+            </div>
+            <!-- end row -->
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var deliveryFeeSpan = document.getElementById("deliveryFee");
+        var codFeeSpan = document.getElementById("codFee");
+        var totalCostSpan = document.getElementById("totalCost");
+
+        function calculateDeliveryFee() {
+            var productWeight = parseFloat(document.getElementById("ProductWeight").value);
+            var deliveryType = document.getElementById("DeliveryType").value;
+            var deliveryFee = 0;
+
+            // Calculate delivery fee based on product weight and delivery type
+            if (deliveryType === "InsideDhaka") {
+                if (productWeight <= 1) {
+                    deliveryFee = 70;
+                } else {
+                    deliveryFee = 70 + (productWeight - 1) * 10;
+                }
+            } else if (deliveryType === "SubDhaka") {
+                if (productWeight <= 1) {
+                    deliveryFee = 90;
+                } else {
+                    deliveryFee = 90 + (productWeight - 1) * 10;
+                }
+            } else if (deliveryType === "OutsideDhaka") {
+                if (productWeight <= 1) {
+                    deliveryFee = 120;
+                } else {
+                    deliveryFee = 120 + (productWeight - 1) * 10;
+                }
+            } else if (deliveryType === "InDhakaEmergency") {
+                if (productWeight <= 1) {
+                    deliveryFee = 100;
+                } else {
+                    deliveryFee = 100 + (productWeight - 1) * 10;
+                }
+            } else if (deliveryType === "P2P") {
+                if (productWeight <= 1) {
+                    deliveryFee = 200;
+                } else {
+                    deliveryFee = 200 + (productWeight - 1) * 10;
+                }
+            }
+
+            return deliveryFee;
+        }
+
+        function calculateCODFee() {
+            var productPrice = parseFloat(document.getElementById("ProductPrice").value);
+            if (isNaN(productPrice)) {
+                return 0; // If product price is not a valid number, return 0 for COD fee
+            }
+            var codFee = productPrice * 0.01; // Calculate COD fee (1% of product price)
+            return codFee;
+        }
+
+        function calculateTotalCost() {
+            var deliveryFee = calculateDeliveryFee();
+            var codFee = calculateCODFee();
+            if (isNaN(deliveryFee) || isNaN(codFee)) {
+                return 0; // If either delivery fee or COD fee is not a valid number, return 0 for total cost
+            }
+            var totalCost = deliveryFee + codFee;
+            return totalCost;
+        }
+
+        function updateCostDetails() {
+            var deliveryFee = calculateDeliveryFee();
+            var codFee = calculateCODFee();
+            var totalCost = calculateTotalCost();
+
+            // Update spans with the calculated values
+            deliveryFeeSpan.textContent = '৳ ' + deliveryFee.toFixed(2);
+            codFeeSpan.textContent = '৳ ' + codFee.toFixed(2);
+            totalCostSpan.textContent = '৳ ' + totalCost.toFixed(2);
+        }
+
+        // Call the function initially
+        updateCostDetails();
+
+        // Call the function whenever inputs change
+        document.getElementById("ProductWeight").addEventListener("change", updateCostDetails);
+        document.getElementById("DeliveryType").addEventListener("change", updateCostDetails);
+        document.getElementById("ProductPrice").addEventListener("input", updateCostDetails);
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var productWeightSelect = document.getElementById("ProductWeight");
+        var deliveryTypeSelect = document.getElementById("DeliveryType");
+        var productPriceInput = document.getElementById("ProductPrice");
+        var productQuantityInput = document.getElementById("ProductQuantity");
+        var deliveryChargeInput = document.getElementById("DeliveryCharge");
+        var codInput = document.getElementById("COD");
+        var totalPriceInput = document.getElementById("TotalPrice");
+
+        function calculateDeliveryCharge() {
+            var productWeight = parseInt(productWeightSelect.value);
+            var deliveryType = deliveryTypeSelect.value;
+            var deliveryCharge = 0;
+
+            // Calculate delivery charge based on product weight and delivery type
+            if (deliveryType === "InsideDhaka") {
+                if (productWeight <= 1) {
+                    deliveryCharge = 70;
+                } else {
+                    deliveryCharge = 70 + (productWeight - 1) * 15;
+                }
+            } else if (deliveryType === "SubDhaka") {
+                if (productWeight <= 1) {
+                    deliveryCharge = 90;
+                } else {
+                    deliveryCharge = 90 + (productWeight - 1) * 15;
+                }
+            } else if (deliveryType === "OutsideDhaka") {
+                if (productWeight <= 1) {
+                    deliveryCharge = 120;
+                } else {
+                    deliveryCharge = 120 + (productWeight - 1) * 15;
+                }
+            } else if (deliveryType === "InDhakaEmergency") {
+                if (productWeight <= 1) {
+                    deliveryCharge = 100;
+                } else {
+                    deliveryCharge = 100 + (productWeight - 1) * 15;
+                }
+            } else if (deliveryType === "P2P") {
+                if (productWeight <= 1) {
+                    deliveryCharge = 200;
+                } else {
+                    deliveryCharge = 200 + (productWeight - 1) * 15;
+                }
+            }
+
+            return deliveryCharge;
+        }
+
+        function calculateCOD() {
+            var productPrice = parseInt(productPriceInput.value);
+            var codCharge = Math.round(productPrice * 0.01); // Calculate COD charge (1% of product price)
+            return codCharge;
+        }
+
+        //calculate weight price
+        function calculateWeightPrice() {
+            var productWeight = parseInt(productWeightSelect.value);
+            var productPrice = parseInt(productPriceInput.value);
+            var weightPrice = productWeight * productPrice;
+            return weightPrice;
+        }
+
+        function calculateTotalPrice() {
+            var deliveryCharge = calculateDeliveryCharge();
+            var codCharge = calculateCOD();
+            var productPrice = parseInt(productPriceInput.value);
+            var productQuantity = parseInt(productQuantityInput.value);
+            var totalPrice = (productPrice + codCharge) + deliveryCharge;
+            return totalPrice;
+        }
+
+        function updatePrices() {
+            var deliveryCharge = calculateDeliveryCharge();
+            var codCharge = calculateCOD();
+            var totalPrice = calculateTotalPrice();
+
+            // Set the calculated delivery charge, COD charge, and total price to the input fields
+            deliveryChargeInput.value = deliveryCharge;
+            codInput.value = codCharge;
+            totalPriceInput.value = totalPrice;
+        }
+
+        // Call the function initially
+        updatePrices();
+
+        // Call the function whenever inputs change
+        productWeightSelect.addEventListener("change", updatePrices);
+        deliveryTypeSelect.addEventListener("change", updatePrices);
+        productPriceInput.addEventListener("change", updatePrices);
+        productQuantityInput.addEventListener("change", updatePrices);
+    });
+</script>
+
+
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var pickupOptionSelect = document.getElementById("PickupOption");
+        var pickupLocationInput = document.getElementById("PickupLocation");
+
+        function togglePickupLocationInput() {
+            if (pickupOptionSelect.value === "Self") {
+                // Set the value of the input field to the merchant's full address from ViewBag
+                pickupLocationInput.value = '@ViewBag.MerchantFullAddress';
+                pickupLocationInput.setAttribute('readonly', true); // Make the input readonly
+                pickupLocationInput.style.display = "block";
+            } else {
+                pickupLocationInput.removeAttribute('readonly'); // Remove the readonly attribute
+                pickupLocationInput.style.display = "block";
+                pickupLocationInput.value = "";
+            }
+        }
+
+
+
+        // Call the function initially
+        togglePickupLocationInput();
+
+        // Call the function whenever pickup option changes
+        pickupOptionSelect.addEventListener("change", togglePickupLocationInput);
+    });
+</script>
+
+
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#ReceiverContactNumber').change(function () {
+                var receiverContactNumber = $(this).val();
+                $.ajax({
+                    url: '@Url.Action("GetParcelDeliveryCounts", "Merchant")',
+                    type: 'GET',
+                    data: { receiverContactNumber: receiverContactNumber },
+                    success: function (result) {
+                        $('#parcelCount').text(result.parcelCount);
+                        $('#deliveryCount').text(result.deliveryCount);
+                        $('#deliverySuccessRate').text(result.successRate.toFixed(2) + "%"); // Display success rate with percentage
+                        $('#returnCount').text(result.returnCount);
+                        $('#parcelDeliveryCounts').show(); // Show the div
+                    },
+                    error: function () {
+                        alert('Error occurred while fetching parcel and delivery counts.');
+                    }
+                });
+            });
+        });
+    </script>
+
+    
+<script>
+        $(document).ready(function () {
+            $('#districtId').change(function () {
+                var districtId = $(this).val();
+                if (districtId) {
+                    $.ajax({
+                        url: '@Url.Action("GetZonesByDistrict", "Merchant")',
+                        type: 'GET',
+                        data: { districtId: districtId },
+                        success: function (data) {
+                            $('#zoneId').empty().append('<option value="">Select Zone</option>');
+                            $.each(data, function (index, zone) {
+                                $('#zoneId').append($('<option>', {
+                                    value: zone.id, // Ensure that zone.id is correct
+                                    text: zone.name
+                                }));
+                            });
+                        }
+                    });
+                } else {
+                    $('#zoneId').empty().append('<option value="">Select Zone</option>');
+                    $('#areaId').empty().append('<option value="">Select Area</option>');
+                }
+            });
+
+            $('#zoneId').change(function () {
+                var zoneId = $(this).val();
+                if (zoneId) {
+                    $.ajax({
+                        url: '@Url.Action("GetAreasByZone", "Merchant")',
+                        type: 'GET',
+                        data: { zoneId: zoneId },
+                        success: function (data) {
+                            $('#areaId').empty().append('<option value="">Select Area</option>');
+                            $.each(data, function (index, area) {
+                                $('#areaId').append($('<option>', {
+                                    value: area.id, // Ensure that area.id is correct
+                                    text: area.name
+                                }));
+                            });
+                        }
+                    });
+                } else {
+                    $('#areaId').empty().append('<option value="">Select Area</option>');
+                }
+            });
+        });
+</script>
+
+
+}
+@{
+            <partial name="_ValidationScriptsPartial" />
+    }
+}

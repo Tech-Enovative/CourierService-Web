@@ -2579,6 +2579,58 @@ namespace CourierService_Web.Controllers
             return View(parcel);
         }
 
+        //add new parcel
+        public IActionResult AddNewParcel()
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            //parcel with hub information
+            ViewBag.HubList = _context.Hubs.ToList();
+
+            ViewBag.Districts = _context.District.ToList();
+            ViewBag.Zones = _context.Zone.ToList();
+            ViewBag.Area = _context.Areas.ToList();
+
+            ViewBag.Merchants = _context.Merchants.ToList();
+            ViewBag.Stores = _context.Stores.ToList();
+            return View();
+        }
+        [HttpPost]
+        public IActionResult AddParcel(Parcel parcel)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            //find merchant according to store id
+            var merchant = _context.Merchants.Find(parcel.MerchantId);
+            //find merchant id and set
+            parcel.MerchantId = merchant.Id;
+
+            //find hub according to store id
+            var store = _context.Stores.Find(parcel.StoreId);
+            var hub = _context.Hubs.Find(store.HubId);
+            //find hub id and set
+            parcel.HubId = hub.Id;
+
+
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("AddNewParcel");
+            }
+
+            // Add the parcel to the context and save changes
+            _context.Parcels.Add(parcel);
+            _context.SaveChanges();
+
+            TempData["success"] = "Parcel Added Successfully";
+            return RedirectToAction("Index");
+        }
+
+
 
 
     }
