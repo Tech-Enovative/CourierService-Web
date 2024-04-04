@@ -38,12 +38,10 @@
                             <label for="DistrictId">Select District<span class="text-danger">*</span></label>
                             <select name="DistrictId" id="districtId" class="form-control">
                             <option value="" selected>Select District</option>
-                            @foreach (var district in ViewBag.Districts)
-                            {
-
-
-                            <option value="@district.Id">@district.Name</option>
-                            }
+                                    @foreach (var district in ViewBag.Districts)
+                                    {
+                                        <option value="@district.Id">@district.Name</option>
+                                    }
                             </select>
                             </div>
 
@@ -86,7 +84,7 @@
 </div>
 
 @section Scripts {
-    @* Add any scripts here if needed *@
+    
     <script>
         $(document).ready(function () {
             $('#districtId').change(function () {

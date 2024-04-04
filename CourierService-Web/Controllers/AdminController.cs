@@ -294,6 +294,246 @@ namespace CourierService_Web.Controllers
             return View();
         }
 
+        //parcel status changed to At the Hub Received
+        public IActionResult ParcelAtTheHubReceived(string? id)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+            parcel.Status = "At The Hub Received";
+            _context.Parcels.Update(parcel);
+            _context.SaveChanges();
+            TempData["success"] = "Parcel Status Changed to At The Hub Received";
+            return RedirectToAction("Parcel");
+        }
+
+        //OnTheWayToSortingHub
+        public IActionResult OnTheWayToSortingHub(string id)
+        {
+            if(!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+            parcel.Status = "On The Way To Sorting Hub";
+            _context.Parcels.Update(parcel);
+            _context.SaveChanges();
+            TempData["success"] = "Parcel Status Changed to On The Way To Sorting Hub";
+            return RedirectToAction("Parcel");
+
+        }
+
+        //AtTheSortingHub
+        public IActionResult AtTheSortingHub(string id)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+            parcel.Status = "At The Sorting Hub";
+            _context.Parcels.Update(parcel);
+            _context.SaveChanges();
+            TempData["success"] = "Parcel Status Changed to At The Sorting Hub";
+            return RedirectToAction("Parcel");
+
+        }
+
+        //On The Way To Last Mile Hub
+        public IActionResult OnTheWayToLastMileHub(string id)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+            parcel.Status = "On The Way To Last Mile Hub";
+            _context.Parcels.Update(parcel);
+            _context.SaveChanges();
+            TempData["success"] = "Parcel Status Changed to On The Way To Last Mile Hub";
+            return RedirectToAction("Parcel");
+
+        }
+
+        //Received At Last Mile Hub
+        public IActionResult ReceivedAtLastMileHub(string id)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+            parcel.Status = "Received At Last Mile Hub";
+            _context.Parcels.Update(parcel);
+            _context.SaveChanges();
+            TempData["success"] = "Parcel Status Changed to Received At Last Mile Hub";
+            return RedirectToAction("Parcel");
+
+        }
+
+        //Return Create First Mile Hub
+        public IActionResult ReturnCreateFirstMileHub(string id)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+            parcel.Status = "Return Create First Mile Hub";
+            _context.Parcels.Update(parcel);
+            _context.SaveChanges();
+            TempData["success"] = "Parcel Status Changed to Return Create First Mile Hub";
+            return RedirectToAction("Parcel");
+
+        }
+
+        //Return On The Way To Sorting Hub
+        public IActionResult ReturnOnTheWayToSortingHub(string id)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+            parcel.Status = "Return On The Way To Sorting Hub";
+            _context.Parcels.Update(parcel);
+            _context.SaveChanges();
+            TempData["success"] = "Parcel Status Changed to Return On The Way To Sorting Hub";
+            return RedirectToAction("Parcel");
+
+        }
+
+
+        //Return Received By Sorting Hub
+        public IActionResult ReturnReceivedBySortingHub(string id)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+            parcel.Status = "Return Received By Sorting Hub";
+            _context.Parcels.Update(parcel);
+            _context.SaveChanges();
+            TempData["success"] = "Parcel Status Changed to Return Received By Sorting Hub";
+            return RedirectToAction("Parcel");
+
+        }
+
+        //Return On The Way To First Mile Hub
+        public IActionResult ReturnOnTheWayToFirstMileHub(string id)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+            parcel.Status = "Return On The Way To First Mile Hub";
+            _context.Parcels.Update(parcel);
+            _context.SaveChanges();
+            TempData["success"] = "Parcel Status Changed to Return On The Way To First Mile Hub";
+            return RedirectToAction("Parcel");
+
+        }
+
+        //Return Received By First Mile Hub
+        public IActionResult ReturnReceivedByFirstMileHub(string id)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+            parcel.Status = "Return Received By First Mile Hub";
+            _context.Parcels.Update(parcel);
+            _context.SaveChanges();
+            TempData["success"] = "Parcel Status Changed to Return Received By First Mile Hub";
+            return RedirectToAction("Parcel");
+
+        }
+
         //complains
         public IActionResult Complain()
         {
@@ -2256,7 +2496,7 @@ namespace CourierService_Web.Controllers
                 return RedirectToAction("Login", "Home");
             }
             // Find the parcel by ID
-            var parcel = _context.Parcels.Where(p => p.Id == id).Include(m => m.Merchant).FirstOrDefault();
+            var parcel = _context.Parcels.Where(p => p.Id == id).Include(m => m.Merchant).Include(s=>s.Store).FirstOrDefault();
             if (parcel == null)
             {
                 return NotFound();
@@ -2271,6 +2511,41 @@ namespace CourierService_Web.Controllers
 
             return View(parcel);
 
+        }
+
+        [HttpPost]
+        public IActionResult AssignRiderToMerchant(string id, string riderId)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            // Find the parcel by ID
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+
+            // Find the rider by ID
+            var rider = _context.Riders.Find(riderId);
+            if (rider == null)
+            {
+                TempData["error"] = "Please Select A Rider";
+                return RedirectToAction("AssignRiderToMerchant", new { id = id });
+            }
+
+            // Assign the rider to the parcel
+            parcel.Rider = rider;
+            parcel.Status = "Assigned A Rider To Merchant";
+            parcel.DispatchDate = DateTime.Now;
+
+            // Save changes to the database
+            _context.SaveChanges();
+            TempData["success"] = "Assigned Successfully";
+            // Redirect to the parcel details page or any other desired page
+            return RedirectToAction("Parcel", "Admin");
         }
 
         //status - ExchangeParcelHub

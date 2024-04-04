@@ -7,6 +7,24 @@
 @{
     string AdminEmail = Context.Request.Cookies["AdminEmail"];
 }
+
+<!-- Style for the barcode -->
+<style>
+    .barcode {
+        text-align: center;
+        margin-top: 10px;
+    }
+
+        .barcode canvas {
+            width: 200px;
+        }
+
+    .print-container {
+        width: 100%;
+        max-width: 800px; /* Adjust according to your layout */
+        margin: 0 auto;
+    }
+</style>
 <div class="content-page">
     <div class="content">
         <div class="container-fluid">
@@ -69,7 +87,7 @@
                         <div class="table-responsive" id="parcelTable" style="overflow-x: auto;">
                             <table class="table mb-0">
                                 <thead>
-                                    <tr>
+                                    <tr >
                                         <th>SL</th>
                                         <th>ID</th>
                                         <th>Merchant</th>
@@ -102,8 +120,8 @@
                                    
                                     @foreach (var parcel in Model.OrderByDescending(u=>u.PickupRequestDate))
                                     {
-                                        
-                                        <tr >
+
+                                        <tr id="parcelTable_@parcel.Id">
                                             <td>@sl</td>
                                             <td>@parcel.Id</td>
                                             <td>
@@ -240,13 +258,49 @@
 
                                                         @if (parcel.Status == "Picked Up")
                                                         {
-                                                            <a asp-action="ParcelInHub" asp-route-id="@parcel.Id" asp-controller="Admin" class="btn btn-sm btn-info">
-                                                                <i class="fas fa-plus-circle"></i> Parcel Received
+                                                            <a asp-action="ParcelAtTheHubReceived" asp-route-id="@parcel.Id" asp-controller="Admin" class="btn btn-sm btn-info">
+                                                                <i class="fas fa-plus-circle"></i> Hub Received
 
                                                             </a>
                                                         }
 
-                                                        else if (parcel.Status == "Parcel In Hub")
+                                                        else if (parcel.Status == "At The Hub Received")
+                                                        {
+                                                        
+                                                            <a asp-action="OnTheWayToSortingHub" asp-route-id="@parcel.Id" asp-controller="Admin" class="btn btn-sm btn-info">
+                                                                <i class="fas fa-truck"></i> On The Way To Sorting Hub
+                                                            </a>
+
+
+                                                        }
+
+                                                        else if (parcel.Status == "On The Way To Sorting Hub")
+                                                        {
+                                                            <a href="javascript:void(0);" class="btn btn-sm btn-info print-btn" data-id="@parcel.Id">
+                                                                <i class="fas fa-print"></i> Print
+                                                            </a>
+
+
+                                                        }
+                                                       
+
+                                                        else if (parcel.Status == "At The Sorting Hub")
+                                                        {
+                                                            <a asp-action="OnTheWayToLastMileHub" asp-route-id="@parcel.Id" asp-controller="Admin" class="btn btn-sm btn-info">
+                                                                <i class="fas fa-truck"></i> On The Way To Last Mile Hub
+                                                            </a>
+
+
+                                                        }
+                                                        
+                                                        else if (parcel.Status == "On The Way To Last Mile Hub")
+                                                        {
+                                                            <a asp-action="ReceivedAtLastMileHub" asp-route-id="@parcel.Id" asp-controller="Admin" class="btn btn-sm btn-info">
+                                                                <i class="fas fa-truck"></i> Received At Last Mile Hub
+                                                            </a>
+                                                        }
+
+                                                        else if (parcel.Status == "Received At Last Mile Hub")
                                                         {
                                                             <a asp-action="AssignDeliveryRiderAdmin" asp-route-id="@parcel.Id" asp-controller="Admin" class="btn btn-sm btn-info">
                                                                 <i class="fas fa-plus-circle"></i> Assign Delivery Rider
@@ -256,16 +310,48 @@
 
                                                         else if (parcel.Status == "Returned")
                                                         {
-                                                            <a asp-action="ReturnParcelHub" asp-controller="Admin" asp-route-id="@parcel.Id" class="btn btn-sm btn-danger">
-                                                                <i class="fas fa-plus-circle"></i> Returned Parcel In Hub
+                                                            <a asp-action="ReturnCreateFirstMileHub" asp-controller="Admin" asp-route-id="@parcel.Id" class="btn btn-sm btn-danger">
+                                                                <i class="fas fa-plus-circle"></i> Return Create First Mile Hub
 
                                                             </a>
                                                         }
 
-                                                        else if (parcel.Status == "Return Parcel In Hub")
+                                                        else if (parcel.Status == "Return Create First Mile Hub")
+                                                        {
+                                                            <a asp-action="ReturnOnTheWayToSortingHub" asp-controller="Admin" asp-route-id="@parcel.Id" class="btn btn-sm btn-danger">
+                                                                <i class="fas fa-plus-circle"></i> Return On The Way To Sorting Hub
+
+                                                            </a>
+                                                        }
+
+                                                        else if (parcel.Status == "Return On The Way To Sorting Hub")
+                                                        {
+                                                            <a asp-action="ReturnReceivedBySortingHub" asp-controller="Admin" asp-route-id="@parcel.Id" class="btn btn-sm btn-danger">
+                                                                <i class="fas fa-plus-circle"></i> Return Received By Sorting Hub
+
+                                                            </a>
+                                                        }
+
+                                                        else if (parcel.Status == "Return Received By Sorting Hub")
+                                                        {
+                                                            <a asp-action="ReturnOnTheWayToFirstMileHub" asp-controller="Admin" asp-route-id="@parcel.Id" class="btn btn-sm btn-danger">
+                                                                <i class="fas fa-plus-circle"></i> Return On The Way To First Mile Hub
+
+                                                            </a>
+                                                        }
+
+                                                        else if (parcel.Status == "Return On The Way To First Mile Hub")
+                                                        {
+                                                            <a asp-action="ReturnReceivedByFirstMileHub" asp-controller="Admin" asp-route-id="@parcel.Id" class="btn btn-sm btn-danger">
+                                                                <i class="fas fa-plus-circle"></i> Return Received By First Mile Hub
+
+                                                            </a>
+                                                        }
+
+                                                        else if (parcel.Status == "Return Received By First Mile Hub")
                                                         {
                                                             <a asp-action="AssignRiderToMerchant" asp-route-id="@parcel.Id" asp-controller="Admin" class="btn btn-sm btn-success">
-                                                                <i class="fas fa-plus-circle"></i> Assign Rider To Merchant
+                                                                <i class="fas fa-plus-circle"></i> Assign Pickup Rider
 
                                                             </a>
                                                         }
@@ -580,6 +666,53 @@
             });
         });
     </script>
+
+    <!-- Include the required libraries for barcode generation -->
+    <script src="https://cdn.jsdelivr.net/jsbarcode/3.6.0/JsBarcode.all.min.js"></script>
+
+    <!-- Script to generate barcode and handle printing -->
+    <script>
+        $(document).ready(function () {
+            $('.print-btn').click(function () {
+                var parcelId = $(this).data('id');
+                var printContent = $('#parcelTable_' + parcelId).clone();
+                var barcodeCanvas = document.createElement('canvas');
+                JsBarcode(barcodeCanvas, parcelId, {
+                    format: 'CODE128',
+                    displayValue: false
+                });
+
+                // Append barcode to the print content
+                var barcodeDiv = $('<div>').addClass('barcode').append(barcodeCanvas);
+                printContent.find('.barcode-container').append(barcodeDiv);
+
+                // Create a container for printing
+                var printContainer = $('<div>').addClass('print-container').append(printContent);
+                $('body').empty().append(printContainer);
+
+                // Print the content
+                window.print();
+
+                // Restore the original content
+                $('body').html('');
+
+                // Update the parcel status
+                $.ajax({
+                    url: '/Admin/AtTheSortingHub',
+                    type: 'POST',
+                    data: { id: parcelId },
+                    success: function (response) {
+                        console.log('Parcel status updated successfully.');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error updating parcel status:', error);
+                    }
+                });
+            });
+        });
+    </script>
+
+
 
 
 }

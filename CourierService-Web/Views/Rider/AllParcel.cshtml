@@ -151,6 +151,10 @@
                                                 {
                                                     <span class="badge badge-success text-medium">@parcel.Status</span>
                                                 }
+                                                else if (parcel.Status == "Assigned A Rider To Merchant")
+                                                {
+                                                    <span class="badge badge-danger text-medium">Assigned For Return Parcel</span>
+                                                }
                                                 else
                                                 {
                                                     <span class="badge badge-danger text-medium">@parcel.Status</span>
@@ -201,17 +205,15 @@
                                                         <a asp-route-id="@parcel.Id" asp-controller="Rider" asp-action="Delivered" class="btn btn-sm btn-success">
                                                             <i class="fas fa-check"></i> Delivered
                                                         </a>
-                                                        <a asp-route-id="@parcel.Id" asp-controller="Rider" asp-action="Exchange" class="btn btn-sm btn-danger">
-                                                            <i class="fas fa-times"></i> Exchange
-                                                        </a>
+                                                        
                                                         <a asp-route-id="@parcel.Id" asp-controller="Rider" asp-action="Return" class="btn btn-sm btn-warning mt-2">
                                                             <i class="fas fa-undo"></i> Return
                                                         </a>
                                                     }
-                                                    @if (parcel.Status == "Assigned For Return Parcel")
+                                                     @if (parcel.Status == "Assigned A Rider To Merchant")
                                                     {
-                                                        <a asp-route-id="@parcel.Id" asp-controller="Rider" asp-action="ReturnParcelToMerchant" class="btn btn-sm btn-info">
-                                                            <i class="fas fa-check"></i> Return Parcel
+                                                        <a asp-route-id="@parcel.Id" asp-controller="Rider" asp-action="ReturnOnTheWayToMerchant" class="btn btn-sm btn-success">
+                                                            <i class="fas fa-truck"></i> Return On The Way To Merchant
                                                         </a>
                                                     }
                                                     @if (parcel.Status == "Assigned For Exchange Parcel")

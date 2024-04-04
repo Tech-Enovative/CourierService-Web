@@ -1,0 +1,49 @@
+﻿@model Parcel
+
+@{
+    ViewData["Title"] = "Assign Rider To Merchant";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card-box">
+                        <h4 class="header-title">Assign Rider For Returned Parcel</h4>
+                        <div>
+                            <h5>Merchant Information</h5>
+                            <p><strong>Parcel ID:</strong> @Model.Id</p>
+                            <p><strong>Location:</strong> @Model.Store.Address</p>
+                            <p><strong>Merchant Name:</strong> @Model.Merchant.Name</p>
+                            <p><strong>Address:</strong> @Model.Merchant.FullAddress</p>
+                            <p><strong>Contact Number:</strong> @Model.Merchant.ContactNumber</p>
+                            <p><strong> Email:</strong> @Model.Merchant.Email</p>
+                            <!-- Add more parcel information here as needed -->
+                        </div>
+                        <hr>
+                        <div>
+                            <h5>Assign Rider</h5>
+                            <form method="post" asp-action="AssignParcel" asp-controller="Home">
+                                <input type="hidden" asp-for="Id" />
+                                <div class="form-group">
+                                    <label for="riderId">Select Rider:</label>
+                                    <select class="form-control" id="riderId" name="riderId">
+                                        <option value="">-- Select Rider --</option>
+                                        @foreach (var rider in ViewBag.Riders)
+                                        {
+                                            <option value="@rider.Id">@rider.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                                <button type="submit" asp-action="AssignRiderToMerchant" class="btn btn-primary">Assign Rider</button>
+                                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

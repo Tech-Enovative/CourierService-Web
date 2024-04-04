@@ -166,9 +166,9 @@
                                             {
                                                 <td><span class="badge badge-info text-medium">Return Parcel Arrived</span></td>
                                             }
-                                            else if (parcel.Status == "Exchanged Parcel Returned Merchant")
+                                            else if (parcel.Status == "Return Received By Merchant")
                                             {
-                                                <td><span class="badge badge-success text-medium">Exchange Parcel Arrived</span></td>
+                                                <td><span class="badge badge-success text-medium">Return Parcel Received</span></td>
                                             }
                                             else
                                             {
@@ -256,9 +256,9 @@
                                             </td>
 
                                             <td>
-                                                @if (parcel.Status == "Parcel Returned To Merchant")
+                                                @if (parcel.Status == "Return On The Way To Merchant")
                                                 {
-                                                    <a asp-route-id="@parcel.Id" asp-controller="Merchant" asp-action="ReturnParcelReceived" class="btn btn-sm btn-success">
+                                                    <a asp-route-id="@parcel.Id" asp-controller="Merchant" asp-action="ReturnReceivedByMerchant" class="btn btn-sm btn-success">
                                                         <i class="fas fa-check"></i> Return Parcel Received
                                                     </a>
                                                 }
@@ -269,6 +269,16 @@
                                                     </a>
                                                 }
                                                 
+                                            </td>
+
+                                            <td>
+                                                @if(parcel.Status == "Picked Up")
+                                                {
+                                                    <a asp-route-id="@parcel.Id" asp-controller="Merchant" asp-action="CancelPickupRequest" class="btn btn-sm btn-danger">
+                                                        <i class="fas fa-times-circle"></i> Cancel Pickup
+                                                    </a>
+
+                                                }
                                             </td>
                                             
 

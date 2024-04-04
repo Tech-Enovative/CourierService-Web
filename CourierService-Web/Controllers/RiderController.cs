@@ -399,7 +399,7 @@ namespace CourierService_Web.Controllers
 
 
             parcel.Status = "Returned";
-            parcel.ReturnDate = DateTime.Now.Date;
+            parcel.ReturnDate = DateTime.Now;
             rider.State = "Available";
             _context.Parcels.Update(parcel);
             _context.Riders.Update(rider);
@@ -473,6 +473,28 @@ namespace CourierService_Web.Controllers
                 MerchantId = parcel.MerchantId
             };
             parcel.Status = "Exchanged";
+            rider.State = "Available";
+            _context.Parcels.Update(parcel);
+            _context.Riders.Update(rider);
+            _context.SaveChanges();
+            return RedirectToAction("AllParcel");
+        }
+
+        // status changed to Return On The Way To Merchant
+        public IActionResult ReturnOnTheWayToMerchant(string id)
+        {
+            if (!IsRiderLoggedIn())
+            {
+
+                return RedirectToAction("Login", "Home");
+            }
+
+            var riderId = HttpContext.Request.Cookies["RiderId"];
+            //find rider by riderId
+            var rider = _context.Riders.Find(riderId);
+            var parcel = _context.Parcels.Find(id);
+            parcel.Status = "Return On The Way To Merchant";
+            //parcel.ReturnDate = DateTime.Now.Date;
             rider.State = "Available";
             _context.Parcels.Update(parcel);
             _context.Riders.Update(rider);

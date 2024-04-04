@@ -9,6 +9,7 @@ using System.Text;
 using System.Formats.Asn1;
 using CsvHelper;
 using System.Linq;
+using Hangfire;
 
 namespace CourierService_Web.Controllers
 {
@@ -177,6 +178,7 @@ namespace CourierService_Web.Controllers
                 return RedirectToAction("Login", "Home");
             }
             UpdateLayout();
+            //TriggerBackgroundJob();
             return View();
         }
 
@@ -484,6 +486,29 @@ namespace CourierService_Web.Controllers
             return View("Profile", merchant);
         }
 
+        //PArcel Statu Changed to Return receive by merchant
+        public IActionResult ReturnReceivedByMerchant(string id)
+        {
+            if (!IsMerchantLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return RedirectToAction("Parcels");
+            }
+
+            parcel.Status = "Return Received By Merchant";
+            _context.Parcels.Update(parcel);
+            _context.SaveChanges();
+
+           
+
+            return RedirectToAction("Parcels");
+        }
+
 
 
         public IActionResult AddNewParcel()
@@ -694,6 +719,121 @@ namespace CourierService_Web.Controllers
             return totalPrice;
         }
 
+        //pickup failed if merchant did'nt give parcel in 2 min from pickup request date
+        public IActionResult PickupFailed()
+        {
+            if (!IsMerchantLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            var merchantId = HttpContext.Request.Cookies["MerchantId"];
+            var parcels = _context.Parcels
+                .Where(x => x.MerchantId == merchantId && x.Status == "Assigned A Rider For Pickup")
+                .ToList();
+
+            // Calculate the cutoff time (1 minute from pickup request date)
+            var cutoffTime = DateTime.Now.AddMinutes(-1);
+
+            foreach (var parcel in parcels)
+            {
+                if (parcel.PickupRequestDate < cutoffTime)
+                {
+                    parcel.Status = "Pickup Failed";
+                    _context.Parcels.Update(parcel);
+                }
+            }
+
+            _context.SaveChanges();
+            TempData["success"] = "Pickup Failed Parcels Updated Successfully";
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult ScheduleBackgroundJob()
+        {
+            // Schedule the PickupFailed method to run every 3 minutes
+            RecurringJob.AddOrUpdate("CheckForFailedPickups", () => PickupFailed(), Cron.MinuteInterval(1));
+
+           return RedirectToAction("Parcels");
+        }
+
+        //trigger schedule background job
+        public IActionResult TriggerBackgroundJob()
+        {
+            BackgroundJob.Enqueue(() => ScheduleBackgroundJob());
+            return RedirectToAction("Parcels");
+        }
+
+        //cancel pickup 
+        public IActionResult CancelPickupRequest(string id)
+        {
+            if (!IsMerchantLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return RedirectToAction("Parcels");
+            }
+
+            parcel.Status = " Pickup Cancelled";
+            _context.Parcels.Update(parcel);
+            _context.SaveChanges();
+
+            TempData["success"] = "Cancelled Successfully";
+            return RedirectToAction("Parcels");
+        }
+
+        //pickup on hold
+        public IActionResult PickupOnHold()
+        {
+            if (!IsMerchantLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            //if merchant did'nt give me parcel today & time limited crossed from today, first check status those parcels which is pickup
+            var merchantId = HttpContext.Request.Cookies["MerchantId"];
+            var parcels = _context.Parcels.Where(x => x.MerchantId == merchantId && x.Status == "Assigned A Rider For Pickup").ToList();
+            foreach (var parcel in parcels)
+            {
+                if (parcel.PickupRequestDate.Value.AddDays(1) < DateTime.Now)
+                {
+                    parcel.Status = "Pickup On Hold";
+                    _context.Parcels.Update(parcel);
+                }
+            }
+            _context.SaveChanges();
+
+            TempData["success"] = "Pickup On Hold Successfully";
+            return RedirectToAction("Parcels");
+        }
+
+
+
+
+        //public IActionResult PickupFailed()
+        //{
+        //    if (!IsMerchantLoggedIn())
+        //    {
+        //        return RedirectToAction("Login", "Home");
+        //    }
+        //    var merchantId = HttpContext.Request.Cookies["MerchantId"];
+        //    var parcels = _context.Parcels.Where(x => x.MerchantId == merchantId && x.Status == "Pickup Requested").ToList();
+        //    foreach (var parcel in parcels)
+        //    {
+        //        if (parcel.PickupRequestDate.Value.AddDays(3) < DateTime.Now)
+        //        {
+        //            parcel.Status = "Pickup Failed";
+        //            _context.Parcels.Update(parcel);
+        //        }
+        //    }
+        //    _context.SaveChanges();
+        //    TempData["success"] = "Pickup Failed Parcels Updated Successfully";
+        //    return RedirectToAction("Index");
+        //}
 
         [HttpPost]
         public IActionResult Upload(IFormFile file)
@@ -866,7 +1006,7 @@ namespace CourierService_Web.Controllers
             // Pass selected date range to the ViewBag
             ViewBag.StartDate = startDate ?? DateTime.Today;
             ViewBag.EndDate = endDate ?? DateTime.Today;
-
+            ScheduleBackgroundJob();
             return View(parcels);
         }
 
@@ -923,7 +1063,7 @@ namespace CourierService_Web.Controllers
             return File(Encoding.UTF8.GetBytes(csvContent.ToString()), "text/csv", $"Parcels_{startDate?.ToString("yyyy-MM-dd")}_{endDate?.ToString("yyyy-MM-dd")}.csv");
         }
 
-
+        
 
 
 

@@ -4,7 +4,7 @@ namespace CourierService_Web.Models
 {
     public class ReturnParcel
     {
-        public string Id { get; set; } = "R-" + Guid.NewGuid().ToString().Substring(0, 4);
+        public string Id { get; set; } = "R" + System.DateTime.Now.ToString("ddMMyyyy") + System.Guid.NewGuid().ToString().Substring(0, 3).ToUpper();
 
         public string? ParcelId { get; set; }
         public Parcel? Parcel { get; set; }
