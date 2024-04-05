@@ -934,107 +934,102 @@ namespace CourierService_Web.Controllers
         //}
 
         [HttpPost]
-        public IActionResult Upload(IFormFile file)
+        public async Task<IActionResult> Upload(IFormFile file)
+{
+    if (file == null || file.Length == 0)
+    {
+        ModelState.AddModelError("File", "Please select a file");
+        return View();
+    }
+
+    using (var reader = new StreamReader(file.OpenReadStream(), Encoding.UTF8))
+    {
+        List<ParcelImportViewModel> parcels = new List<ParcelImportViewModel>();
+        bool isFirstLine = true; // Flag to skip the first line
+
+        while (!reader.EndOfStream)
         {
-            if (file == null || file.Length == 0)
+            string line = await reader.ReadLineAsync();
+
+            if (isFirstLine)
             {
-                ModelState.AddModelError("File", "Please select a file");
-                return View();
+                isFirstLine = false;
+                continue; // Skip the first line
             }
 
-            using (var reader = new StreamReader(file.OpenReadStream(), Encoding.UTF8))
+            // Split the line by comma to get the values
+            string[] values = line.Split(',');
+
+            parcels.Add(new ParcelImportViewModel
             {
-                List<ParcelImportViewModel> parcels = new List<ParcelImportViewModel>();
-                bool isFirstLine = true; // Flag to skip the first line
-
-                while (!reader.EndOfStream)
-                {
-                    string line = reader.ReadLine();
-
-                    if (isFirstLine)
-                    {
-                        isFirstLine = false;
-                        continue; // Skip the first line
-                    }
-
-                    // Split the line by comma to get the values
-                    string[] values = line.Split(',');
-
-                    parcels.Add(new ParcelImportViewModel
-                    {
-                        Store = values[0],
-                        ReceiverName = values[1],
-                        ReceiverAddress = values[2],
-                        ReceiverContactNumber = values[3],
-                        District = values[4],
-                        Zone = values[5],
-                        Area = values[6],
-                        ProductName = values[7],
-                        ProductWeight = decimal.Parse(values[8]),
-                        ProductPrice = int.Parse(values[9]),
-                        ProductQuantity = string.IsNullOrEmpty(values[10]) ? null : (int?)int.Parse(values[10])
-                    });
-                }
-
-                
-
-
-
-
-
-                // Save parcels to the database
-                foreach (var parcel in parcels)
-                {
-                    
-                    // Calculate delivery charge (assuming a default delivery type of "InsideDhaka")
-                    var deliveryCharge = CalculateDeliveryCharge(parcel.ProductWeight, "InsideDhaka");
-                    if (parcel.District != "Dhaka")
-                    {
-                        deliveryCharge = CalculateDeliveryCharge(parcel.ProductWeight, "OutsideDhaka");
-                    }
-
-                    // Calculate COD charge
-                    var codCharge = CalculateCOD(parcel.ProductPrice);
-
-                    // Calculate total price
-                    var totalPrice = CalculateTotalPrice(parcel.ProductPrice, codCharge, deliveryCharge);
-
-                    //find hub according to store id
-                    var store = _context.Stores.FirstOrDefault(x => x.Name == parcel.Store);
-                    var hubId = store.HubId;
-                    
-
-                    // Add parcel to the database
-                    _context.Parcels.Add(new Parcel
-                    {
-                        MerchantId = HttpContext.Request.Cookies["MerchantId"],
-                        StoreId = _context.Stores.FirstOrDefault(s => s.Name == parcel.Store)?.Id,
-                        ReceiverName = parcel.ReceiverName,
-                        ReceiverAddress = parcel.ReceiverAddress,
-                        ReceiverContactNumber = parcel.ReceiverContactNumber,
-                        DistrictId = _context.District.FirstOrDefault(d => d.Name == parcel.District)?.Id,
-                        ZoneId = _context.Zone.FirstOrDefault(z => z.Name == parcel.Zone)?.Id,
-                        AreaId = _context.Areas.FirstOrDefault(a => a.Name == parcel.Area)?.Id,
-                        ProductName = parcel.ProductName,
-                        ProductWeight = parcel.ProductWeight,
-                        ProductPrice = parcel.ProductPrice,
-                        ProductQuantity = parcel.ProductQuantity,
-                        DeliveryType = "InsideDhaka", // Default to "InsideDhaka"
-                        DeliveryCharge = (int)deliveryCharge,
-                        COD = (int)codCharge,
-                        TotalPrice = (int)totalPrice,
-                        PickupRequestDate = DateTime.Now,
-                        HubId = hubId
-                    });
-                }
-
-                _context.SaveChanges();
-
-                TempData["Success"] = "Parcels imported successfully";
-            }
-
-            return RedirectToAction("Parcels");
+                Store = values[0],
+                ReceiverName = values[1],
+                ReceiverAddress = values[2],
+                ReceiverContactNumber = values[3],
+                District = values[4],
+                Zone = values[5],
+                Area = values[6],
+                ProductName = values[7],
+                ProductWeight = decimal.Parse(values[8]),
+                ProductPrice = int.Parse(values[9]),
+                ProductQuantity = string.IsNullOrEmpty(values[10]) ? null : (int?)int.Parse(values[10])
+            });
         }
+
+        // Save parcels to the database asynchronously
+        foreach (var parcel in parcels)
+        {
+            var deliveryType = "";
+            // Calculate delivery charge (assuming a default delivery type of "InsideDhaka")
+            var deliveryCharge = CalculateDeliveryCharge(parcel.ProductWeight, "InsideDhaka");
+            if (parcel.District != "Dhaka")
+            {
+                deliveryCharge = CalculateDeliveryCharge(parcel.ProductWeight, "OutsideDhaka");
+                deliveryType = "OutsideDhaka";
+            }
+
+            // Calculate COD charge
+            var codCharge = CalculateCOD(parcel.ProductPrice);
+
+            // Calculate total price
+            var totalPrice = CalculateTotalPrice(parcel.ProductPrice, codCharge, deliveryCharge);
+
+            // Find hub according to store id
+            var store = await _context.Stores.FirstOrDefaultAsync(x => x.Name == parcel.Store);
+            var hubId = store.HubId;
+
+            // Add parcel to the database asynchronously
+            _context.Parcels.Add(new Parcel
+            {
+                MerchantId = HttpContext.Request.Cookies["MerchantId"],
+                StoreId = (await _context.Stores.FirstOrDefaultAsync(s => s.Name == parcel.Store))?.Id,
+                ReceiverName = parcel.ReceiverName,
+                ReceiverAddress = parcel.ReceiverAddress,
+                ReceiverContactNumber = parcel.ReceiverContactNumber,
+                DistrictId = (await _context.District.FirstOrDefaultAsync(d => d.Name == parcel.District))?.Id,
+                ZoneId = (await _context.Zone.FirstOrDefaultAsync(z => z.Name == parcel.Zone))?.Id,
+                AreaId = (await _context.Areas.FirstOrDefaultAsync(a => a.Name == parcel.Area))?.Id,
+                ProductName = parcel.ProductName,
+                ProductWeight = parcel.ProductWeight,
+                ProductPrice = parcel.ProductPrice,
+                ProductQuantity = parcel.ProductQuantity,
+                DeliveryType = deliveryType, // Default to "InsideDhaka"
+                DeliveryCharge = (int)deliveryCharge,
+                COD = (int)codCharge,
+                TotalPrice = (int)totalPrice,
+                PickupRequestDate = DateTime.Now,
+                HubId = hubId
+            });
+        }
+
+        await _context.SaveChangesAsync();
+
+        TempData["Success"] = "Parcels imported successfully";
+    }
+
+    return RedirectToAction("Parcels");
+}
+
 
 
 

@@ -141,6 +141,9 @@
                                         Assign Delivery Rider
                                     </button>
 
+                                    
+                                    
+                                    <!-- Assign Delivery Rider Modal -->
                                     <!-- Assign Delivery Rider Modal -->
                                     <div class="modal fade" id="assignDeliveryRiderModal" tabindex="-1" role="dialog" aria-labelledby="assignDeliveryRiderModalLabel" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -154,11 +157,11 @@
                                                 <div class="modal-body">
                                                     <!-- Form for assigning delivery rider -->
                                                     <h5>Parcel Information</h5>
-                                                    <div id="selectedParcelsList"></div>
+                                                    <div id="selectedParcelsList"></div> <!-- Display selected parcels here -->
                                                     <form id="assignDeliveryRiderForm">
                                                         <div class="form-group">
-                                                            <label for="riderIdModal">Select Rider:</label>
-                                                            <select class="form-control" id="riderIdModal" name="riderIdModal">
+                                                            <label for="riderModal">Select Rider:</label>
+                                                            <select class="form-control" id="riderModal" name="riderModal">
                                                                 <option value="">-- Select Rider --</option>
                                                                 @foreach (var rider in ViewBag.Riders)
                                                                 {
@@ -172,7 +175,7 @@
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                    <button type="button" class="btn btn-primary" id="assignDeliveryRiderSubmitBtn">Assign Rider</button>
+                                                    <button type="button" class="btn btn-primary" id="assignDeliveryRiderSubmitBtn">Assign Delivery Rider</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -1008,6 +1011,48 @@
                 } else {
                     alert('Please select at least one parcel to delete.');
                 }
+            });
+        });
+    </script>
+
+
+    <script>
+        $(document).ready(function () {
+            // Bulk Assign Delivery Rider Button in the modal
+            $('#assignDeliveryRiderSubmitBtn').click(function () {
+                var riderId = $('#riderModal').val();
+                console.log('Selected Rider ID:', riderId);
+
+                var selectedParcelsHtml = ''; // Variable to store selected parcel list HTML
+
+                // Collect selected parcel IDs and build the list HTML
+                var parcelIds = [];
+                $('.selectedParcels:checked').each(function () {
+                    parcelIds.push($(this).val());
+                    console.log('Selected  ID:', parcelIds);
+                    var parcelRow = $('#parcelTable_' + $(this).val()); // Assuming each parcel row has an ID like 'parcelTable_<parcelId>'
+                    selectedParcelsHtml += '<div><strong>Parcel ID:</strong> ' + $(this).val() + '</div>';
+                    // Add more parcel information fields as needed
+                });
+
+                // Display selected parcels in the modal
+                $('#selectedParcelsList').html(selectedParcelsHtml);
+
+                // Perform bulk assign operation using AJAX
+                $.ajax({
+                    url: '@Url.Action("BulkAssignDeliveryRider", "Admin")',
+                    type: 'POST',
+                    data: { riderId: riderId, parcelIds: parcelIds },
+                    success: function (response) {
+                        // Handle success response
+                        $('#assignDeliveryRiderModal').modal('hide');
+                        location.reload(); // Refresh the whole page after successful assignment
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle error
+                        console.log(error);
+                    }
+                });
             });
         });
     </script>

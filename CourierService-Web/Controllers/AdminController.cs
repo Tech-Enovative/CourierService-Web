@@ -2589,6 +2589,8 @@ namespace CourierService_Web.Controllers
             return RedirectToAction("Parcel", "Admin");
         }
 
+
+
         //bulk delete parcels
         [HttpPost]
         public IActionResult BulkDeleteParcels(List<string> parcelIds)

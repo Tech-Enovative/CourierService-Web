@@ -6,7 +6,7 @@ namespace CourierService_Web.Models
     public class Parcel
     {
         [Key]
-        public string Id { get; set; } = "D" + System.DateTime.Now.ToString("ddMMyyyy") + System.Guid.NewGuid().ToString().Substring(0, 3).ToUpper();
+        public string Id { get; set; } = "D" + System.DateTime.Now.ToString("ddMMyyyy") + System.Guid.NewGuid().ToString().Substring(0, 10).ToUpper();
 
         [Required(ErrorMessage = "Receiver name is required")]
         public string ReceiverName { get; set; }
