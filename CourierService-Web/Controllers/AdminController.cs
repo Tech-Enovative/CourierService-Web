@@ -364,14 +364,19 @@ namespace CourierService_Web.Controllers
             parcel.Status = "At The Sorting Hub";
             _context.Parcels.Update(parcel);
             _context.SaveChanges();
-            TempData["success"] = "Parcel Status Changed to At The Sorting Hub";
             return RedirectToAction("Parcel");
 
+            //// Generate DOCX file
+            //var docxContent = $"Parcel ID: {parcel.Id}\nStatus: At The Sorting Hub";
+            //var docxBytes = Encoding.UTF8.GetBytes(docxContent);
+            //var fileName = $"Parcel_{parcel.Id}_Status.docx";
+
+            //return File(docxBytes, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", fileName);
         }
 
-        //generate barcode using barcodelib
-        [HttpGet]
-        public IActionResult GenerateBarcode()
+
+        [HttpPost]
+        public ActionResult GenerateBarcode()
         {
             // Generate barcode using ZXing.Net
             BarcodeWriter<SKBitmap> writer = new BarcodeWriter<SKBitmap>
@@ -397,7 +402,7 @@ namespace CourierService_Web.Controllers
                 imageBytes = ms.ToArray();
             }
 
-            // Create DOCX file using DocX library
+            // Create DOCX file using DocX library (assuming you have DocX library installed)
             using (DocX doc = DocX.Create("BarcodeDetails.docx"))
             {
                 // Add content to the document
@@ -409,7 +414,7 @@ namespace CourierService_Web.Controllers
                 doc.Save();
             }
 
-            // Return the barcode image and the DOCX file as a ZIP file
+            // Create a ZIP file containing the barcode image and DOCX file
             using (MemoryStream zipStream = new MemoryStream())
             {
                 using (ZipArchive zip = new ZipArchive(zipStream, ZipArchiveMode.Create, true))
@@ -433,10 +438,9 @@ namespace CourierService_Web.Controllers
                 byte[] zipBytes = zipStream.ToArray();
                 return File(zipBytes, "application/zip", "BarcodeDetails.zip");
             }
-        }
 
-
-        public IActionResult DownloadDocx(string id)
+            }
+            public IActionResult DownloadDocx(string id)
         {
             // Create .docx file logic using a library like DocX or NPOI
 
@@ -1533,6 +1537,7 @@ namespace CourierService_Web.Controllers
         // Pass selected date range to the view
         ViewBag.StartDate = startDate ?? DateTime.Today;
         ViewBag.EndDate = endDate ?? DateTime.Today;
+        ViewBag.Riders = _context.Riders.ToList();
 
         return View(parcels);
     }
@@ -2504,7 +2509,60 @@ namespace CourierService_Web.Controllers
             return RedirectToAction("Parcel", "Admin");
         }
 
-        
+        [HttpPost]
+        public IActionResult BulkAssignParcel(List<string> parcelIds, string riderId)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            // Find the rider by ID
+            var rider = _context.Riders.Find(riderId);
+            if (rider == null)
+            {
+                TempData["error"] = "Please Select A Rider";
+                return RedirectToAction("AssignParcel"); // Redirect to the assign parcel page
+            }
+
+            // Assign the rider to each parcel in the list
+            foreach (string id in parcelIds)
+            {
+                var parcel = _context.Parcels.Find(id);
+                if (parcel != null)
+                {
+                    parcel.Rider = rider;
+                    parcel.Status = "Assigned A Rider For Pickup";
+                    parcel.DispatchDate = DateTime.Now;
+                }
+            }
+
+            // Save changes to the database
+            _context.SaveChanges();
+            TempData["success"] = "Parcels Assigned Successfully";
+
+            // Redirect to the parcel details page or any other desired page
+            return RedirectToAction("Parcel", "Admin");
+        }
+
+        //bulk delete parcels
+        [HttpPost]
+        public IActionResult BulkDeleteParcels(List<string> parcelIds)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            // Find and remove selected parcels from the database
+            var parcelsToRemove = _context.Parcels.Where(p => parcelIds.Contains(p.Id)).ToList();
+            _context.Parcels.RemoveRange(parcelsToRemove);
+            _context.SaveChanges();
+
+            return RedirectToAction("Parcel");
+        }
+
+
 
         [HttpPost]
         public IActionResult AssignDeliveryRider(string id, string riderId)
@@ -2543,6 +2601,44 @@ namespace CourierService_Web.Controllers
             // Redirect to the parcel details page or any other desired page
             return RedirectToAction("Parcel", "Admin");
         }
+
+        [HttpPost]
+        public IActionResult BulkAssignDeliveryRider(List<string> parcelIds, string riderId)
+        {
+            if (!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            // Find the rider by ID
+            var rider = _context.Riders.Find(riderId);
+            if (rider == null)
+            {
+                TempData["error"] = "Please Select A Rider";
+                // Redirect to the bulk assign modal with selected parcel IDs
+                return RedirectToAction("AssignDeliveryRider", new { parcelIds = parcelIds });
+            }
+
+            // Assign the rider to each parcel in the list
+            foreach (string id in parcelIds)
+            {
+                var parcel = _context.Parcels.Find(id);
+                if (parcel != null)
+                {
+                    parcel.Rider = rider;
+                    parcel.Status = "Assigned For Delivery";
+                    parcel.DeliveryRiderAssignedAt = DateTime.Now;
+                }
+            }
+
+            // Save changes to the database
+            _context.SaveChanges();
+            TempData["success"] = "Parcels Assigned Successfully";
+
+            // Redirect to the parcel details page or any other desired page
+            return RedirectToAction("Parcel", "Admin");
+        }
+
 
         //status change to Parcel In Hub
         public IActionResult ParcelInHub(string id)

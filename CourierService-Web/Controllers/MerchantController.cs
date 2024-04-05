@@ -714,9 +714,9 @@ namespace CourierService_Web.Controllers
         public IActionResult DownloadTemplate()
         {
             // CSV content with headers and sample data
-            var csvContent = "ReceiverName,ReceiverAddress,ReceiverContactNumber,ReceiverEmail,ProductName,ProductWeight,ProductPrice,ProductQuantity,PickupLocation,DeliveryType,COD\n";
-            csvContent += "John Doe,123 Main St,1234567890,johndoe@example.com,Example Product,2,100,1,Merchant Address,InsideDhaka,1\n";
-            csvContent += "Jane Smith,456 Elm St,0987654321,janesmith@example.com,Another Product,1,50,2,Merchant Address,SubDhaka,0\n";
+            var csvContent = "Store,ReceiverName,ReceiverAddress,ReceiverContactNumber,District,Zone,Area,ProductName,ProductWeight,ProductPrice,ProductQuantity\n";
+            csvContent += "NewStore,John Doe,123 Main St,1234567890,Dhaka,Mirpur,Mirpur,Example Product,2,100,1\n";
+            
 
             // Create a byte array from the CSV content
             var bytes = Encoding.UTF8.GetBytes(csvContent);
@@ -934,26 +934,21 @@ namespace CourierService_Web.Controllers
         [HttpPost]
         public IActionResult Upload(IFormFile file)
         {
-            //find hub
-            var merchantId = HttpContext.Request.Cookies["MerchantId"];
-            var merchant = _context.Merchants.Find(merchantId);
-            //var hub = _context.Hubs.FirstOrDefault(x => x.Area == merchant.Area);
             if (file == null || file.Length == 0)
             {
                 ModelState.AddModelError("File", "Please select a file");
                 return View();
             }
 
-
-
             using (var reader = new StreamReader(file.OpenReadStream(), Encoding.UTF8))
             {
                 List<ParcelImportViewModel> parcels = new List<ParcelImportViewModel>();
-                string line;
                 bool isFirstLine = true; // Flag to skip the first line
 
-                while ((line = reader.ReadLine()) != null)
+                while (!reader.EndOfStream)
                 {
+                    string line = reader.ReadLine();
+
                     if (isFirstLine)
                     {
                         isFirstLine = false;
@@ -965,25 +960,36 @@ namespace CourierService_Web.Controllers
 
                     parcels.Add(new ParcelImportViewModel
                     {
-                        ReceiverName = values[0],
-                        ReceiverAddress = values[1],
-                        ReceiverContactNumber = values[2],
-                        ReceiverEmail = values[3],
-                        ProductName = values[4],
-                        ProductWeight = decimal.Parse(values[5]),
-                        ProductPrice = int.Parse(values[6]),
-                        ProductQuantity = string.IsNullOrEmpty(values[7]) ? null : (int?)int.Parse(values[7]),
-                        PickupLocation = values[8],
-                        DeliveryType = values[9],
-                        COD = int.Parse(values[10])
+                        Store = values[0],
+                        ReceiverName = values[1],
+                        ReceiverAddress = values[2],
+                        ReceiverContactNumber = values[3],
+                        District = values[4],
+                        Zone = values[5],
+                        Area = values[6],
+                        ProductName = values[7],
+                        ProductWeight = decimal.Parse(values[8]),
+                        ProductPrice = int.Parse(values[9]),
+                        ProductQuantity = string.IsNullOrEmpty(values[10]) ? null : (int?)int.Parse(values[10])
                     });
                 }
+
+                
+
+
+
+
 
                 // Save parcels to the database
                 foreach (var parcel in parcels)
                 {
-                    // Calculate delivery charge
-                    var deliveryCharge = CalculateDeliveryCharge(parcel.ProductWeight, parcel.DeliveryType);
+                    
+                    // Calculate delivery charge (assuming a default delivery type of "InsideDhaka")
+                    var deliveryCharge = CalculateDeliveryCharge(parcel.ProductWeight, "InsideDhaka");
+                    if (parcel.District != "Dhaka")
+                    {
+                        deliveryCharge = CalculateDeliveryCharge(parcel.ProductWeight, "OutsideDhaka");
+                    }
 
                     // Calculate COD charge
                     var codCharge = CalculateCOD(parcel.ProductPrice);
@@ -991,24 +997,28 @@ namespace CourierService_Web.Controllers
                     // Calculate total price
                     var totalPrice = CalculateTotalPrice(parcel.ProductPrice, codCharge, deliveryCharge);
 
+                    
+
                     // Add parcel to the database
                     _context.Parcels.Add(new Parcel
                     {
                         MerchantId = HttpContext.Request.Cookies["MerchantId"],
-                        //HubId = hub.Id,
+                        StoreId = _context.Stores.FirstOrDefault(s => s.Name == parcel.Store)?.Id,
                         ReceiverName = parcel.ReceiverName,
                         ReceiverAddress = parcel.ReceiverAddress,
                         ReceiverContactNumber = parcel.ReceiverContactNumber,
-                        ReceiverEmail = parcel.ReceiverEmail,
+                        DistrictId = _context.District.FirstOrDefault(d => d.Name == parcel.District)?.Id,
+                        ZoneId = _context.Zone.FirstOrDefault(z => z.Name == parcel.Zone)?.Id,
+                        AreaId = _context.Areas.FirstOrDefault(a => a.Name == parcel.Area)?.Id,
                         ProductName = parcel.ProductName,
                         ProductWeight = parcel.ProductWeight,
                         ProductPrice = parcel.ProductPrice,
                         ProductQuantity = parcel.ProductQuantity,
-                        PickupLocation = parcel.PickupLocation,
-                        DeliveryType = parcel.DeliveryType,
+                        DeliveryType = "InsideDhaka", // Default to "InsideDhaka"
                         DeliveryCharge = (int)deliveryCharge,
                         COD = (int)codCharge,
-                        TotalPrice = (int)totalPrice
+                        TotalPrice = (int)totalPrice,
+                        PickupRequestDate = DateTime.Now
                     });
                 }
 
@@ -1019,6 +1029,7 @@ namespace CourierService_Web.Controllers
 
             return RedirectToAction("Parcels");
         }
+
 
 
 
