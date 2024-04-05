@@ -497,6 +497,7 @@ namespace CourierService_Web.Controllers
             }
 
             parcel.Status = "Return Received By Merchant";
+            parcel.ReturnReceivedByMerchantAt = DateTime.Now;
             _context.Parcels.Update(parcel);
             _context.SaveChanges();
 
@@ -875,6 +876,7 @@ namespace CourierService_Web.Controllers
             }
 
             parcel.Status = " Pickup Cancelled";
+            parcel.PickupCancelledAt = DateTime.Now;
             _context.Parcels.Update(parcel);
             _context.SaveChanges();
 
@@ -997,6 +999,9 @@ namespace CourierService_Web.Controllers
                     // Calculate total price
                     var totalPrice = CalculateTotalPrice(parcel.ProductPrice, codCharge, deliveryCharge);
 
+                    //find hub according to store id
+                    var store = _context.Stores.FirstOrDefault(x => x.Name == parcel.Store);
+                    var hubId = store.HubId;
                     
 
                     // Add parcel to the database
@@ -1018,7 +1023,8 @@ namespace CourierService_Web.Controllers
                         DeliveryCharge = (int)deliveryCharge,
                         COD = (int)codCharge,
                         TotalPrice = (int)totalPrice,
-                        PickupRequestDate = DateTime.Now
+                        PickupRequestDate = DateTime.Now,
+                        HubId = hubId
                     });
                 }
 

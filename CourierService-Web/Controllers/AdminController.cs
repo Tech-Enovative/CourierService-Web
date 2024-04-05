@@ -315,6 +315,7 @@ namespace CourierService_Web.Controllers
                 return NotFound();
             }
             parcel.Status = "At The Hub Received";
+            parcel.ParcelAtTheHubReceivedAt = DateTime.Now;
             _context.Parcels.Update(parcel);
             _context.SaveChanges();
             TempData["success"] = "Parcel Status Changed to At The Hub Received";
@@ -338,6 +339,7 @@ namespace CourierService_Web.Controllers
                 return NotFound();
             }
             parcel.Status = "On The Way To Sorting Hub";
+            parcel.OnTheWayToSortingHubAt = DateTime.Now;
             _context.Parcels.Update(parcel);
             _context.SaveChanges();
             TempData["success"] = "Parcel Status Changed to On The Way To Sorting Hub";
@@ -362,6 +364,7 @@ namespace CourierService_Web.Controllers
                 return NotFound();
             }
             parcel.Status = "At The Sorting Hub";
+            parcel.AtTheSortingHubAt = DateTime.Now;
             _context.Parcels.Update(parcel);
             _context.SaveChanges();
             return RedirectToAction("Parcel");
@@ -476,6 +479,7 @@ namespace CourierService_Web.Controllers
                 return NotFound();
             }
             parcel.Status = "On The Way To Last Mile Hub";
+            parcel.OnTheWayToLastMileHubAt = DateTime.Now;
             _context.Parcels.Update(parcel);
             _context.SaveChanges();
             TempData["success"] = "Parcel Status Changed to On The Way To Last Mile Hub";
@@ -500,9 +504,44 @@ namespace CourierService_Web.Controllers
                 return NotFound();
             }
             parcel.Status = "Received At Last Mile Hub";
+            parcel.ReceivedAtLastMileHubAt = DateTime.Now;
             _context.Parcels.Update(parcel);
             _context.SaveChanges();
             TempData["success"] = "Parcel Status Changed to Received At Last Mile Hub";
+            return RedirectToAction("Parcel");
+
+        }
+
+        //parcel status Changed to Damaged and create return id
+        public IActionResult Damaged(string id)
+        {
+            if(!IsAdminLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var parcel = _context.Parcels.Find(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+
+            parcel.ReturnParcel = new ReturnParcel
+            {
+                ParcelId = parcel.Id,
+                ReturnDate = DateTime.Now,
+                HubId = parcel.HubId,
+                MerchantId = parcel.MerchantId
+            };
+
+            parcel.Status = "Damaged";
+            parcel.DamagedAt = DateTime.Now;
+            _context.Parcels.Update(parcel);
+            _context.SaveChanges();
+            TempData["success"] = "Parcel Status Changed to Damaged";
             return RedirectToAction("Parcel");
 
         }
@@ -524,6 +563,7 @@ namespace CourierService_Web.Controllers
                 return NotFound();
             }
             parcel.Status = "Return Create First Mile Hub";
+            parcel.ReturnCreateFirstMileHubAt = DateTime.Now;
             _context.Parcels.Update(parcel);
             _context.SaveChanges();
             TempData["success"] = "Parcel Status Changed to Return Create First Mile Hub";
@@ -548,6 +588,7 @@ namespace CourierService_Web.Controllers
                 return NotFound();
             }
             parcel.Status = "Return On The Way To Sorting Hub";
+            parcel.ReturnOnTheWayToSortingHubAt = DateTime.Now;
             _context.Parcels.Update(parcel);
             _context.SaveChanges();
             TempData["success"] = "Parcel Status Changed to Return On The Way To Sorting Hub";
@@ -573,6 +614,7 @@ namespace CourierService_Web.Controllers
                 return NotFound();
             }
             parcel.Status = "Return Received By Sorting Hub";
+            parcel.ReturnReceivedBySortingHubAt = DateTime.Now;
             _context.Parcels.Update(parcel);
             _context.SaveChanges();
             TempData["success"] = "Parcel Status Changed to Return Received By Sorting Hub";
@@ -597,6 +639,7 @@ namespace CourierService_Web.Controllers
                 return NotFound();
             }
             parcel.Status = "Return On The Way To First Mile Hub";
+            parcel.ReturnOnTheWayToFirstMileHubAt = DateTime.Now;
             _context.Parcels.Update(parcel);
             _context.SaveChanges();
             TempData["success"] = "Parcel Status Changed to Return On The Way To First Mile Hub";
@@ -621,6 +664,7 @@ namespace CourierService_Web.Controllers
                 return NotFound();
             }
             parcel.Status = "Return Received By First Mile Hub";
+            parcel.ReturnReceivedByFirstMileHubAt = DateTime.Now;
             _context.Parcels.Update(parcel);
             _context.SaveChanges();
             TempData["success"] = "Parcel Status Changed to Return Received By First Mile Hub";
@@ -2541,7 +2585,7 @@ namespace CourierService_Web.Controllers
             _context.SaveChanges();
             TempData["success"] = "Parcels Assigned Successfully";
 
-            // Redirect to the parcel details page or any other desired page
+            
             return RedirectToAction("Parcel", "Admin");
         }
 
@@ -2652,7 +2696,7 @@ namespace CourierService_Web.Controllers
             
             var parcel = _context.Parcels.Find(id);
             parcel.Status = "Parcel In Hub";
-            parcel.InHubAt = DateTime.Now;
+            parcel.ParcelAtTheHubReceivedAt = DateTime.Now;
             //rider.State = "Available";
             _context.Parcels.Update(parcel);
             //_context.Riders.Update(rider);
@@ -2724,8 +2768,8 @@ namespace CourierService_Web.Controllers
 
             // Assign the rider to the parcel
             parcel.Rider = rider;
-            parcel.Status = "Assigned A Rider To Merchant";
-            parcel.DispatchDate = DateTime.Now;
+            parcel.Status = "Returned Assigned Pickup Agent";
+            parcel.ReturnedAssignedPickupAgentAt = DateTime.Now;
 
             // Save changes to the database
             _context.SaveChanges();

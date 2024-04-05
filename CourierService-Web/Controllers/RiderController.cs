@@ -232,6 +232,7 @@ namespace CourierService_Web.Controllers
                 .Where(x => x.RiderId == riderId)
                 .Include(u => u.Rider)
                 .Include(m => m.Merchant)
+                .Include(s=>s.Store)
                 .Include(h => h.Hub);
 
            
@@ -406,6 +407,62 @@ namespace CourierService_Web.Controllers
             _context.SaveChanges();
             return RedirectToAction("AllParcel");
         }
+
+        //status changed to DeliveryFailed and create return parcel
+        public IActionResult DeliveryFailed(string id)
+        {
+            if (!IsRiderLoggedIn())
+            {
+
+                return RedirectToAction("Login", "Home");
+            }
+
+            var riderId = HttpContext.Request.Cookies["RiderId"];
+            //find rider by riderId
+            var rider = _context.Riders.Find(riderId);
+            var parcel = _context.Parcels.Find(id);
+
+            parcel.ReturnParcel = new ReturnParcel
+            {
+                ParcelId = parcel.Id,
+                RiderId = riderId,
+                ReturnDate = DateTime.Now,
+                HubId = parcel.HubId,
+                MerchantId = parcel.MerchantId
+            };
+
+            parcel.Status = "Delivery Failed";
+            parcel.DeliveryFailedAt = DateTime.Now;
+            parcel.ReturnDate = DateTime.Now;
+            rider.State = "Available";
+            _context.Parcels.Update(parcel);
+            _context.Riders.Update(rider);
+            _context.SaveChanges();
+            return RedirectToAction("AllParcel");
+        }
+        //status changed to Delivery On Hold
+        public IActionResult DeliveryOnHold(string id)
+        {
+            if(!IsRiderLoggedIn())
+            {
+
+                return RedirectToAction("Login", "Home");
+            }
+            var riderId = HttpContext.Request.Cookies["RiderId"];
+            //find rider by riderId
+            var rider = _context.Riders.Find(riderId);
+            var parcel = _context.Parcels.Find(id);
+            parcel.Status = "Delivery On Hold";
+            parcel.DeliveryOnHoldAt = DateTime.Now;
+
+            rider.State = "Available";
+            _context.Parcels.Update(parcel);
+            _context.Riders.Update(rider);
+            _context.SaveChanges();
+            return RedirectToAction("AllParcel");
+
+        }
+
         //ReturnParcelToMerchant
         public IActionResult ReturnParcelToMerchant(string id)
         {
@@ -494,6 +551,53 @@ namespace CourierService_Web.Controllers
             var rider = _context.Riders.Find(riderId);
             var parcel = _context.Parcels.Find(id);
             parcel.Status = "Return On The Way To Merchant";
+            parcel.ReturnOnTheWayToMerchantAt = DateTime.Now;
+            //parcel.ReturnDate = DateTime.Now.Date;
+            rider.State = "Available";
+            _context.Parcels.Update(parcel);
+            _context.Riders.Update(rider);
+            _context.SaveChanges();
+            return RedirectToAction("AllParcel");
+        }
+
+        //ParcelOnHold
+        public IActionResult PickupOnHold(string id)
+        {
+            if (!IsRiderLoggedIn())
+            {
+
+                return RedirectToAction("Login", "Home");
+            }
+
+            var riderId = HttpContext.Request.Cookies["RiderId"];
+            //find rider by riderId
+            var rider = _context.Riders.Find(riderId);
+            var parcel = _context.Parcels.Find(id);
+            parcel.Status = "Pickup On Hold";
+            parcel.PickupOnHoldAt = DateTime.Now;
+            //parcel.ReturnDate = DateTime.Now.Date;
+            rider.State = "Available";
+            _context.Parcels.Update(parcel);
+            _context.Riders.Update(rider);
+            _context.SaveChanges();
+            return RedirectToAction("AllParcel");
+        }
+
+        //PickupFailed
+        public IActionResult PickupFailed(string id)
+        {
+            if (!IsRiderLoggedIn())
+            {
+
+                return RedirectToAction("Login", "Home");
+            }
+
+            var riderId = HttpContext.Request.Cookies["RiderId"];
+            //find rider by riderId
+            var rider = _context.Riders.Find(riderId);
+            var parcel = _context.Parcels.Find(id);
+            parcel.Status = "Pickup Failed";
+            parcel.PickupFailedAt = DateTime.Now;
             //parcel.ReturnDate = DateTime.Now.Date;
             rider.State = "Available";
             _context.Parcels.Update(parcel);

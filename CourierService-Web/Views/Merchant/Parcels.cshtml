@@ -231,10 +231,43 @@
                                                                 {
                                                                     <p><strong><i class="fas fa-truck-loading"></i> Rider Pickedup:</strong> @(parcel.PickedUpAt.HasValue ? parcel.PickedUpAt.Value.ToString("t") : "N/A")</p>
                                                                 }
-
-                                                                @if (parcel.InHubAt != null)
+                                                                @if(parcel.PickupFailedAt !=null)
                                                                 {
-                                                                    <p><strong><i class="fas fa-warehouse"></i> Hub Entry Date:</strong> @(parcel.InHubAt.HasValue ? parcel.InHubAt.Value.ToString("t") : "N/A")</p>
+                                                                    <p><strong><i class="fas fa-truck-loading"></i> Pickup Failed:</strong> @(parcel.PickupFailedAt.HasValue ? parcel.PickupFailedAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+                                                                @if(parcel.PickupCancelledAt !=null)
+                                                                {
+                                                                    <p><strong><i class="fas fa-truck-loading"></i> Pickup Cancelled:</strong> @(parcel.PickupCancelledAt.HasValue ? parcel.PickupCancelledAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+                                                                @if(parcel.PickupOnHoldAt !=null)
+                                                                {
+                                                                    <p><strong><i class="fas fa-truck-loading"></i> Pickup On Hold:</strong> @(parcel.PickupOnHoldAt.HasValue ? parcel.PickupOnHoldAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if (parcel.ParcelAtTheHubReceivedAt != null)
+                                                                {
+                                                                    <p><strong><i class="fas fa-warehouse"></i> Parcel At The Hub:</strong> @(parcel.ParcelAtTheHubReceivedAt.HasValue ? parcel.ParcelAtTheHubReceivedAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+                                                                @if(parcel.OnTheWayToSortingHubAt !=null)
+                                                                {
+                                                                    <p><strong><i class="fas fa-warehouse"></i> On The Way To Sorting Hub:</strong> @(parcel.OnTheWayToSortingHubAt.HasValue ? parcel.OnTheWayToSortingHubAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if(parcel.AtTheSortingHubAt !=null)
+                                                                {
+                                                                    <p><strong><i class="fas fa-warehouse"></i> At The Sorting Hub:</strong> @(parcel.AtTheSortingHubAt.HasValue ? parcel.AtTheSortingHubAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if(parcel.OnTheWayToLastMileHubAt !=null)
+                                                                {
+                                                                    
+                                                                <p><strong><i class="fas fa-warehouse"></i> On The Way To Last Mile Hub:</strong> @(parcel.OnTheWayToLastMileHubAt.HasValue ? parcel.OnTheWayToLastMileHubAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if(parcel.ReceivedAtLastMileHubAt !=null)
+                                                                {
+                                                                    
+                                                                <p><strong><i class="fas fa-warehouse"></i> Received At Last Mile Hub:</strong> @(parcel.ReceivedAtLastMileHubAt.HasValue ? parcel.ReceivedAtLastMileHubAt.Value.ToString("t") : "N/A")</p>
                                                                 }
 
                                                                 @if (parcel.DeliveryRiderAssignedAt != null)
@@ -252,9 +285,64 @@
                                                                     <p><strong><i class="fas fa-truck"></i> Delivery:</strong> @(parcel.DeliveryDate.Value.ToString("t"))</p>
                                                                 }
 
+                                                                @if(parcel.DeliveryFailedAt !=null)
+                                                                {
+                                                                    
+                                                                    <p><strong><i class="fas fa-truck"></i> Delivery Failed:</strong> @(parcel.DeliveryFailedAt.HasValue ? parcel.DeliveryFailedAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if(parcel.DamagedAt !=null)
+                                                                {
+                                                                    
+                                                                    <p><strong><i class="fas fa-truck"></i> Damaged:</strong> @(parcel.DamagedAt.HasValue ? parcel.DamagedAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if(parcel.DeliveryOnHoldAt !=null)
+                                                                {
+                                                                    
+                                                                    <p><strong><i class="fas fa-truck"></i> Delivery On Hold:</strong> @(parcel.DeliveryOnHoldAt.HasValue ? parcel.DeliveryOnHoldAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+
                                                                 @if (parcel.ReturnParcel != null && parcel.ReturnParcel.ReturnDate != null)
                                                                 {
                                                                     <p><strong><i class="fas fa-undo"></i> Return:</strong> @(parcel.ReturnParcel.ReturnDate.ToString("t"))</p>
+                                                                }
+
+                                                                @if(parcel.ReturnCreateFirstMileHubAt !=null)
+                                                                {
+                                                                    
+                                                                   <p><strong><i class="fas fa-undo"></i> Return Parcel Created:</strong> @(parcel.ReturnCreateFirstMileHubAt.HasValue ? parcel.ReturnCreateFirstMileHubAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if(parcel.ReturnOnTheWayToSortingHubAt !=null)
+                                                                {
+                                                                    
+                                                                    <p><strong><i class="fas fa-undo"></i> Return On The Way To Sorting Hub:</strong> @(parcel.ReturnOnTheWayToSortingHubAt.HasValue ? parcel.ReturnOnTheWayToSortingHubAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if(parcel.ReturnReceivedByFirstMileHubAt !=null)
+                                                                {
+                                                                    
+                                                                    <p><strong><i class="fas fa-undo"></i> Return Received By First Mile Hub:</strong> @(parcel.ReturnReceivedByFirstMileHubAt.HasValue ? parcel.ReturnReceivedByFirstMileHubAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if(parcel.ReturnedAssignedPickupAgentAt !=null)
+                                                                {
+                                                                    
+                                                                    <p><strong><i class="fas fa-undo"></i> Return Assigned Pickup Agent:</strong> @(parcel.ReturnedAssignedPickupAgentAt.HasValue ? parcel.ReturnedAssignedPickupAgentAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if(parcel.ReturnOnTheWayToMerchantAt !=null)
+                                                                {
+                                                                    
+                                                                    <p><strong><i class="fas fa-undo"></i> Return On The Way To Merchant:</strong> @(parcel.ReturnOnTheWayToMerchantAt.HasValue ? parcel.ReturnOnTheWayToMerchantAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if(parcel.ReturnReceivedByMerchantAt !=null)
+                                                                {
+                                                                    
+                                                                    <p><strong><i class="fas fa-undo"></i> Return Received By Merchant:</strong> @(parcel.ReturnReceivedByMerchantAt.HasValue ? parcel.ReturnReceivedByMerchantAt.Value.ToString("t") : "N/A")</p>
                                                                 }
                                                             </div>
                                                             <div class="modal-footer">

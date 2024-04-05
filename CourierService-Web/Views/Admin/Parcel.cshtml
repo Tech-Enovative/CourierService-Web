@@ -99,35 +99,42 @@
 
                                     <!-- Bulk Assign Modal -->
                                     <div class="modal fade" id="bulkAssignModal" tabindex="-1" role="dialog" aria-labelledby="bulkAssignModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="bulkAssignModalLabel">Bulk Assign Parcels</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <h5>Parcel Information</h5>
-                                                    <div id="selectedParcelsList"></div> <!-- Display selected parcels here -->
-                                                    <div class="form-group">
-                                                        <label for="riderIdModal">Select Rider:</label>
-                                                        <select class="form-control" id="riderIdModal" name="riderIdModal">
-                                                            <option value="">-- Select Rider --</option>
-                                                            @foreach (var rider in ViewBag.Riders)
-                                                            {
-                                                                <option value="@rider.Id">@rider.Name</option>
-                                                            }
-                                                        </select>
+                                        <form id="bulkAssignForm" method="post" action="@Url.Action("BulkAssignParcel", "Admin")">
+                                            @* Hidden input fields to store riderId and parcelIds *@
+                                            <input type="hidden" id="riderIdHidden" name="riderId" />
+                                            <input type="hidden" id="parcelIdsHidden" name="parcelIds" />
+
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="bulkAssignModalLabel">Bulk Assign Parcels</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <h5>Parcel Information</h5>
+                                                        <div id="selectedParcelsList"></div> <!-- Display selected parcels here -->
+                                                        <div class="form-group">
+                                                            <label for="riderIdModal">Select Rider:</label>
+                                                            <select class="form-control" id="riderIdModal" name="riderIdModal">
+                                                                <option value="">-- Select Rider --</option>
+                                                                @foreach (var rider in ViewBag.Riders)
+                                                                {
+                                                                    <option value="@rider.Id">@rider.Name</option>
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-primary" id="bulkAssignBtnModal">Assign Pickup Rider</button>
                                                     </div>
                                                 </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                    <button type="button" class="btn btn-primary" id="bulkAssignBtnModal">Bulk Assign</button>
-                                                </div>
                                             </div>
-                                        </div>
+                                        </form>
                                     </div>
+
 
                                     <!-- Assign Delivery Rider Button -->
                                     <button type="button" class="btn btn-sm btn-info" id="assignDeliveryRiderBtn" data-toggle="modal" data-target="#assignDeliveryRiderModal">
@@ -172,7 +179,7 @@
                                     </div>
 
 
-                                    <button type="button" class="btn btn-sm btn-danger" id="bulkDeleteBtn">Bulk Delete</button>
+                                    <button type="button" class="btn btn-sm btn-danger" id="bulkDeleteBtn">Delete</button>
                                 </div>
                             <table class="table mb-0">
                                 <thead>
@@ -399,6 +406,10 @@
 
                                                         else if (parcel.Status == "Received At Last Mile Hub")
                                                         {
+                                                                <a asp-action="Damaged" asp-route-id="@parcel.Id" asp-controller="Admin" class="btn btn-sm btn-info">
+                                                                    <i class="fas fa-plus-circle"></i> Damaged
+
+                                                                </a>
                                                             <a asp-action="AssignDeliveryRiderAdmin" asp-route-id="@parcel.Id" asp-controller="Admin" class="btn btn-sm btn-info">
                                                                 <i class="fas fa-plus-circle"></i> Assign Delivery Rider
 
@@ -497,65 +508,157 @@
                                                 </button>
 
                                                 <!-- Modal -->
-                                                <div id="viewModal_@parcel.Id" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
-                                                    <div class="modal-dialog modal-dialog-centered modal-lg">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="viewModalLabel"><i class="fas fa-box"></i> View Parcel Details</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <!-- Display parcel details here -->
-                                                                <h5 class="font-16"><i class="fas fa-barcode"></i> Parcel ID: @parcel.Id</h5>
-                                                                <p><strong><i class="fas fa-store"></i> Merchant Name:</strong> @parcel.Merchant?.Name</p>
-                                                                <p><strong><i class="fas fa-phone"></i> Merchant Phone:</strong> @parcel.Merchant?.ContactNumber</p>
+                                                    <!-- Modal -->
+                                                    <div id="viewModal_@parcel.Id" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
+                                                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="viewModalLabel"><i class="fas fa-box"></i> View Parcel Details</h5>
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <!-- Display parcel details here -->
+                                                                    <h5 class="font-16"><i class="fas fa-barcode"></i> Parcel ID: @parcel.Id</h5>
+                                                                    @* <p><strong><i class="fas fa-store"></i> Merchant Name:</strong> @parcel.Merchant?.Name</p>
+                                                                <p><strong><i class="fas fa-phone"></i> Merchant Phone:</strong> @parcel.Merchant?.ContactNumber</p> *@
 
-                                                                <p><strong><i class="fas fa-box-open"></i> Product:</strong> @parcel.ProductName</p>
-                                                                <p><strong><i class="far fa-calendar-alt"></i> Parcel Created At:</strong> @(parcel.PickupRequestDate.HasValue ? parcel.PickupRequestDate.Value.ToString("g") : "N/A")</p>
+                                                                    <p><strong><i class="fas fa-box-open"></i> Product:</strong> @parcel.ProductName</p>
+                                                                    <p><strong><i class="far fa-calendar-alt"></i> Parcel Created At:</strong> @(parcel.PickupRequestDate.HasValue ? parcel.PickupRequestDate.Value.ToString("g") : "N/A")</p>
+                                                                    @if (parcel.UpdatedAt != null)
+                                                                    {
+                                                                        <p><strong><i class="far fa-calendar-alt"></i> Parcel Updated At:</strong> @(parcel.UpdatedAt.HasValue ? parcel.UpdatedAt.Value.ToString("g") : "N/A")</p>
+                                                                    }
+                                                                    @if (parcel.DispatchDate != null)
+                                                                    {
+                                                                        <p><strong><i class="fas fa-motorcycle"></i> Rider Assigned:</strong> @(parcel.DispatchDate.HasValue ? parcel.DispatchDate.Value.ToString("t") : "N/A")</p>
+                                                                    }
 
-                                                                @if (parcel.DispatchDate != null)
-                                                                {
-                                                                    <p><strong><i class="fas fa-motorcycle"></i> Rider Assigned:</strong> @(parcel.DispatchDate.HasValue ? parcel.DispatchDate.Value.ToString("t") : "N/A")</p>
-                                                                }
+                                                                    @if (parcel.PickedUpAt != null)
+                                                                    {
+                                                                        <p><strong><i class="fas fa-truck-loading"></i> Rider Pickedup:</strong> @(parcel.PickedUpAt.HasValue ? parcel.PickedUpAt.Value.ToString("t") : "N/A")</p>
+                                                                    }
+                                                                    @if (parcel.PickupFailedAt != null)
+                                                                    {
+                                                                        <p><strong><i class="fas fa-truck-loading"></i> Pickup Failed:</strong> @(parcel.PickupFailedAt.HasValue ? parcel.PickupFailedAt.Value.ToString("t") : "N/A")</p>
+                                                                    }
+                                                                    @if (parcel.PickupCancelledAt != null)
+                                                                    {
+                                                                        <p><strong><i class="fas fa-truck-loading"></i> Pickup Cancelled:</strong> @(parcel.PickupCancelledAt.HasValue ? parcel.PickupCancelledAt.Value.ToString("t") : "N/A")</p>
+                                                                    }
+                                                                    @if (parcel.PickupOnHoldAt != null)
+                                                                    {
+                                                                        <p><strong><i class="fas fa-truck-loading"></i> Pickup On Hold:</strong> @(parcel.PickupOnHoldAt.HasValue ? parcel.PickupOnHoldAt.Value.ToString("t") : "N/A")</p>
+                                                                    }
 
-                                                                @if (parcel.PickedUpAt != null)
-                                                                {
-                                                                    <p><strong><i class="fas fa-truck-loading"></i> Rider Pickedup:</strong> @(parcel.PickedUpAt.HasValue ? parcel.PickedUpAt.Value.ToString("t") : "N/A")</p>
-                                                                }
+                                                                    @if (parcel.ParcelAtTheHubReceivedAt != null)
+                                                                    {
+                                                                        <p><strong><i class="fas fa-warehouse"></i> Parcel At The Hub:</strong> @(parcel.ParcelAtTheHubReceivedAt.HasValue ? parcel.ParcelAtTheHubReceivedAt.Value.ToString("t") : "N/A")</p>
+                                                                    }
+                                                                    @if (parcel.OnTheWayToSortingHubAt != null)
+                                                                    {
+                                                                        <p><strong><i class="fas fa-warehouse"></i> On The Way To Sorting Hub:</strong> @(parcel.OnTheWayToSortingHubAt.HasValue ? parcel.OnTheWayToSortingHubAt.Value.ToString("t") : "N/A")</p>
+                                                                    }
 
-                                                                @if (parcel.InHubAt != null)
-                                                                {
-                                                                    <p><strong><i class="fas fa-warehouse"></i> Hub Entry Date:</strong> @(parcel.InHubAt.HasValue ? parcel.InHubAt.Value.ToString("t") : "N/A")</p>
-                                                                }
+                                                                    @if (parcel.AtTheSortingHubAt != null)
+                                                                    {
+                                                                        <p><strong><i class="fas fa-warehouse"></i> At The Sorting Hub:</strong> @(parcel.AtTheSortingHubAt.HasValue ? parcel.AtTheSortingHubAt.Value.ToString("t") : "N/A")</p>
+                                                                    }
 
-                                                                @if (parcel.DeliveryRiderAssignedAt != null)
-                                                                {
-                                                                    <p><strong><i class="fas fa-user-tag"></i> Delivery Rider Assigned:</strong> @(parcel.DeliveryRiderAssignedAt.HasValue ? parcel.DeliveryRiderAssignedAt.Value.ToString("t") : "N/A")</p>
-                                                                }
+                                                                    @if (parcel.OnTheWayToLastMileHubAt != null)
+                                                                    {
 
-                                                                @if (parcel.OnTheWayAt != null)
-                                                                {
-                                                                    <p><strong><i class="fas fa-shipping-fast"></i> On The Way:</strong> @(parcel.OnTheWayAt.HasValue ? parcel.OnTheWayAt.Value.ToString("t") : "N/A")</p>
-                                                                }
+                                                                        <p><strong><i class="fas fa-warehouse"></i> On The Way To Last Mile Hub:</strong> @(parcel.OnTheWayToLastMileHubAt.HasValue ? parcel.OnTheWayToLastMileHubAt.Value.ToString("t") : "N/A")</p>
+                                                                    }
 
-                                                                @if (parcel.DeliveryDate != null)
-                                                                {
-                                                                    <p><strong><i class="fas fa-truck"></i> Delivery:</strong> @(parcel.DeliveryDate.Value.ToString("t"))</p>
-                                                                }
+                                                                    @if (parcel.ReceivedAtLastMileHubAt != null)
+                                                                    {
 
-                                                                @if (parcel.ReturnParcel != null && parcel.ReturnParcel.ReturnDate != null)
-                                                                {
-                                                                    <p><strong><i class="fas fa-undo"></i> Return:</strong> @(parcel.ReturnParcel.ReturnDate.ToString("t"))</p>
-                                                                }
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                        <p><strong><i class="fas fa-warehouse"></i> Received At Last Mile Hub:</strong> @(parcel.ReceivedAtLastMileHubAt.HasValue ? parcel.ReceivedAtLastMileHubAt.Value.ToString("t") : "N/A")</p>
+                                                                    }
+
+                                                                    @if (parcel.DeliveryRiderAssignedAt != null)
+                                                                    {
+                                                                        <p><strong><i class="fas fa-user-tag"></i> Delivery Rider Assigned:</strong> @(parcel.DeliveryRiderAssignedAt.HasValue ? parcel.DeliveryRiderAssignedAt.Value.ToString("t") : "N/A")</p>
+                                                                    }
+
+                                                                    @if (parcel.OnTheWayAt != null)
+                                                                    {
+                                                                        <p><strong><i class="fas fa-shipping-fast"></i> On The Way:</strong> @(parcel.OnTheWayAt.HasValue ? parcel.OnTheWayAt.Value.ToString("t") : "N/A")</p>
+                                                                    }
+
+                                                                    @if (parcel.DeliveryDate != null)
+                                                                    {
+                                                                        <p><strong><i class="fas fa-truck"></i> Delivery:</strong> @(parcel.DeliveryDate.Value.ToString("t"))</p>
+                                                                    }
+
+                                                                    @if (parcel.DeliveryFailedAt != null)
+                                                                    {
+
+                                                                        <p><strong><i class="fas fa-truck"></i> Delivery Failed:</strong> @(parcel.DeliveryFailedAt.HasValue ? parcel.DeliveryFailedAt.Value.ToString("t") : "N/A")</p>
+                                                                    }
+
+                                                                    @if (parcel.DamagedAt != null)
+                                                                    {
+
+                                                                        <p><strong><i class="fas fa-truck"></i> Damaged:</strong> @(parcel.DamagedAt.HasValue ? parcel.DamagedAt.Value.ToString("t") : "N/A")</p>
+                                                                    }
+
+                                                                    @if (parcel.DeliveryOnHoldAt != null)
+                                                                    {
+
+                                                                        <p><strong><i class="fas fa-truck"></i> Delivery On Hold:</strong> @(parcel.DeliveryOnHoldAt.HasValue ? parcel.DeliveryOnHoldAt.Value.ToString("t") : "N/A")</p>
+                                                                    }
+
+
+                                                                    @if (parcel.ReturnParcel != null && parcel.ReturnParcel.ReturnDate != null)
+                                                                    {
+                                                                        <p><strong><i class="fas fa-undo"></i> Return:</strong> @(parcel.ReturnParcel.ReturnDate.ToString("t"))</p>
+                                                                    }
+
+                                                                    @if (parcel.ReturnCreateFirstMileHubAt != null)
+                                                                    {
+
+                                                                        <p><strong><i class="fas fa-undo"></i> Return Parcel Created:</strong> @(parcel.ReturnCreateFirstMileHubAt.HasValue ? parcel.ReturnCreateFirstMileHubAt.Value.ToString("t") : "N/A")</p>
+                                                                    }
+
+                                                                    @if (parcel.ReturnOnTheWayToSortingHubAt != null)
+                                                                    {
+
+                                                                        <p><strong><i class="fas fa-undo"></i> Return On The Way To Sorting Hub:</strong> @(parcel.ReturnOnTheWayToSortingHubAt.HasValue ? parcel.ReturnOnTheWayToSortingHubAt.Value.ToString("t") : "N/A")</p>
+                                                                    }
+
+                                                                    @if (parcel.ReturnReceivedByFirstMileHubAt != null)
+                                                                    {
+
+                                                                        <p><strong><i class="fas fa-undo"></i> Return Received By First Mile Hub:</strong> @(parcel.ReturnReceivedByFirstMileHubAt.HasValue ? parcel.ReturnReceivedByFirstMileHubAt.Value.ToString("t") : "N/A")</p>
+                                                                    }
+
+                                                                    @if (parcel.ReturnedAssignedPickupAgentAt != null)
+                                                                    {
+
+                                                                        <p><strong><i class="fas fa-undo"></i> Return Assigned Pickup Agent:</strong> @(parcel.ReturnedAssignedPickupAgentAt.HasValue ? parcel.ReturnedAssignedPickupAgentAt.Value.ToString("t") : "N/A")</p>
+                                                                    }
+
+                                                                    @if (parcel.ReturnOnTheWayToMerchantAt != null)
+                                                                    {
+
+                                                                        <p><strong><i class="fas fa-undo"></i> Return On The Way To Merchant:</strong> @(parcel.ReturnOnTheWayToMerchantAt.HasValue ? parcel.ReturnOnTheWayToMerchantAt.Value.ToString("t") : "N/A")</p>
+                                                                    }
+
+                                                                    @if (parcel.ReturnReceivedByMerchantAt != null)
+                                                                    {
+
+                                                                        <p><strong><i class="fas fa-undo"></i> Return Received By Merchant:</strong> @(parcel.ReturnReceivedByMerchantAt.HasValue ? parcel.ReturnReceivedByMerchantAt.Value.ToString("t") : "N/A")</p>
+                                                                    }
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
 
                                             </td>
 
@@ -748,54 +851,77 @@
             }
         });
     </script>
-
-
     <script>
-        // Event handler for merchant accounts modal trigger
-        $('#merchantAccountsTrigger').click(function () {
-            var merchantId = $(this).data('merchant-id');
-            var url = '/Admin/MerchantAccounts?merchantId=' + merchantId;
+        $(document).ready(function () {
+            // Function to update selected parcels list and information in the modal
+            function updateSelectedParcels() {
+                var selectedParcels = [];
+                $('input[name="selectedParcels"]:checked').each(function () {
+                    var parcelId = $(this).val();
+                    var parcelRow = $('#parcelTable_' + parcelId); // Assuming each parcel row has an ID like 'parcelTable_<parcelId>'
+                    var parcelInfo = {
+                        id: parcelId,
+                        merchant: parcelRow.find('td:nth-child(3)').text().trim(), // Adjust the index based on your table structure
+                        rider: parcelRow.find('td:nth-child(5)').text().trim(), // Adjust the index based on your table structure
+                        // Add more parcel information fields as needed
+                    };
+                    selectedParcels.push(parcelInfo);
+                });
 
-            // Fetch the merchant accounts data
-            $.get(url, function (data) {
-                // Construct the HTML content for merchant accounts
-                var modalContent = '<div class="modal-body">';
-                modalContent += '<h5>Merchant Accounts</h5>';
-                modalContent += '<p>Total Price Sum: ' + data.TotalPriceSum + ' BDT</p>';
-                modalContent += '<p>Amount Paid: ' + data.AmountPaid + ' BDT</p>';
-                modalContent += '<p>Due Amount: ' + data.DueAmount + ' BDT</p>';
-                // Add more data as needed
-                modalContent += '</div>';
+                // Display selected parcels information in the modal
+                var html = '';
+                for (var i = 0; i < selectedParcels.length; i++) {
+                    var parcel = selectedParcels[i];
+                    html += '<div><strong>Parcel ID:</strong> ' + parcel.id + '</div>';
 
-                // Set the modal body content and display the modal
-                $('#merchantAccountsModal .modal-body').html(modalContent);
-                $('#merchantAccountsModal').modal('show');
+                    //check if rider is not assigned..if there is rider information then disable button
+                    if (parcel.rider != "Not Assigned") {
+                        $('#bulkAssignBtnModal').prop('disabled', true);
+                    }
+                    else {
+                        $('#bulkAssignBtnModal').prop('disabled', false);
+                    }
+
+                    html += '<div><strong>Rider:</strong> ' + parcel.rider + '</div>';
+
+                    html += '<hr>';
+                }
+                $('#selectedParcelsList').html(html);
+            }
+
+            // Update selected parcels list and information when checkboxes are clicked
+            $('input[name="selectedParcels"]').on('change', function () {
+                updateSelectedParcels();
             });
-        });
 
-        // Event handler for rider accounts modal trigger
-        $('#riderAccountsTrigger').click(function () {
-            var riderId = $(this).data('rider-id');
-            var url = '/Admin/RiderAccounts?riderId=' + riderId;
+            // Bulk Assign Button in the modal
+            $('#bulkAssignBtnModal').click(function () {
+                var riderId = $('#riderIdModal').val();
+                var parcelIds = $('input[name="selectedParcels"]:checked').map(function () {
+                    return $(this).val();
+                }).get();
 
-            // Fetch the rider accounts data
-            $.get(url, function (data) {
-                // Construct the HTML content for rider accounts
-                var modalContent = '<div class="modal-body">';
-                modalContent += '<h5>Rider Accounts</h5>';
-                modalContent += '<p>Total Delivery Charge: ' + data.TotalDeliveryCharge + ' BDT</p>';
-                modalContent += '<p>Amount Collected: ' + data.AmountCollected + ' BDT</p>';
-                modalContent += '<p>Hub Received: ' + data.HubReceivedAmount + ' BDT</p>';
-                modalContent += '<p>Hub Due: ' + data.DueAmount + ' BDT</p>';
-                // Add more data as needed
-                modalContent += '</div>';
-
-                // Set the modal body content and display the modal
-                $('#riderAccountsModal .modal-body').html(modalContent);
-                $('#riderAccountsModal').modal('show');
+                // Perform bulk assign operation using AJAX or submit the form
+                // Example using AJAX:
+                $.ajax({
+                    url: '@Url.Action("BulkAssignParcel", "Admin")',
+                    type: 'POST',
+                    data: { riderId: riderId, parcelIds: parcelIds },
+                    success: function (response) {
+                        // Handle success response
+                        $('#bulkAssignModal').modal('hide');
+                        location.reload(); // Refresh the whole page
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle error
+                    }
+                });
             });
         });
     </script>
+
+
+
 
     <!-- Include the required libraries for barcode generation -->
     <script src="https://cdn.jsdelivr.net/jsbarcode/3.6.0/JsBarcode.all.min.js"></script>
@@ -885,234 +1011,6 @@
             });
         });
     </script>
-
-    <script>
-        $(document).ready(function () {
-            // Function to update selected parcels list and information in the modal
-            function updateSelectedParcels() {
-                var selectedParcels = [];
-                $('input[name="selectedParcels"]:checked').each(function () {
-                    var parcelId = $(this).val();
-                    var parcelRow = $('#parcelTable_' + parcelId); // Assuming each parcel row has an ID like 'parcelTable_<parcelId>'
-                    var parcelInfo = {
-                        id: parcelId,
-                        merchant: parcelRow.find('td:nth-child(3)').text().trim(), // Adjust the index based on your table structure
-                        rider: parcelRow.find('td:nth-child(5)').text().trim(), // Adjust the index based on your table structure
-                        // Add more parcel information fields as needed
-                    };
-                    selectedParcels.push(parcelInfo);
-                });
-
-                // Display selected parcels information in the modal
-                var html = '';
-                for (var i = 0; i < selectedParcels.length; i++) {
-                    var parcel = selectedParcels[i];
-                    html += '<div><strong>Parcel ID:</strong> ' + parcel.id + '</div>';
-
-                    //check if rider is not assigned..if there is rider information then disable button
-                    if (parcel.rider != "Not Assigned") {
-                        $('#bulkAssignBtnModal').prop('disabled', true);
-                    }
-                    else {
-                        $('#bulkAssignBtnModal').prop('disabled', false);
-                    }
-
-                    html += '<div><strong>Rider:</strong> ' + parcel.rider + '</div>';
-                    
-                    html += '<hr>';
-                }
-                $('#selectedParcelsList').html(html);
-            }
-
-            // Update selected parcels list and information when checkboxes are clicked
-            $('input[name="selectedParcels"]').on('change', function () {
-                updateSelectedParcels();
-            });
-
-            // Bulk Assign Button in the modal
-            $('#bulkAssignBtnModal').click(function () {
-                var riderId = $('#riderIdModal').val();
-                var parcelIds = $('input[name="selectedParcels"]:checked').map(function () {
-                    return $(this).val();
-                }).get();
-
-                // Perform bulk assign operation using AJAX or submit the form
-                // Example using AJAX:
-                $.ajax({
-                    url: '@Url.Action("BulkAssignParcel", "Admin")',
-                    type: 'POST',
-                    data: { riderId: riderId, parcelIds: parcelIds },
-                    success: function (response) {
-                        // Handle success response
-                        $('#bulkAssignModal').modal('hide');
-                        // Optionally, update the UI or display a success message
-                    },
-                    error: function (xhr, status, error) {
-                        // Handle error
-                    }
-                });
-            });
-        });
-    </script>
-
-
-
-    <script>
-        $(document).ready(function () {
-            // Function to update selected parcels list and information in the modal
-            function updateSelectedParcels() {
-                var selectedParcels = [];
-                $('input[name="selectedParcels"]:checked').each(function () {
-                    var parcelId = $(this).val();
-                    var parcelRow = $('#parcelTable_' + parcelId); // Assuming each parcel row has an ID like 'parcelTable_<parcelId>'
-                    var parcelInfo = {
-                        id: parcelId,
-                        merchant: parcelRow.find('td:nth-child(3)').text().trim(), // Adjust the index based on your table structure
-                        rider: parcelRow.find('td:nth-child(5)').text().trim(), // Adjust the index based on your table structure
-                        // Add more parcel information fields as needed
-                    };
-                    selectedParcels.push(parcelInfo);
-                });
-
-                // Display selected parcels information in the modal
-                var html = '';
-                for (var i = 0; i < selectedParcels.length; i++) {
-                    var parcel = selectedParcels[i];
-                    html += '<div><strong>Parcel ID:</strong> ' + parcel.id + '</div>';
-                    html += '<div><strong>Merchant:</strong> ' + parcel.merchant + '</div>';
-                    html += '<div><strong>Rider:</strong> ' + parcel.rider + '</div>';
-                    html += '<hr>';
-                }
-                $('#selectedParcelsList').html(html);
-            }
-
-            // Update selected parcels list and information when checkboxes are clicked
-            $('input[name="selectedParcels"]').on('change', function () {
-                updateSelectedParcels();
-            });
-
-            // Bulk Assign Button in the modal
-            $('#bulkAssignBtnModal').click(function () {
-                var riderId = $('#riderIdModal').val();
-                var parcelIds = $('input[name="selectedParcels"]:checked').map(function () {
-                    return $(this).val();
-                }).get();
-
-                // Perform bulk assign operation using AJAX or submit the form
-                // Example using AJAX:
-                $.ajax({
-                    url: '@Url.Action("BulkAssignDeliveryRider", "Admin")', // Adjust the URL as needed
-                    type: 'POST',
-                    data: { riderId: riderId, parcelIds: parcelIds },
-                    success: function (response) {
-                        // Handle success response
-                        $('#bulkAssignModal').modal('hide');
-                        // Optionally, update the UI or display a success message
-                    },
-                    error: function (xhr, status, error) {
-                        // Handle error
-                    }
-                });
-            });
-        });
-    </script>
-
-
-    <script>
-        // JavaScript code for Assign Delivery Rider modal and Bulk Assign Delivery Rider operation
-
-        // Function to update the modal with selected parcels information
-        function updateSelectedParcelsModal(selectedParcelIds) {
-            // Clear existing content
-            $('#selectedParcelsList').empty();
-
-            // Fetch parcel information via AJAX and update modal
-            $.ajax({
-                type: 'GET',
-                url: '/Admin/GetSelectedParcels', // Update the URL as per your route
-                data: { selectedParcelIds: selectedParcelIds },
-                success: function (data) {
-                    if (data.length > 0) {
-                        // Append parcel information to the modal
-                        data.forEach(function (parcel) {
-                            var parcelInfo = '<p><strong>ID:</strong> ' + parcel.Id + '</p>' +
-                                '<p><strong>Pickup Location:</strong> ' + parcel.PickupLocation + '</p>' +
-                                '<p><strong>Receiver Name:</strong> ' + parcel.ReceiverName + '</p>' +
-                                '<p><strong>Receiver Address:</strong> ' + parcel.ReceiverAddress + '</p>' +
-                                '<p><strong>Receiver Contact Number:</strong> ' + parcel.ReceiverContactNumber + '</p>' +
-                                '<p><strong>Receiver Email:</strong> ' + parcel.ReceiverEmail + '</p>' +
-                                '<hr>';
-                            $('#selectedParcelsList').append(parcelInfo);
-                        });
-                    } else {
-                        $('#selectedParcelsList').html('<p>No parcels selected.</p>');
-                    }
-                },
-                error: function () {
-                    $('#selectedParcelsList').html('<p>Error fetching parcel information.</p>');
-                }
-            });
-        }
-
-        // Function to handle Bulk Assign Delivery Rider operation
-        function bulkAssignDeliveryRider(riderId, selectedParcelIds) {
-            // AJAX call to perform Bulk Assign Delivery Rider
-            $.ajax({
-                type: 'POST',
-                url: '/Admin/BulkAssignDeliveryRider', // Update the URL as per your route
-                data: { riderId: riderId, parcelIds: selectedParcelIds },
-                success: function (data) {
-                    // Handle success response
-                    alert('Bulk Assign Delivery Rider operation successful!');
-                    $('#bulkAssignModal').modal('hide');
-                    // You can redirect or perform any other action here after successful operation
-                },
-                error: function () {
-                    // Handle error response
-                    alert('Error performing Bulk Assign Delivery Rider operation.');
-                }
-            });
-        }
-
-        // Document ready function
-        $(document).ready(function () {
-            // Handle click on Bulk Assign button inside the modal
-            $('#bulkAssignBtnModal').click(function () {
-                // Get selected rider ID and selected parcel IDs from the modal
-                var riderId = $('#riderIdModal').val();
-                var selectedParcelIds = [];
-                $('input[name="parcelIds"]:checked').each(function () {
-                    selectedParcelIds.push($(this).val());
-                });
-
-                // Validate if rider and parcels are selected
-                if (riderId === '' || selectedParcelIds.length === 0) {
-                    alert('Please select a rider and at least one parcel.');
-                    return;
-                }
-
-                // Perform Bulk Assign Delivery Rider operation
-                bulkAssignDeliveryRider(riderId, selectedParcelIds.join(','));
-            });
-
-            // Update modal with selected parcels information when modal is shown
-            $('#assignDeliveryRiderModal').on('show.bs.modal', function (event) {
-                var button = $(event.relatedTarget);
-                var selectedParcelIds = [];
-                $('input[name="selectedParcels"]:checked').each(function () {
-                    selectedParcelIds.push($(this).val());
-                });
-                updateSelectedParcelsModal(selectedParcelIds.join(','));
-            });
-        });
-
-    </script>
-
-
-
-
-
-
 
 
 

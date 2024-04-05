@@ -74,8 +74,7 @@
                                         <th>Pickup Location</th>
                                         <th>Date</th>
                                         <th>Receiver Information</th>
-                                        <th>Product</th>
-                                        <th>Delivery</th>
+                                       
                                         <th>Total Price</th>
                                         <th>Status</th>
                                         <th>Payment Status</th>
@@ -114,7 +113,7 @@
                                                     <strong>Phone:</strong> @parcel.Merchant?.ContactNumber
                                                 </td>
                                             }
-                                            <td>@parcel.PickupLocation</td>
+                                            <td>@parcel.Store?.Address</td>
                                             <td>@(parcel.DispatchDate?.Date.ToShortDateString())</td>
                                             <td>
                                                 <strong>Name:</strong> @parcel.ReceiverName<br>
@@ -122,7 +121,7 @@
                                                 <strong>Contact:</strong> @parcel.ReceiverContactNumber
                                             </td>
 
-                                            <td>
+                                            @* <td>
                                                 <strong>Name:</strong> @parcel.ProductName <br />
                                                 <strong>Weight:</strong> @parcel.ProductWeight KG <br />
                                                 <strong>Price:</strong> @parcel.ProductPrice TK <br />
@@ -132,7 +131,7 @@
                                             <td>
                                                 <strong>Type:</strong> @parcel.DeliveryType <br />
                                                 <strong>Charge:</strong> @parcel.DeliveryCharge TK <br />
-                                            </td>
+                                            </td> *@
                                             <td>@parcel.TotalPrice TK</td>
                                             <td>
                                                 @if (parcel.Status == "Pickup Request")
@@ -194,6 +193,19 @@
                                                             <i class="fas fa-truck"></i> Picked Up
                                                         </a>
                                                     }
+
+                                                    @if (parcel.Status == "Picked Up")
+                                                    {
+                                                        <div class="mt-3">
+                                                            <a asp-route-id="@parcel.Id" asp-controller="Rider" asp-action="PickupOnHold" class="btn btn-sm btn-warning">
+                                                                <i class="fas fa-truck"></i> &nbsp; Pickup On Hold
+                                                            </a>
+                                                            <br />
+                                                            <a asp-route-id="@parcel.Id" asp-controller="Rider" asp-action="PickupFailed" class="btn btn-sm btn-danger mt-2">
+                                                                <i class="fas fa-truck"></i> &nbsp; Pickup Failed
+                                                            </a>
+                                                        </div>
+                                                    }
                                                     @if (parcel.Status == "Assigned For Delivery")
                                                     {
                                                         <a asp-route-id="@parcel.Id" asp-controller="Rider" asp-action="ParcelOntheWay" class="btn btn-sm btn-success">
@@ -202,15 +214,29 @@
                                                     }
                                                     @if (parcel.Status == "Parcel On The Way")
                                                     {
+                                                      <div class="mt-3">
                                                         <a asp-route-id="@parcel.Id" asp-controller="Rider" asp-action="Delivered" class="btn btn-sm btn-success">
                                                             <i class="fas fa-check"></i> Delivered
                                                         </a>
-                                                        
+                                                            <br />
                                                         <a asp-route-id="@parcel.Id" asp-controller="Rider" asp-action="Return" class="btn btn-sm btn-warning mt-2">
                                                             <i class="fas fa-undo"></i> Return
                                                         </a>
+
+                                                            <a asp-route-id="@parcel.Id" asp-controller="Rider" asp-action="DeliveryOnHold" class="btn btn-sm btn-info mt-2">
+                                                                <i class="fas fa-pause-circle"></i> &nbsp; Delivery On Hold
+                                                            </a>
+                                                            <br />
+                                                            <a asp-route-id="@parcel.Id" asp-controller="Rider" asp-action="DeliveryFailed" class="btn btn-sm btn-danger mt-2">
+                                                                <i class="fas fa-times-circle"></i> &nbsp; Delivery Failed
+                                                            </a>
+                                                            <br />
+                                                            <a asp-route-id="@parcel.Id" asp-controller="Rider" asp-action="PartialDelivery" class="btn btn-sm btn-info mt-2">
+                                                                <i class="fas fa-puzzle-piece"></i> &nbsp; Partial Delivery
+                                                            </a>
+                                                       </div>
                                                     }
-                                                     @if (parcel.Status == "Assigned A Rider To Merchant")
+                                                    @if (parcel.Status == "Returned Assigned Pickup Agent")
                                                     {
                                                         <a asp-route-id="@parcel.Id" asp-controller="Rider" asp-action="ReturnOnTheWayToMerchant" class="btn btn-sm btn-success">
                                                             <i class="fas fa-truck"></i> Return On The Way To Merchant

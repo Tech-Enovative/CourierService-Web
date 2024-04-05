@@ -48,9 +48,30 @@ namespace CourierService_Web.Models
         public DateTime? DispatchDate  { get; set; }
         public DateTime? DeliveryDate { get; set; }
         public DateTime? PickedUpAt { get; set; }
-        public DateTime? InHubAt { get; set; }
+        public DateTime? PickupFailedAt { get; set; }
+        public DateTime? PickupCancelledAt { get; set; }
+        public DateTime? PickupOnHoldAt { get; set; }
+        public DateTime? ParcelAtTheHubReceivedAt { get; set; }
+        public DateTime? OnTheWayToSortingHubAt { get; set; }
+        public DateTime? AtTheSortingHubAt { get; set; }
+        public DateTime? OnTheWayToLastMileHubAt { get; set; }
+        public DateTime? ReceivedAtLastMileHubAt { get; set; }
         public DateTime? DeliveryRiderAssignedAt { get; set; }
         public DateTime? OnTheWayAt { get; set; }
+        public DateTime? DeliveryFailedAt { get; set; }
+        public DateTime? DamagedAt { get; set; }
+        public DateTime? DeliveryOnHoldAt { get; set; }
+        public DateTime? ReturnCreateFirstMileHubAt { get; set; }
+        public DateTime? ReturnOnTheWayToSortingHubAt { get; set; }
+        public DateTime? ReturnReceivedBySortingHubAt { get; set; }
+        public DateTime? ReturnOnTheWayToFirstMileHubAt { get; set; }
+        public DateTime? ReturnReceivedByFirstMileHubAt { get; set; }
+
+        public DateTime? ReturnedAssignedPickupAgentAt { get; set; }
+        public DateTime? ReturnOnTheWayToMerchantAt { get; set; }
+        public DateTime? ReturnReceivedByMerchantAt { get; set; }
+
+
         public DateTime? PaymentInHubAt { get; set; }
         public DateTime? ReturnDate { get; set; }
         public string? PaymentStatus { get; set; }
