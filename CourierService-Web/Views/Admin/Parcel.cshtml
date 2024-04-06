@@ -417,13 +417,15 @@
 
                                                         else if (parcel.Status == "On The Way To Sorting Hub")
                                                         {
-                                                                <a class="btn btn-sm btn-info print-btn" data-id="@parcel.Id">
+                                                                <a class="btn btn-md btn-info print-btn" data-id="@parcel.Id">
                                                                     <i class="fas fa-print"></i> Print
                                                                 </a>
-
-                                                           @*  <a asp-action="AtTheSortingHub" asp-route-id="@parcel.Id" asp-controller="Admin" class="btn btn-sm btn-info">
-                                                                <i class="fas fa-truck"></i> At The Sorting Hub
-                                                            </a> *@
+                                                                <br />
+                                                                <!-- Added padding to create space -->
+                                                                <a asp-action="AtTheSortingHub" asp-route-id="@parcel.Id" asp-controller="Admin" class="btn btn-sm btn-info mt-2">
+                                                                    <!-- Added "mt-2" class for margin-top -->
+                                                                    <i class="fas fa-truck"></i> At The Sorting Hub
+                                                                </a>
 
                                                         }
                                                        
@@ -637,6 +639,12 @@
                                                                     {
 
                                                                         <p><strong><i class="fas fa-truck"></i> Delivery Failed:</strong> @(parcel.DeliveryFailedAt.HasValue ? parcel.DeliveryFailedAt.Value.ToString("t") : "N/A")</p>
+                                                                    }
+
+                                                                    @if (parcel.PartialDeliveryAt != null)
+                                                                    {
+
+                                                                        <p><strong><i class="fas fa-truck"></i> Partial Delivery:</strong> @(parcel.PartialDeliveryAt.HasValue ? parcel.PartialDeliveryAt.Value.ToString("t") : "N/A")</p>
                                                                     }
 
                                                                     @if (parcel.DamagedAt != null)
@@ -1178,17 +1186,17 @@
 
                     // Update parcel status via API call
                     try {
-                        const response = await fetch(`/Admin/AtTheSortingHub?id=${parcelId}`, {
-                            method: 'GET', // or 'POST' if your server action requires POST method
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            // You can include any additional data or parameters here if needed
-                        });
+                        // const response = await fetch(`/Admin/AtTheSortingHub?id=${parcelId}`, {
+                        //     method: 'GET', // or 'POST' if your server action requires POST method
+                        //     headers: {
+                        //         'Content-Type': 'application/json'
+                        //     },
+                        //     // You can include any additional data or parameters here if needed
+                        // });
 
-                        if (!response.ok) {
-                            throw new Error('Failed to update parcel status');
-                        }
+                        // if (!response.ok) {
+                        //     throw new Error('Failed to update parcel status');
+                        // }
 
                         const docDefinition = {
                             content: [

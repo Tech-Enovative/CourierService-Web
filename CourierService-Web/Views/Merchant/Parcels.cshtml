@@ -93,10 +93,10 @@
 
                                         <tr>
                                             <td>@sl</td>
-                                            <td>
+                                            @* <td>
                                                 <!-- Barcode placeholder -->
                                                 <svg class="barcode" data-id="@parcel.Id"></svg>
-                                            </td>
+                                            </td> *@
                                             <td>
                                                 @(GetTimeAgo(parcel.PickupRequestDate))
                                                 <br />
@@ -296,6 +296,12 @@
                                                                 {
                                                                     
                                                                     <p><strong><i class="fas fa-truck"></i> Delivery Failed:</strong> @(parcel.DeliveryFailedAt.HasValue ? parcel.DeliveryFailedAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if(parcel.PartialDeliveryAt !=null)
+                                                                {
+                                                                    
+                                                                    <p><strong><i class="fas fa-truck"></i> Partial Delivery:</strong> @(parcel.PartialDeliveryAt.HasValue ? parcel.PartialDeliveryAt.Value.ToString("t") : "N/A")</p>
                                                                 }
 
                                                                 @if(parcel.DamagedAt !=null)

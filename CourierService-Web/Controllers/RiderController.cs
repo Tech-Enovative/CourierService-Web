@@ -408,6 +408,35 @@ namespace CourierService_Web.Controllers
             return RedirectToAction("AllParcel");
         }
 
+        //PartialDelivery
+        public IActionResult PartialDelivery(string id)
+        {
+            if (!IsRiderLoggedIn())
+            {
+
+                return RedirectToAction("Login", "Home");
+            }
+            var riderId = HttpContext.Request.Cookies["RiderId"];
+            //find rider by riderId
+            var rider = _context.Riders.Find(riderId);
+            var parcel = _context.Parcels.Find(id);
+            parcel.ReturnParcel = new ReturnParcel
+            {
+                ParcelId = parcel.Id,
+                RiderId = riderId,
+                ReturnDate = DateTime.Now,
+                HubId = parcel.HubId,
+                MerchantId = parcel.MerchantId
+            };
+            parcel.Status = "Partial Delivery";
+            parcel.PartialDeliveryAt = DateTime.Now;
+            rider.State = "Available";
+            _context.Parcels.Update(parcel);
+            _context.Riders.Update(rider);
+            _context.SaveChanges();
+            return RedirectToAction("AllParcel");
+        }
+
         //status changed to DeliveryFailed and create return parcel
         public IActionResult DeliveryFailed(string id)
         {

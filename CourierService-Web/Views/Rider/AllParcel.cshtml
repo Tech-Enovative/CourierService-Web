@@ -212,7 +212,7 @@
                                                             <i class="fas fa-truck"></i> Parcel On the Way
                                                         </a>
                                                     }
-                                                    @if (parcel.Status == "Parcel On The Way")
+                                                    @if (parcel.Status == "Parcel On The Way" || parcel.Status == "Delivery On Hold")
                                                     {
                                                       <div class="mt-3">
                                                         <a asp-route-id="@parcel.Id" asp-controller="Rider" asp-action="Delivered" class="btn btn-sm btn-success">

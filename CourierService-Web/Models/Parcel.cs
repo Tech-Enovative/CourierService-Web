@@ -58,6 +58,8 @@ namespace CourierService_Web.Models
         public DateTime? ReceivedAtLastMileHubAt { get; set; }
         public DateTime? DeliveryRiderAssignedAt { get; set; }
         public DateTime? OnTheWayAt { get; set; }
+
+        public DateTime? PartialDeliveryAt { get; set; }
         public DateTime? DeliveryFailedAt { get; set; }
         public DateTime? DamagedAt { get; set; }
         public DateTime? DeliveryOnHoldAt { get; set; }
