@@ -211,6 +211,7 @@
                                             <input type="checkbox" id="selectAll" />
                                         </th>
                                         <th>SL</th>
+                                            <th>Updated On</th>
                                         <th>ID</th>
                                             <th></th>
                                         <th>Merchant</th>
@@ -249,6 +250,11 @@
                                                 <input type="checkbox" name="selectedParcels" value="@parcel.Id" class="checkbox" />
                                             </td>
                                             <td>@sl</td>
+                                                <td>
+                                                    @(GetTimeAgo(parcel.PickupRequestDate))
+                                                    <br />
+                                                    Created : @(parcel.PickupRequestDate.HasValue ? parcel.PickupRequestDate.Value.ToString("g") : "N/A")
+                                                </td>
                                             <td>@parcel.Id</td>
                                                 <td>
                                                     <i class="fas fa-copy" onclick="copyToClipboard('@parcel.Id')" style="cursor: pointer;"></i>
@@ -785,7 +791,35 @@
         </div>
     </div>
 </div>
-
+@functions {
+    public string GetTimeAgo(DateTime? updatedAt)
+    {
+        if (updatedAt.HasValue)
+        {
+            TimeSpan timeDifference = DateTime.Now - updatedAt.Value;
+            if (timeDifference.TotalMinutes < 1)
+            {
+                return "Just now";
+            }
+            else if (timeDifference.TotalMinutes < 60)
+            {
+                return $"{(int)timeDifference.TotalMinutes} min ago";
+            }
+            else if (timeDifference.TotalHours < 24)
+            {
+                return $"{(int)timeDifference.TotalHours} hr ago";
+            }
+            else
+            {
+                return updatedAt.Value.ToString("g");
+            }
+        }
+        else
+        {
+            return "N/A";
+        }
+    }
+}
 
 
 @section Scripts {

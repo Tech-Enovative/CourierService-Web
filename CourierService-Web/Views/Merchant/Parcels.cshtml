@@ -64,7 +64,9 @@
                             <table class="table mb-0">
                                 <thead>
                                     <tr>
+                                        
                                         <th>SL</th>
+                                        <th>Updated On</th>
                                         <th>ID</th>
                                         <th></th>
                                         <th>Hub</th>
@@ -91,6 +93,13 @@
 
                                         <tr>
                                             <td>@sl</td>
+                                            <td>
+                                                @(GetTimeAgo(parcel.PickupRequestDate))
+                                                <br />
+                                                Created : @(parcel.PickupRequestDate.HasValue ? parcel.PickupRequestDate.Value.ToString("g") : "N/A")
+                                            </td>
+
+                                            
                                             <td>@parcel.Id</td>
                                             <td>
                                                 <i class="fas fa-copy" onclick="copyToClipboard('@parcel.Id')" style="cursor: pointer;"></i>
@@ -107,7 +116,7 @@
                                             {
 
                                                 <td>
-                                                    <strong>Name:</strong> @parcel.Hub?.Name <br />
+                                                    <strong></strong> @parcel.Hub?.Name <br />
                                                     
                                                 </td>
                                             }
@@ -190,13 +199,7 @@
                                                     <i class="fas fa-eye"></i>
                                                     View
                                                 </button>
-                                                @if (parcel.Status == "Pending" || parcel.Status == "Pickup Requested" || parcel.Status == "Assigned A Rider For Pickup")
-                                                {
-                                                    <a asp-action="EditParcel" asp-route-id="@parcel.Id" asp-controller="Merchant" class="btn btn-primary">
-                                                        <i class="fas fa-edit"></i>
-                                                        Edit
-                                                    </a>
-                                                }
+                                                
                                                 
 
 
@@ -367,6 +370,14 @@
                                                         <i class="fas fa-check"></i> Exchange Parcel Received
                                                     </a>
                                                 }
+
+                                                @if (parcel.Status == "Pending" || parcel.Status == "Pickup Requested" || parcel.Status == "Assigned A Rider For Pickup")
+                                                {
+                                                    <a asp-action="EditParcel" asp-route-id="@parcel.Id" asp-controller="Merchant" class="btn btn-primary">
+                                                        <i class="fas fa-edit"></i>
+                                                        Edit
+                                                    </a>
+                                                }
                                                 
                                             </td>
 
@@ -398,6 +409,37 @@
         </div>
     </div>
 </div>
+
+@functions {
+    public string GetTimeAgo(DateTime? updatedAt)
+    {
+        if (updatedAt.HasValue)
+        {
+            TimeSpan timeDifference = DateTime.Now - updatedAt.Value;
+            if (timeDifference.TotalMinutes < 1)
+            {
+                return "Just now";
+            }
+            else if (timeDifference.TotalMinutes < 60)
+            {
+                return $"{(int)timeDifference.TotalMinutes} min ago";
+            }
+            else if (timeDifference.TotalHours < 24)
+            {
+                return $"{(int)timeDifference.TotalHours} hr ago";
+            }
+            else
+            {
+                return updatedAt.Value.ToString("g");
+            }
+        }
+        else
+        {
+            return "N/A";
+        }
+    }
+}
+
 @section Scripts {
     <script>
         // Wait for the document to be ready
