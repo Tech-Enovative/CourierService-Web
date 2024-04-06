@@ -94,6 +94,10 @@
                                         <tr>
                                             <td>@sl</td>
                                             <td>
+                                                <!-- Barcode placeholder -->
+                                                <svg class="barcode" data-id="@parcel.Id"></svg>
+                                            </td>
+                                            <td>
                                                 @(GetTimeAgo(parcel.PickupRequestDate))
                                                 <br />
                                                 Created : @(parcel.PickupRequestDate.HasValue ? parcel.PickupRequestDate.Value.ToString("g") : "N/A")
@@ -391,6 +395,7 @@
                                                 }
                                             </td>
                                             
+                                            
 
                                         </tr>
                                         sl++;
@@ -572,5 +577,34 @@
             });
         });
     </script>
+
+    <script>
+        // Function to generate barcode for each parcel
+        function generateBarcodes() {
+            // Select all SVG elements with class 'barcode'
+            const barcodes = document.querySelectorAll('.barcode');
+
+            // Loop through each SVG element
+            barcodes.forEach(barcode => {
+                // Get the parcel ID from the 'data-id' attribute
+                const parcelId = barcode.getAttribute('data-id');
+
+                // Generate the barcode using JsBarcode library
+                JsBarcode(barcode, parcelId, {
+                    format: 'CODE128', // Barcode format
+                    displayValue: false, // Hide the text below the barcode
+                    width: 2, // Width of the barcode lines
+                    height: 50 // Height of the barcode
+                });
+            });
+        }
+
+        // Call the generateBarcodes function after the table is rendered
+        document.addEventListener('DOMContentLoaded', function () {
+            // Call generateBarcodes after a slight delay to ensure table rendering
+            setTimeout(generateBarcodes, 100);
+        });
+    </script>
+
 
 }

@@ -250,6 +250,11 @@
                                                 <input type="checkbox" name="selectedParcels" value="@parcel.Id" class="checkbox" />
                                             </td>
                                             <td>@sl</td>
+                                                @* <td>
+                                                    <!-- Barcode placeholder -->
+                                                    <svg class="barcode" data-id="@parcel.Id"></svg>
+                                                </td> *@
+
                                                 <td>
                                                     @(GetTimeAgo(parcel.PickupRequestDate))
                                                     <br />
@@ -412,9 +417,10 @@
 
                                                         else if (parcel.Status == "On The Way To Sorting Hub")
                                                         {
-                                                            <a href="javascript:void(0);" class="btn btn-sm btn-info print-btn" data-id="@parcel.Id">
-                                                                <i class="fas fa-print"></i> Print
-                                                            </a>
+                                                                <a class="btn btn-sm btn-info print-btn" data-id="@parcel.Id">
+                                                                    <i class="fas fa-print"></i> Print
+                                                                </a>
+
                                                             <a asp-action="AtTheSortingHub" asp-route-id="@parcel.Id" asp-controller="Admin" class="btn btn-sm btn-info">
                                                                 <i class="fas fa-truck"></i> At The Sorting Hub
                                                             </a>
@@ -970,39 +976,9 @@
 
     <!-- Include the required libraries for barcode generation -->
     <script src="https://cdn.jsdelivr.net/jsbarcode/3.6.0/JsBarcode.all.min.js"></script>
+    
 
-
-    <script>
-        $(document).ready(function () {
-            console.log('Document ready');
-
-            $('.print-btn').on('click', function () {
-                console.log('Print button clicked');
-                var parcelId = $(this).data('id');
-                console.log('Parcel ID:', parcelId);
-
-                $.ajax({
-                    url: '@Url.Action("GenerateBarcode", "Admin")',
-                    type: 'POST',
-                    success: function (response) {
-                        console.log('GenerateBarcode success');
-                        console.log('Response:', response);
-
-                        var blob = new Blob([response], { type: 'application/zip' });
-                        var link = document.createElement('a');
-                        link.href = window.URL.createObjectURL(blob);
-                        link.download = 'BarcodeDetails.zip';
-                        document.body.appendChild(link);
-                        link.click();
-                    },
-                    error: function (xhr, status, error) {
-                        console.log('GenerateBarcode error');
-                        console.log('Error:', xhr.responseText);
-                    }
-                });
-            });
-        });
-    </script>
+    
 
     <script>
         $(document).ready(function () {
@@ -1148,6 +1124,100 @@
             alert("Copied to clipboard: " + text);
         }
     </script>
+
+    <script>
+        // Function to generate barcode for each parcel
+        function generateBarcodes() {
+            // Select all SVG elements with class 'barcode'
+            const barcodes = document.querySelectorAll('.barcode');
+
+            // Loop through each SVG element
+            barcodes.forEach(barcode => {
+                // Get the parcel ID from the 'data-id' attribute
+                const parcelId = barcode.getAttribute('data-id');
+
+                // Generate the barcode using JsBarcode library
+                JsBarcode(barcode, parcelId, {
+                    format: 'CODE128', // Barcode format
+                    displayValue: false, // Hide the text below the barcode
+                    width: 2, // Width of the barcode lines
+                    height: 50 // Height of the barcode
+                });
+            });
+        }
+
+        // Call the generateBarcodes function after the table is rendered
+        document.addEventListener('DOMContentLoaded', function () {
+            // Call generateBarcodes after a slight delay to ensure table rendering
+            setTimeout(generateBarcodes, 100);
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/vfs_fonts.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const printButtons = document.querySelectorAll('.print-btn');
+
+            printButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const parcelId = button.getAttribute('data-id');
+
+                    // Fetch parcel information from the database
+
+                    const parcelRow = document.getElementById('parcelTable_' + parcelId);
+
+                    
+
+                    const parcelInfo = {
+                        
+                         'Date': new Date().toLocaleDateString('en-GB'),
+                        
+                        'ID': parcelRow.cells[3].innerText,
+                        'Merchant': parcelRow.cells[5].innerText,
+                        'Rider': parcelRow.cells[6].innerText,
+                        'Receiver Information': parcelRow.cells[7].innerText,
+                        'Total Price': parcelRow.cells[8].innerText,
+                        // Add more fields as needed
+                    };
+
+                    const docDefinition = {
+                        content: [
+                            { text: 'Flyer Express Bd Ltd', style: 'header' },
+                            { text: 'Parcel ID: ' + parcelId },
+                            { image: generateBarcodeImage(parcelId), width: 200, alignment: 'center' }, // Include barcode for parcel ID
+                            { text: 'Additional Information:', style: 'subheader' },
+                            // Add parcel information dynamically
+                            Object.keys(parcelInfo).map(key => ({ text: key + ': ' + parcelInfo[key] })),
+                        ],
+                        styles: {
+                            header: {
+                                fontSize: 18,
+                                bold: true,
+                                margin: [0, 0, 0, 10]
+                            },
+                            subheader: {
+                                fontSize: 14,
+                                bold: true,
+                                margin: [0, 10, 0, 5]
+                            }
+                        }
+                    };
+
+                    pdfMake.createPdf(docDefinition).open();
+                });
+            });
+        });
+
+        // Function to generate barcode image using Barcode functionality from PDFMake
+        function generateBarcodeImage(text) {
+            const canvas = document.createElement('canvas');
+            JsBarcode(canvas, text, { format: 'CODE128' }); // Use CODE128 format for barcode
+            return canvas.toDataURL(); // Convert canvas to base64 image data
+        }
+    </script>
+
+
 
 
 
