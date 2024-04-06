@@ -38,7 +38,7 @@
                             <option value="Pending">Pending</option>
                             <option value="At The Sorting Hub">At Sorting Hub</option>
                             <option value="Assigned A Delivery Rider">Assigned For Delivery</option>
-                            <option value="Last Mile Hub">Last Mile Hub</option>
+                            <option value="Received At Last Mile Hub">Last Mile Hub</option>
                             <option value="Parcel On The Way">On The Way</option>
 
                             <!-- Add more options as needed -->
@@ -512,6 +512,23 @@
             // Optionally, provide some visual feedback
             alert("Copied to clipboard: " + text);
         }
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#searchInput').on('input', function () {
+                var searchText = $(this).val().toLowerCase();
+                $('#parcelTable tbody tr').each(function () {
+                    var rowId = $(this).attr('id');
+                    var rowData = $('#' + rowId).text().toLowerCase();
+                    if (rowData.indexOf(searchText) === -1) {
+                        $('#' + rowId).hide();
+                    } else {
+                        $('#' + rowId).show();
+                    }
+                });
+            });
+        });
     </script>
 
 }

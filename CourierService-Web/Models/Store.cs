@@ -40,5 +40,7 @@ namespace CourierService_Web.Models
         public string Address { get; set; }
 
         public List<Parcel>? Parcels { get; set; }
+
+        public int? Status { get; set; } = 0;
     }
 }

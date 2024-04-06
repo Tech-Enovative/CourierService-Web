@@ -157,38 +157,52 @@
                             </li>
 
                             <li>
-                                <a asp-controller="Admin" asp-action="District">
-                                    <i class="mdi mdi-map-marker"></i>
-                                    <span> District </span>
-                                </a>
-                            </li>
-                            <li>
-                                <a asp-controller="Admin" asp-action="Zone">
-                                    <i class="mdi mdi-map-marker-radius"></i>
-                                    <span> Zone </span>
-                                </a>
-                            </li>
-                            <li>
-                                <a asp-controller="Admin" asp-action="Area">
+                                <a href="javascript: void(0);">
                                     <i class="mdi mdi-map-marker-multiple"></i>
-                                    <span> Area </span>
+                                    <span> Locations </span>
+                                    <span class="menu-arrow"></span>
                                 </a>
+                                <ul class="nav-second-level" aria-expanded="false">
+                                    <li>
+                                        <a asp-controller="Admin" asp-action="District">
+                                            <i class="mdi mdi-map-marker"></i>
+                                            <span>District</span>
+                                        </a>
+                                        
+                                    </li>
+                                    <li>
+
+                                        <a asp-controller="Admin" asp-action="Area">
+                                            <i class="mdi mdi-map-marker-multiple"></i>
+                                            <span>Area</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a asp-controller="Admin" asp-action="Zone">
+                                            <i class="mdi mdi-map-marker-radius"></i>
+                                            <span>Zone</span>
+                                        </a>
+                                    </li>
+                                    
+                                    
+                                </ul>
                             </li>
-
-
 
                             <li>
                                 <a asp-controller="Admin" asp-action="Hub">
                                     <i class="mdi mdi-warehouse"></i>
-                                    <span> Hub </span>
+                                    <span>Hub</span>
                                 </a>
                             </li>
                             <li>
                                 <a asp-controller="Admin" asp-action="Parcel">
-                                    <i class="fas fa-box-open"></i>
-                                    <span> Parcel </span>
+                                    <i class="fas fa-box open"></i>
+                                    <span>Parcel</span>
                                 </a>
                             </li>
+
+                            
+
                            @*  <li>
                                 <a asp-controller="Admin" asp-action="DeliveredParcelList">
                                     <i class="fas fa-truck"></i>
@@ -325,8 +339,8 @@
 
                             <li>
                                 <a asp-controller="Merchant" asp-action="AddBulkParcels">
-                                    <i class="fas fa-box-open"></i>
-                                    <span> Add Bulk Parcel </span>
+                                    <i class="fas fa-file-import"></i>
+                                    <span> Import Bulk Parcel </span>
                                 </a>
                             </li>
 

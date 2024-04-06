@@ -51,15 +51,36 @@
 
                 <div class="col-lg-12">
                     <div class="col-lg-3">
-                        <label for="statusFilter">Filter by Status:</label>
+                        <label for="statusFilter">Parcel Status:</label>
                         <select id="statusFilter" class="form-control">
                             <option value="">All</option>
-                            <option value="Pickup Request">Pickup Request</option>
-                           @*  <option value="Dispatched">Dispatched</option>
-                            <option value="Transit">Transit</option> *@
+                            <option value="Pending">Pending</option>
+                            <option value="Pickup Requested">Pickup Requested</option>
+                            <option value="Assigned A Rider For Pickup">Assigned A Rider For Pickup</option>
+                            <option value="Picked Up">Picked Up</option>
+                            <option value="Pickup Failed">Pickup Failed</option>
+                            <option value="Pickup Cancelled">Pickup Cancelled</option>
+                            <option value="Pickup On Hold">Pickup On Hold</option>
+                            <option value="At The Hub Received">At The Hub Received</option>
+                            <option value="On The Way To Sorting Hub">On The Way To Sorting Hub</option>
+                            <option value="At The Sorting Hub">At The Sorting Hub</option>
+                            <option value="On The Way To Last Mile Hub">On The Way To Last Mile Hub</option>
+                            <option value="Received At Last Mile Hub">Received At Last Mile Hub</option>
+                            <option value="Delivery Rider Assigned">Delivery Rider Assigned</option>
+                            <option value="On The Way">On The Way</option>
                             <option value="Delivered">Delivered</option>
-                            <option value="Exchanged">Exchanged</option>
+                            <option value="Delivery Failed">Delivery Failed</option>
+                            <option value="Damaged">Damaged</option>
+                            <option value="Delivery On Hold">Delivery On Hold</option>
                             <option value="Returned">Returned</option>
+                            <option value="Return Create First Mile Hub">Return Create First Mile Hub</option>
+                            <option value="Return On The Way To Sorting Hub">Return On The Way To Sorting Hub</option>
+                            <option value="Return Received By Sorting Hub">Return Received By Sorting Hub</option>
+                            <option value="Return On The Way To First Mile Hub">Return On The Way To First Mile Hub</option>
+                            <option value="Return Received By First Mile Hub">Return Received By First Mile Hub</option>
+                            <option value="Return Assigned Pickup Agent">Return Assigned Pickup Agent</option>
+                            <option value="Return On The Way To Merchant">Return On The Way To Merchant</option>
+                            <option value="Return Received By Merchant">Return Received By Merchant</option>
                             
                             <!-- Add more options as needed -->
                         </select>
@@ -93,7 +114,7 @@
                         <div class="table-responsive" id="parcelTable" style="overflow-x: auto;">
                             <form id="bulkActionForm" method="post" action="">
                                 <div>
-                                    <button type="button" class="btn btn-sm btn-info" id="bulkAssignModalBtn" data-toggle="modal" data-target="#bulkAssignModal">
+                                    <button type="button" class="btn btn-sm btn-secondary" id="bulkAssignModalBtn" data-toggle="modal" data-target="#bulkAssignModal">
                                         Assign Pickup Rider 
                                     </button>
 
@@ -184,7 +205,7 @@
 
                                     <button type="button" class="btn btn-sm btn-danger" id="bulkDeleteBtn">Delete</button>
                                 </div>
-                            <table class="table mb-0">
+                                <table class="table mb-0 mt-4" id="parcelTable">
                                 <thead>
                                     <tr >
                                         <th>
@@ -192,6 +213,7 @@
                                         </th>
                                         <th>SL</th>
                                         <th>ID</th>
+                                            <th></th>
                                         <th>Merchant</th>
                                         <th>Rider</th>
                                        @*  <th>Pickup Location</th> *@
@@ -229,6 +251,10 @@
                                             </td>
                                             <td>@sl</td>
                                             <td>@parcel.Id</td>
+                                                <td>
+                                                    <i class="fas fa-copy" onclick="copyToClipboard('@parcel.Id')" style="cursor: pointer;"></i>
+                                                </td>
+
                                             <td>
                                                  @parcel.Merchant?.CompanyName
 
@@ -813,47 +839,30 @@
         });
     </script>
 
+
+
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Get the input element, status filter, and table rows
-            var searchInput = document.getElementById('searchInput');
-            var statusFilter = document.getElementById('statusFilter');
-            var rows = document.querySelectorAll("#parcelTable tbody tr");
+        document.addEventListener('DOMContentLoaded', function () {
+            const statusFilter = document.getElementById('statusFilter');
+            const parcelTable = document.getElementById('parcelTable');
 
-            // Add event listener for input event on search input
-            searchInput.addEventListener('input', filterRows);
-            // Add event listener for change event on status filter dropdown
-            statusFilter.addEventListener('change', filterRows);
+            statusFilter.addEventListener('change', function () {
+                const selectedStatus = statusFilter.value;
+                const rows = parcelTable.querySelectorAll('tbody tr');
 
-            // Function to filter table rows based on search input and selected status
-            function filterRows() {
-                var searchText = searchInput.value.toLowerCase();
-                var selectedStatus = statusFilter.value.toLowerCase();
+                rows.forEach(row => {
+                    const statusCell = row.querySelector('td:nth-child(8)'); // Adjust the nth-child index based on your table structure
 
-                // Loop through all table rows
-                rows.forEach(function (row) {
-                    var shouldDisplay = false;
-                    var statusCell = row.querySelectorAll('td')[10]; // Assuming status is at index 10
-                    var statusText = statusCell.textContent.toLowerCase();
-
-                    // Check if the row contains the search text in any cell
-                    var containsSearchText = Array.from(row.querySelectorAll('td')).some(function (cell) {
-                        return cell.textContent.toLowerCase().indexOf(searchText) !== -1;
-                    });
-
-                    // Check if the row matches the selected status
-                    var matchesStatus = selectedStatus === "" || statusText === selectedStatus;
-
-                    // Display or hide row based on search text and selected status
-                    if (matchesStatus && (searchText === "" || containsSearchText)) {
+                    if (selectedStatus === '' || statusCell.textContent.trim() === selectedStatus) {
                         row.style.display = '';
                     } else {
                         row.style.display = 'none';
                     }
                 });
-            }
+            });
         });
     </script>
+   
     <script>
         $(document).ready(function () {
             // Function to update selected parcels list and information in the modal
@@ -1055,6 +1064,29 @@
                 });
             });
         });
+    </script>
+
+    <script>
+        function copyToClipboard(text) {
+            // Create a temporary input element
+            var tempInput = document.createElement("input");
+            tempInput.style = "position: absolute; left: -1000px; top: -1000px";
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+
+            // Select the text in the input element
+            tempInput.select();
+            tempInput.setSelectionRange(0, 99999); /* For mobile devices */
+
+            // Copy the selected text
+            document.execCommand("copy");
+
+            // Remove the temporary input element
+            document.body.removeChild(tempInput);
+
+            // Optionally, provide some visual feedback
+            alert("Copied to clipboard: " + text);
+        }
     </script>
 
 
