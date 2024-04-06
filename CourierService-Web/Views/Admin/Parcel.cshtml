@@ -421,9 +421,9 @@
                                                                     <i class="fas fa-print"></i> Print
                                                                 </a>
 
-                                                            <a asp-action="AtTheSortingHub" asp-route-id="@parcel.Id" asp-controller="Admin" class="btn btn-sm btn-info">
+                                                           @*  <a asp-action="AtTheSortingHub" asp-route-id="@parcel.Id" asp-controller="Admin" class="btn btn-sm btn-info">
                                                                 <i class="fas fa-truck"></i> At The Sorting Hub
-                                                            </a>
+                                                            </a> *@
 
                                                         }
                                                        
@@ -926,7 +926,7 @@
                     html += '<div><strong>Parcel ID:</strong> ' + parcel.id + '</div>';
 
                     //check if rider is not assigned..if there is rider information then disable button
-                    if (parcel.rider != "Not Assigned") {
+                    if (parcel.rider.id != null) {
                         $('#bulkAssignBtnModal').prop('disabled', true);
                     }
                     else {
@@ -1160,11 +1160,10 @@
             const printButtons = document.querySelectorAll('.print-btn');
 
             printButtons.forEach(function (button) {
-                button.addEventListener('click', function () {
+                button.addEventListener('click', async function () {
                     const parcelId = button.getAttribute('data-id');
 
                     // Fetch parcel information from the database
-
                     const parcelRow = document.getElementById('parcelTable_' + parcelId);
 
                     const parcelInfo = {
@@ -1177,33 +1176,53 @@
                         // Add more fields as needed
                     };
 
-                    const docDefinition = {
-                        content: [
-                            { text: 'Flyer Express Bd Ltd', style: 'header' },
-                            { text: 'Parcel ID: ' + parcelId },
-                            { image: generateBarcodeImage(parcelId), width: 200, alignment: 'center' }, // Include barcode for parcel ID
-                            { text: 'Additional Information:', style: 'subheader' },
-                            // Add parcel information dynamically with bold style
-                            Object.keys(parcelInfo).map(key => ({
-                                text: key + ': ' + parcelInfo[key],
-                                bold: true, // Apply bold style
-                            })),
-                        ],
-                        styles: {
-                            header: {
-                                fontSize: 18,
-                                bold: true,
-                                margin: [0, 0, 0, 10],
+                    // Update parcel status via API call
+                    try {
+                        const response = await fetch(`/Admin/AtTheSortingHub?id=${parcelId}`, {
+                            method: 'GET', // or 'POST' if your server action requires POST method
+                            headers: {
+                                'Content-Type': 'application/json'
                             },
-                            subheader: {
-                                fontSize: 14,
-                                bold: true,
-                                margin: [0, 10, 0, 5],
-                            },
-                        },
-                    };
+                            // You can include any additional data or parameters here if needed
+                        });
 
-                    pdfMake.createPdf(docDefinition).open();
+                        if (!response.ok) {
+                            throw new Error('Failed to update parcel status');
+                        }
+
+                        const docDefinition = {
+                            content: [
+                                { text: 'Flyer Express Bd Ltd', style: 'header' },
+                                { text: 'Parcel ID: ' + parcelId },
+                                { image: generateBarcodeImage(parcelId), width: 200, alignment: 'center' }, // Include barcode for parcel ID
+                                { text: 'Additional Information:', style: 'subheader' },
+                                // Add parcel information dynamically with bold style
+                                Object.keys(parcelInfo).map(key => ({
+                                    text: key + ': ' + parcelInfo[key],
+                                    bold: true, // Apply bold style
+                                })),
+                            ],
+                            styles: {
+                                header: {
+                                    fontSize: 18,
+                                    bold: true,
+                                    margin: [0, 0, 0, 10],
+                                },
+                                subheader: {
+                                    fontSize: 14,
+                                    bold: true,
+                                    margin: [0, 10, 0, 5],
+                                },
+                            },
+                        };
+
+                        pdfMake.createPdf(docDefinition).open();
+
+                        window.location.reload();
+                    } catch (error) {
+                        console.error('Error:', error.message);
+                        // Handle error, show alert, etc.
+                    }
                 });
             });
         });
@@ -1213,7 +1232,10 @@
             const canvas = document.createElement('canvas');
             JsBarcode(canvas, text, { format: 'CODE128' }); // Use CODE128 format for barcode
             return canvas.toDataURL(); // Convert canvas to base64 image data
+            
         }
+        
+
 
     </script>
 
