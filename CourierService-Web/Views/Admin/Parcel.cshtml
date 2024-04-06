@@ -1167,12 +1167,8 @@
 
                     const parcelRow = document.getElementById('parcelTable_' + parcelId);
 
-                    
-
                     const parcelInfo = {
-                        
-                         'Date': new Date().toLocaleDateString('en-GB'),
-                        
+                        'Date': new Date().toLocaleDateString('en-GB'),
                         'ID': parcelRow.cells[3].innerText,
                         'Merchant': parcelRow.cells[5].innerText,
                         'Rider': parcelRow.cells[6].innerText,
@@ -1187,21 +1183,24 @@
                             { text: 'Parcel ID: ' + parcelId },
                             { image: generateBarcodeImage(parcelId), width: 200, alignment: 'center' }, // Include barcode for parcel ID
                             { text: 'Additional Information:', style: 'subheader' },
-                            // Add parcel information dynamically
-                            Object.keys(parcelInfo).map(key => ({ text: key + ': ' + parcelInfo[key] })),
+                            // Add parcel information dynamically with bold style
+                            Object.keys(parcelInfo).map(key => ({
+                                text: key + ': ' + parcelInfo[key],
+                                bold: true, // Apply bold style
+                            })),
                         ],
                         styles: {
                             header: {
                                 fontSize: 18,
                                 bold: true,
-                                margin: [0, 0, 0, 10]
+                                margin: [0, 0, 0, 10],
                             },
                             subheader: {
                                 fontSize: 14,
                                 bold: true,
-                                margin: [0, 10, 0, 5]
-                            }
-                        }
+                                margin: [0, 10, 0, 5],
+                            },
+                        },
                     };
 
                     pdfMake.createPdf(docDefinition).open();
@@ -1215,6 +1214,7 @@
             JsBarcode(canvas, text, { format: 'CODE128' }); // Use CODE128 format for barcode
             return canvas.toDataURL(); // Convert canvas to base64 image data
         }
+
     </script>
 
 
