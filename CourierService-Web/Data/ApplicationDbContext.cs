@@ -38,6 +38,9 @@ namespace CourierService_Web.Data
 
         public DbSet<Store> Stores { get; set; }
 
+        public DbSet<AccessGroup> AccessGroups { get; set; }
+        public DbSet<AccessController> AccessControllers { get; set; }
+
 
 
 
@@ -261,6 +264,12 @@ namespace CourierService_Web.Data
                 .HasOne(p => p.District)
                 .WithMany(d => d.Parcels)
                 .HasForeignKey(p => p.DistrictId);
+
+            //relationship between accessgroup and accesscontroller
+            modelBuilder.Entity<AccessGroup>()
+                .HasMany(ag => ag.AccessControllers)
+                .WithOne(ac => ac.AccessGroup)
+                .HasForeignKey(ac => ac.AccessGroupId);
 
            
 

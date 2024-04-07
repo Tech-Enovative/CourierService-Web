@@ -57,7 +57,7 @@ namespace CourierService_Web.Controllers
             DateTime tomorrowStart = todayStart.AddDays(1);
 
             var todayPickupRequest = _context.Parcels
-                .Where(p => p.PickupRequestDate >= todayStart && p.PickupRequestDate < tomorrowStart)
+                .Where(p => p.PickupRequestDate >= todayStart && p.PickupRequestDate < tomorrowStart && p.Status =="Pending")
                 .Count();
 
             ViewBag.TodayPickupRequest = todayPickupRequest;
@@ -77,7 +77,7 @@ namespace CourierService_Web.Controllers
 
             //parcel in hub
             var inHub = _context.Parcels
-                .Where(p => p.Status == "Parcel In Hub")
+                .Where(p => p.Status == "At The Hub Received")
                 .Count();
             ViewBag.InHub = inHub;
 

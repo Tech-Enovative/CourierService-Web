@@ -898,7 +898,7 @@
                 const rows = parcelTable.querySelectorAll('tbody tr');
 
                 rows.forEach(row => {
-                    const statusCell = row.querySelector('td:nth-child(10)'); // Assuming status cell is the 11th column
+                    const statusCell = row.querySelector('td:nth-child(10)'); // Assuming status cell is the 10th column
                     const statusText = statusCell.textContent.trim();
 
                     if (selectedStatus === '' || statusText === selectedStatus) {
