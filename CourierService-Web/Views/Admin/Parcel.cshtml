@@ -1178,6 +1178,7 @@
                     const parcelRow = document.getElementById('parcelTable_' + parcelId);
 
                     const parcelInfo = {
+
                         'Date': new Date().toLocaleDateString('en-GB'),
                         'ID': parcelRow.cells[3].innerText,
                         'Merchant': parcelRow.cells[5].innerText,
@@ -1187,68 +1188,71 @@
                         // Add more fields as needed
                     };
 
-                    // Update parcel status via API call
-                    try {
-                        // const response = await fetch(`/Admin/AtTheSortingHub?id=${parcelId}`, {
-                        //     method: 'GET', // or 'POST' if your server action requires POST method
-                        //     headers: {
-                        //         'Content-Type': 'application/json'
-                        //     },
-                        //     // You can include any additional data or parameters here if needed
-                        // });
-
-                        // if (!response.ok) {
-                        //     throw new Error('Failed to update parcel status');
-                        // }
-
-                        const docDefinition = {
-                            content: [
-                                { text: 'Flyer Express Bd Ltd', style: 'header' },
-                                { text: 'Parcel ID: ' + parcelId },
-                                { image: generateBarcodeImage(parcelId), width: 200, alignment: 'center' }, // Include barcode for parcel ID
-                                { text: 'Additional Information:', style: 'subheader' },
-                                // Add parcel information dynamically with bold style
-                                Object.keys(parcelInfo).map(key => ({
-                                    text: key + ': ' + parcelInfo[key],
-                                    bold: true, // Apply bold style
-                                })),
-                            ],
-                            styles: {
-                                header: {
-                                    fontSize: 18,
-                                    bold: true,
-                                    margin: [0, 0, 0, 10],
-                                },
-                                subheader: {
-                                    fontSize: 14,
-                                    bold: true,
-                                    margin: [0, 10, 0, 5],
-                                },
-                            },
-                        };
-
-                        pdfMake.createPdf(docDefinition).open();
-
-                        //window.location.reload();
-                    } catch (error) {
-                        console.error('Error:', error.message);
-                        // Handle error, show alert, etc.
-                    }
+                    // Generate PDF with boxed layout and barcode
+                    generateBoxedPDFWithBarcode(parcelInfo, parcelId);
                 });
             });
         });
 
-        // Function to generate barcode image using Barcode functionality from PDFMake
+        // Function to generate PDF with boxed layout and barcode
+        function generateBoxedPDFWithBarcode(parcelInfo, parcelId) {
+            const barcodeImage = generateBarcodeImage(parcelId); // Generate barcode image
+            const currentDate = new Date().toLocaleDateString('en-GB');
+            const docDefinition = {
+                content: [
+                    { text: 'Flyer Express Bd Ltd', style: 'header' },
+                    { text: `Print Date: ${currentDate}`, style: 'printDate', alignment: 'right' }, // Print date at top right
+                    { image: barcodeImage, width: 200, alignment: 'center', margin: [0, 10, 0, 10] }, // Barcode on top
+                    {
+                        layout: {
+                            hLineWidth: function (i, node) {
+                                return (i === 0 || i === node.table.body.length) ? 2 : 1;
+                            },
+                            vLineWidth: function (i, node) {
+                                return (i === 0 || i === node.table.widths.length) ? 2 : 1;
+                            },
+                            hLineColor: function (i) {
+                                return i === 0 ? '#000000' : '#000000';
+                            },
+                            vLineColor: function (i) {
+                                return i === 0 ? '#000000' : '#000000';
+                            },
+                        },
+                        table: {
+                            widths: ['50%', '50%'],
+                            body: [
+                                [{ text: 'Date:', bold: true }, { text: parcelInfo['Date'], borderLeft: true }],
+                                [{ text: 'Parcel ID:', bold: true }, { text: parcelId, borderLeft: true }],
+                                [{ text: 'Merchant:', bold: true }, { text: parcelInfo['Merchant'], borderLeft: true }],
+                                [{ text: 'Rider:', bold: true }, { text: parcelInfo['Rider'], borderLeft: true }],
+                                [{ text: 'Receiver Information:', bold: true }, { text: parcelInfo['Receiver Information'], borderLeft: true }],
+                                [{ text: 'Total Price:', bold: true }, { text: parcelInfo['Total Price'], borderLeft: true }],
+                            ],
+                        },
+                    },
+                ],
+                styles: {
+                    header: { fontSize: 18, bold: true, alignment: 'center', margin: [0, 0, 0, 10] },
+                    invoiceHeader: { fontSize: 24, bold: true, alignment: 'center', margin: [0, 0, 0, 20] },
+                },
+            };
+
+            pdfMake.createPdf(docDefinition).open();
+        }
+
+        // Function to generate barcode image using JsBarcode library
         function generateBarcodeImage(text) {
             const canvas = document.createElement('canvas');
             JsBarcode(canvas, text, { format: 'CODE128' }); // Use CODE128 format for barcode
             return canvas.toDataURL(); // Convert canvas to base64 image data
-            
         }
-        
-
-
     </script>
+
+
+
+
+
+
 
 
 
