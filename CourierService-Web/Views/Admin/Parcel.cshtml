@@ -898,9 +898,10 @@
                 const rows = parcelTable.querySelectorAll('tbody tr');
 
                 rows.forEach(row => {
-                    const statusCell = row.querySelector('td:nth-child(8)'); // Adjust the nth-child index based on your table structure
+                    const statusCell = row.querySelector('td:nth-child(10)'); // Assuming status cell is the 11th column
+                    const statusText = statusCell.textContent.trim();
 
-                    if (selectedStatus === '' || statusCell.textContent.trim() === selectedStatus) {
+                    if (selectedStatus === '' || statusText === selectedStatus) {
                         row.style.display = '';
                     } else {
                         row.style.display = 'none';
@@ -909,6 +910,8 @@
             });
         });
     </script>
+
+
    
     <script>
         $(document).ready(function () {
