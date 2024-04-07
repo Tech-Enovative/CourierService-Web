@@ -2594,20 +2594,24 @@ namespace CourierService_Web.Controllers
 
         //bulk delete parcels
         [HttpPost]
-        public IActionResult BulkDeleteParcels(List<string> parcelIds)
+        public async Task<IActionResult> BulkDeleteParcels(List<string> parcelIds)
         {
             if (!IsAdminLoggedIn())
             {
                 return RedirectToAction("Login", "Home");
             }
 
-            // Find and remove selected parcels from the database
-            var parcelsToRemove = _context.Parcels.Where(p => parcelIds.Contains(p.Id)).ToList();
+            // Find and remove selected parcels from the database asynchronously
+            var parcelsToRemove = await _context.Parcels
+                .Where(p => parcelIds.Contains(p.Id))
+                .ToListAsync();
+
             _context.Parcels.RemoveRange(parcelsToRemove);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return RedirectToAction("Parcel");
         }
+
 
 
 
