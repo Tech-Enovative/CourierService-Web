@@ -1554,7 +1554,9 @@ namespace CourierService_Web.Controllers
         IQueryable<Parcel> parcelsQuery = _context.Parcels
             .Include(m => m.Merchant)
             .Include(u => u.Rider)
-            .Include(h => h.Hub);
+            .Include(h => h.Hub)
+            .Include(a=>a.Area)
+            .Include(z=>z.Zone);
 
         // If both start date and end date are provided, filter by date range
         if (startDate.HasValue && endDate.HasValue)
