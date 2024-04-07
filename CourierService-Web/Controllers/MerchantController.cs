@@ -681,9 +681,9 @@ namespace CourierService_Web.Controllers
 
             //find hub according to store id
             var store = _context.Stores.Find(parcel.StoreId);
-            var hub = _context.Hubs.Find(store.HubId);
+
             //find hub id and set
-            parcel.HubId = hub.Id;
+            parcel.HubId = store.HubId;
             //find area id and set
             var area = _context.Areas.Find(parcel.AreaId);
             parcel.AreaId = area.Id;
@@ -698,7 +698,7 @@ namespace CourierService_Web.Controllers
 
             parcel.UpdatedAt = DateTime.Now;
 
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 return RedirectToAction("EditParcel", new { id = parcel.Id });
             }
@@ -1107,7 +1107,13 @@ namespace CourierService_Web.Controllers
             {
                 parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date <= endDate.Value.Date);
             }
-           
+
+            // If no date range is provided, default to today
+            else
+            {
+                parcelsQuery = parcelsQuery.Where(x => x.PickupRequestDate.Value.Date == DateTime.Today);
+            }
+
 
             var parcels = parcelsQuery.ToList();
 
