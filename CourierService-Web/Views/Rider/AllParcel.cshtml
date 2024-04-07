@@ -28,14 +28,15 @@
                 }
                 <div class="col-lg-12">
                     <div class="col-lg-3">
-                        <label for="statusFilter">Filter by Status:</label>
+                        <label for="statusFilter">Parcel Status:</label>
                         <select id="statusFilter" class="form-control">
                             <option value="">All</option>
-                            <option value="Pickup Request">Pickup Request</option>
-                            @*  <option value="Dispatched">Dispatched</option>
-                            <option value="Transit">Transit</option> *@
+                            <option value="Picked Up">Picked Up</option>
+                            <option value="Pickup On Hold">Pickup On Hold</option>
+                            <option value="Assigned For Pickup">Assigned For Pickup</option>
+                            <option value="Assigned For Delivery">Assigned For Delivery</option>
                             <option value="Delivered">Delivered</option>
-                            <option value="Exchanged">Exchanged</option>
+                            <option value="Delivery On Hold">Delivery On Hold</option>
                             <option value="Returned">Returned</option>
 
                             <!-- Add more options as needed -->
@@ -396,7 +397,7 @@
                 // Loop through all table rows
                 rows.forEach(function (row) {
                     var shouldDisplay = false;
-                    var statusCell = row.querySelectorAll('td')[10]; // Assuming status is at index 10
+                    var statusCell = row.querySelectorAll('td')[8]; // Assuming status is at index 10
                     var statusText = statusCell.textContent.trim().toLowerCase();
 
                     // Check if the row contains the search text in any cell
