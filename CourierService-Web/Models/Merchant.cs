@@ -56,10 +56,9 @@ namespace CourierService_Web.Models
         [ValidateNever]
         public string? ConfirmPassword { get; set; }
 
-        
-        //nid should be 10 digit or 13 digit
-        [RegularExpression(@"^[0-9]{10}$|^[0-9]{13}$", ErrorMessage = "Please enter a valid NID.")]
 
+        //nid should be 10, 13 digit or 17 digit
+        [RegularExpression(@"^[0-9]{10}$|^[0-9]{13}$|^[0-9]{17}$", ErrorMessage = "Please enter a valid NID.")]
         public string? NID { get; set; }
 
         

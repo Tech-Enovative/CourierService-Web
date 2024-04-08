@@ -36,7 +36,8 @@ namespace CourierService_Web.Controllers
             var riderCount = _context.Riders.Count();
             ViewBag.RiderCount = riderCount;
 
-            var merchantCount = _context.Merchants.Count();
+            var merchantCount = _context.Merchants.Where(s=>s.Status =="Approved").
+                Count();
             ViewBag.MerchantCount = merchantCount;
 
             //hub count
@@ -170,6 +171,11 @@ namespace CourierService_Web.Controllers
             var profit = ViewBag.TodayMerchantPayment - ViewBag.AmountPayable;
             ViewBag.Profit = profit;
 
+            //merchant request
+            var merchantRequest = _context.Merchants
+                .Where(p => p.Status == "Requested")
+                .Count();
+            ViewBag.MerchantRequest = merchantRequest;
 
 
 

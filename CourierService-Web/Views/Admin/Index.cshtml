@@ -73,15 +73,18 @@
                 </div>
 
 
-                @* <div class="col-md-6 col-xl-3">
-                    <div class="card-box tilebox-one bg-info d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Total Parcel</h6>
-                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TotalParcel</span></h3>
+                <div class="col-md-6 col-xl-3">
+                    <a href="@Url.Action("Merchant", "Admin")">
+                        <div class="card-box tilebox-one bg-primary d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="text-black font-weight-bold text-uppercase mt-0">Merchant Request</h6>
+                                <h3 class="my-3"><span data-plugin="counterup">@ViewBag.MerchantRequest</span></h3>
+                            </div>
+                            <i class="fas fa-box-open fa-3x text-black"></i>
                         </div>
-                        <i class="fas fa-boxes fa-3x text-black"></i>
-                    </div>
-                </div> *@
+                    </a>
+                </div>
+
                 <div class="col-md-6 col-xl-3">
                     <a href="@Url.Action("Hub", "Admin")">
                         <div class="card-box tilebox-one bg-info d-flex align-items-center justify-content-between">

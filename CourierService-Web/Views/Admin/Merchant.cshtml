@@ -49,7 +49,20 @@
                                             <td>@item.Email</td>
                                             <td>@item.ContactNumber</td>
                                             <td>@(item.CreatedAt.ToString("M/d/yyyy"))</td>
-                                            <td>@item.Status</td>
+                                            <td>
+                                                @if (item.Status == "Requested")
+                                                {
+                                                    <span class="text-primary font-weight-bold">@item.Status</span>
+                                                }
+                                                else if (item.Status == "Approved")
+                                                {
+                                                    <span class="text-success font-weight-bold">@item.Status</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>@item.Status</span>
+                                                }
+                                            </td>
                                             <td>
                                                 @if(item.Status == "Requested")
                                                 {
