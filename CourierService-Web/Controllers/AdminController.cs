@@ -2855,6 +2855,8 @@ namespace CourierService_Web.Controllers
             //find hub id and set
             parcel.HubId = hub.Id;
 
+            parcel.PickupRequestDate = DateTime.Now;
+
 
             if (!ModelState.IsValid)
             {
