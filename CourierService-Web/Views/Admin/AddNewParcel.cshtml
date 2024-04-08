@@ -78,12 +78,6 @@
                                 <label asp-for="StoreId" for="StoreId">Select Store<span class="text-danger">*</span></label>
                                 <select asp-for="StoreId" name="StoreId" id="StoreId" class="form-control" required>
                                     <option value="" selected>Select Store</option>
-                                    @foreach (var store in ViewBag.Stores)
-                                    {
-
-
-                                        <option value="@store.Id">@store.Name</option>
-                                    }
                                 </select>
                                 <span asp-validation-for="StoreId" class="text-danger"></span>
                             </div>
@@ -228,7 +222,7 @@
                 </div>
 
                 <div class="col-lg-6 align-items-center justify-content-center">
-    <div class="card">
+    @* <div class="card">
         <div class="card-body">
             <h4 class="header-title">Cost Details</h4>
             <ul class="list-unstyled">
@@ -252,7 +246,7 @@
             <p class="mb-0"><strong>Use Express Delivery Inside Dhaka (2-3 hours) for:</strong> Cooked Foods and other emergency delivery</p>
             <p><strong>Inside Dhaka Normal Delivery:</strong> will take 24-48 hours, On Demand & Fragile take 8 hours, Outside Dhaka it may take 3-5 days</p> -->
         </div>
-    </div>
+    </div> *@
 </div>
 
 
@@ -262,6 +256,14 @@
         </div>
     </div>
 </div>
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Include jQuery Validate -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+
+<!-- Include jQuery Validate Unobtrusive -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
 
 
 <script>
@@ -269,23 +271,53 @@
         var deliveryFeeSpan = document.getElementById("deliveryFee");
         var codFeeSpan = document.getElementById("codFee");
         var totalCostSpan = document.getElementById("totalCost");
+        var merchantIdSelect = document.getElementById("MerchantId");
+        var productWeightSelect = document.getElementById("ProductWeight");
+        var deliveryTypeSelect = document.getElementById("DeliveryType");
+        var productPriceInput = document.getElementById("ProductPrice");
 
-        // Get delivery charges from ViewBag
-        var merchantInsideDhakaDeliveryCharge = parseFloat(@Html.Raw(Json.Serialize(ViewBag.InsideDhakaDeliveryCharge)));
-        var merchantSubDhakaDeliveryCharge = parseFloat(@Html.Raw(Json.Serialize(ViewBag.SubDhakaDeliveryCharge)));
+        function fetchMerchantInfoAndUpdate(merchantId) {
+            fetch('/Admin/GetMerchantInfo?merchantId=' + merchantId)
+                .then(response => response.json())
+                .then(data => {
+                    var productWeight = parseFloat(productWeightSelect.value);
+                    var deliveryType = deliveryTypeSelect.value;
+                    var productPrice = parseFloat(productPriceInput.value);
 
-        function calculateDeliveryFee(productWeight, deliveryType) {
+                    var deliveryFee = calculateDeliveryFee(productWeight, deliveryType, data);
+                    var codFee = calculateCODFee(productPrice);
+                    var totalCost = calculateTotalCost(productWeight, deliveryType, productPrice, deliveryFee);
+
+                    // Update spans with the calculated values
+                    deliveryFeeSpan.textContent = '৳ ' + deliveryFee.toFixed(2);
+                    codFeeSpan.textContent = '৳ ' + codFee.toFixed(2);
+                    totalCostSpan.textContent = '৳ ' + totalCost.toFixed(2);
+                })
+                .catch(error => console.error('Error fetching merchant information:', error));
+        }
+
+        function calculateDeliveryFee(productWeight, deliveryType, merchantInfo) {
             var deliveryFee = 0;
-
-            // Calculate delivery fee based on product weight and delivery type
+            console.log("Product Weight:", productWeight);
+            console.log("Delivery Type:", deliveryType);
+            console.log("Merchant Info:", merchantInfo);
+            // Use the merchant information to calculate delivery fee
             switch (deliveryType) {
                 case "InsideDhaka":
-                    deliveryFee = merchantInsideDhakaDeliveryCharge + (productWeight > 1 ? (productWeight - 1) * 10 : 0);
+                    deliveryFee = merchantInfo.InsideDhakaDeliveryCharge + (productWeight > merchantInfo.MaxiumWeight ? (productWeight - merchantInfo.MaxiumWeight) * merchantInfo.ExtraWeightCharge : 0);
                     break;
                 case "SubDhaka":
-                    deliveryFee = merchantSubDhakaDeliveryCharge + (productWeight > 1 ? (productWeight - 1) * 10 : 0);
+                    deliveryFee = merchantInfo.SubDhakaDeliveryCharge + (productWeight > merchantInfo.MaxiumWeight ? (productWeight - merchantInfo.MaxiumWeight) * merchantInfo.ExtraWeightCharge : 0);
                     break;
-                // Add cases for other delivery types if needed
+                case "OutsideDhaka":
+                    deliveryFee = merchantInfo.OutsideDhakaDeliveryCharge + (productWeight > merchantInfo.MaxiumWeight ? (productWeight - merchantInfo.MaxiumWeight) * merchantInfo.ExtraWeightCharge : 0);
+                    break;
+                case "InDhakaEmergency":
+                    deliveryFee = merchantInfo.InDhakaEmergencyDeliveryCharge + (productWeight > merchantInfo.MaxiumWeight ? (productWeight - merchantInfo.MaxiumWeight) * merchantInfo.ExtraWeightCharge : 0);
+                    break;
+                case "P2P":
+                    deliveryFee = merchantInfo.P2PDeliveryCharge + (productWeight > merchantInfo.MaxiumWeight ? (productWeight - merchantInfo.MaxiumWeight) * merchantInfo.ExtraWeightCharge : 0);
+                    break;
                 default:
                     break;
             }
@@ -301,154 +333,158 @@
             return codFee;
         }
 
-        function calculateTotalCost(productWeight, deliveryType, productPrice) {
-            var deliveryFee = calculateDeliveryFee(productWeight, deliveryType);
+        function calculateTotalCost(productWeight, deliveryType, productPrice, deliveryFee) {
             var codFee = calculateCODFee(productPrice);
+            if (isNaN(deliveryFee) || isNaN(codFee)) {
+                console.error("Invalid deliveryFee or codFee:", deliveryFee, codFee);
+                return 0; // or any default value you prefer
+            }
             var totalCost = deliveryFee + codFee;
+            console.log(totalCost);
             return totalCost;
         }
 
+
         function updateCostDetails() {
-            var productWeight = parseFloat(document.getElementById("ProductWeight").value);
-            var deliveryType = document.getElementById("DeliveryType").value;
-            var productPrice = parseFloat(document.getElementById("ProductPrice").value);
-
-            var deliveryFee = calculateDeliveryFee(productWeight, deliveryType);
-            var codFee = calculateCODFee(productPrice);
-            var totalCost = calculateTotalCost(productWeight, deliveryType, productPrice);
-
-            // Update spans with the calculated values
-            deliveryFeeSpan.textContent = '৳ ' + deliveryFee.toFixed(2);
-            codFeeSpan.textContent = '৳ ' + codFee.toFixed(2);
-            totalCostSpan.textContent = '৳ ' + totalCost.toFixed(2);
+            var merchantId = merchantIdSelect.value;
+            if (merchantId) {
+                fetchMerchantInfoAndUpdate(merchantId);
+            }
         }
+
+        // Call the function whenever inputs change
+        merchantIdSelect.addEventListener("change", updateCostDetails);
+        productWeightSelect.addEventListener("change", updateCostDetails);
+        deliveryTypeSelect.addEventListener("change", updateCostDetails);
+        productPriceInput.addEventListener("input", updateCostDetails);
 
         // Call the function initially
         updateCostDetails();
-
-        // Call the function whenever inputs change
-        document.getElementById("ProductWeight").addEventListener("change", updateCostDetails);
-        document.getElementById("DeliveryType").addEventListener("change", updateCostDetails);
-        document.getElementById("ProductPrice").addEventListener("input", updateCostDetails);
     });
+
 </script>
+
 
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        var productWeightSelect = document.getElementById("ProductWeight");
-        var deliveryTypeSelect = document.getElementById("DeliveryType");
-        var productPriceInput = document.getElementById("ProductPrice");
-        var productQuantityInput = document.getElementById("ProductQuantity");
         var deliveryChargeInput = document.getElementById("DeliveryCharge");
         var codInput = document.getElementById("COD");
         var totalPriceInput = document.getElementById("TotalPrice");
+        var merchantIdSelect = document.getElementById("MerchantId");
+        var productWeightSelect = document.getElementById("ProductWeight");
+        var deliveryTypeSelect = document.getElementById("DeliveryType");
+        var maximumWeight;
+        var extraWeightCharge;
+        var merchantInsideDhakaDeliveryCharge;
 
-        // Assume merchant data is available in the view via ViewBag
-        var merchantInsideDhakaDeliveryCharge = @Html.Raw(Json.Serialize(ViewBag.InsideDhakaDeliveryCharge ?? 0));
-        var merchantSubDhakaDeliveryCharge = @Html.Raw(Json.Serialize(ViewBag.SubDhakaDeliveryCharge));
-        var merchantOutsideDhakaDeliveryCharge = @Html.Raw(Json.Serialize(ViewBag.OutsideDhakaDeliveryCharge));
-        var merchantInDhakaEmergencyDeliveryCharge = @Html.Raw(Json.Serialize(ViewBag.InDhakaEmergencyDeliveryCharge));
-        var merchantP2PDeliveryCharge = @Html.Raw(Json.Serialize(ViewBag.P2PDeliveryCharge));
+        // Function to fetch merchant information and update calculations
+        function fetchMerchantInfoAndUpdate() {
+            var merchantId = merchantIdSelect.value;
+            console.log(merchantId);
+            if (!merchantId) {
+                // No merchant selected, reset fields
+                deliveryChargeInput.value = "";
+                codInput.value = "";
+                totalPriceInput.value = "";
+                return;
+            }
 
+            fetch('/Admin/GetMerchantInfo?merchantId=' + merchantId)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    // Update values based on fetched merchant data
+                    merchantInsideDhakaDeliveryCharge = data.insideDhakaDeliveryCharge;
+                    merchantSubDhakaDeliveryCharge = data.subDhakaDeliveryCharge;
+                    merchantOutsideDhakaDeliveryCharge = data.outsideDhakaDeliveryCharge;
+                    merchantInDhakaEmergencyDeliveryCharge = data.inDhakaEmergencyDeliveryCharge;
+                    merchantP2PDeliveryCharge = data.p2PDeliveryCharge;
+
+                    maximumWeight = data.MaxiumWeight;
+                    extraWeightCharge = data.ExtraWeightCharge;
+
+                    // Update calculations with new merchant data
+                    updatePrices();
+                })
+                .catch(error => console.error('Error fetching merchant information:', error));
+        }
+
+        // Call fetchMerchantInfoAndUpdate whenever MerchantId changes
+        merchantIdSelect.addEventListener("change", fetchMerchantInfoAndUpdate);
+
+        // Function to calculate delivery charge
         function calculateDeliveryCharge() {
             var productWeight = parseInt(productWeightSelect.value);
             var deliveryType = deliveryTypeSelect.value;
             var deliveryCharge = 0;
 
-            // Calculate delivery charge based on product weight and delivery type using merchant's data
-            if (deliveryType === "InsideDhaka") {
-                deliveryCharge = merchantInsideDhakaDeliveryCharge + (productWeight > 1 ? (productWeight - 1) * 15 : 0);
-            } else if (deliveryType === "SubDhaka") {
-                deliveryCharge = merchantSubDhakaDeliveryCharge + (productWeight > 1 ? (productWeight - 1) * 15 : 0);
-            } else if (deliveryType === "OutsideDhaka") {
-                deliveryCharge = merchantOutsideDhakaDeliveryCharge + (productWeight > 1 ? (productWeight - 1) * 15 : 0);
-            } else if (deliveryType === "InDhakaEmergency") {
-                deliveryCharge = merchantInDhakaEmergencyDeliveryCharge + (productWeight > 1 ? (productWeight - 1) * 15 : 0);
-            } else if (deliveryType === "P2P") {
-                deliveryCharge = merchantP2PDeliveryCharge + (productWeight > 1 ? (productWeight - 1) * 15 : 0);
+            switch (deliveryType) {
+                case "InsideDhaka":
+                    deliveryCharge = merchantInsideDhakaDeliveryCharge + (productWeight > maximumWeight ? (productWeight - maximumWeight) * extraWeightCharge : 0);
+                    break;
+                case "SubDhaka":
+                    deliveryCharge = merchantSubDhakaDeliveryCharge + (productWeight > maximumWeight ? (productWeight - maximumWeight) * extraWeightCharge : 0);
+                    break;
+                case "OutsideDhaka":
+                    deliveryCharge = merchantOutsideDhakaDeliveryCharge + (productWeight > maximumWeight ? (productWeight - maximumWeight) * extraWeightCharge : 0);
+                    break;
+                case "InDhakaEmergency":
+                    deliveryCharge = merchantInDhakaEmergencyDeliveryCharge + (productWeight > maximumWeight ? (productWeight - maximumWeight) * extraWeightCharge : 0);
+                    break;
+                case "P2P":
+                    deliveryCharge = merchantP2PDeliveryCharge + (productWeight > maximumWeight ? (productWeight - maximumWeight) * extraWeightCharge : 0);
+                    break;
+                default:
+                    break;
             }
 
             return deliveryCharge;
         }
 
+        // Function to calculate COD charge
         function calculateCOD() {
-            var productPrice = parseInt(productPriceInput.value);
+            // Sample calculation, replace with actual logic
+            var productPrice = parseInt(document.getElementById("ProductPrice").value);
             var codCharge = Math.round(productPrice * 0.01); // Calculate COD charge (1% of product price)
             return codCharge;
         }
 
-        //calculate weight price
-        function calculateWeightPrice() {
-            var productWeight = parseInt(productWeightSelect.value);
-            var productPrice = parseInt(productPriceInput.value);
-            var weightPrice = productWeight * productPrice;
-            return weightPrice;
-        }
-
+        // Function to calculate total price
         function calculateTotalPrice() {
             var deliveryCharge = calculateDeliveryCharge();
             var codCharge = calculateCOD();
-            var productPrice = parseInt(productPriceInput.value);
-            var productQuantity = parseInt(productQuantityInput.value);
-            var totalPrice = (productPrice + codCharge) + deliveryCharge;
+            var productPrice = parseInt(document.getElementById("ProductPrice").value);
+            var totalPrice = productPrice + deliveryCharge + codCharge;
             return totalPrice;
         }
 
+        // Function to update prices in the form
         function updatePrices() {
             var deliveryCharge = calculateDeliveryCharge();
             var codCharge = calculateCOD();
             var totalPrice = calculateTotalPrice();
 
-            // Set the calculated delivery charge, COD charge, and total price to the input fields
+            // Set the calculated values to the input fields
             deliveryChargeInput.value = deliveryCharge;
             codInput.value = codCharge;
             totalPriceInput.value = totalPrice;
         }
 
-        // Call the function initially
+        // Call updatePrices initially
         updatePrices();
 
-        // Call the function whenever inputs change
+        // Call updatePrices whenever relevant inputs change
         productWeightSelect.addEventListener("change", updatePrices);
         deliveryTypeSelect.addEventListener("change", updatePrices);
-        productPriceInput.addEventListener("change", updatePrices);
-        productQuantityInput.addEventListener("change", updatePrices);
+        document.getElementById("ProductPrice").addEventListener("change", updatePrices);
     });
+
 </script>
 
 
 
 
-
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var pickupOptionSelect = document.getElementById("PickupOption");
-        var pickupLocationInput = document.getElementById("PickupLocation");
-
-        function togglePickupLocationInput() {
-            if (pickupOptionSelect.value === "Self") {
-                // Set the value of the input field to the merchant's full address from ViewBag
-                pickupLocationInput.value = '@ViewBag.MerchantFullAddress';
-                pickupLocationInput.setAttribute('readonly', true); // Make the input readonly
-                pickupLocationInput.style.display = "block";
-            } else {
-                pickupLocationInput.removeAttribute('readonly'); // Remove the readonly attribute
-                pickupLocationInput.style.display = "block";
-                pickupLocationInput.value = "";
-            }
-        }
-
-
-
-        // Call the function initially
-        togglePickupLocationInput();
-
-        // Call the function whenever pickup option changes
-        pickupOptionSelect.addEventListener("change", togglePickupLocationInput);
-    });
-</script>
 
 
 
@@ -526,6 +562,44 @@
             });
         });
 </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#MerchantId').change(function () {
+                var selectedMerchantId = $(this).val();
+
+                // Clear previous options
+                $('#StoreId').empty();
+
+                // Add default option
+                $('#StoreId').append($('<option>', {
+                    value: '',
+                    text: 'Select Store'
+                }));
+
+                if (selectedMerchantId) {
+                    console.log("For Store : " + selectedMerchantId)
+                    $.ajax({
+                        url: '/Admin/GetStoresByMerchant?merchantId=' + selectedMerchantId,
+                        type: 'GET',
+                        success: function (data) {
+                            console.log(data);
+                            data.forEach(function (store) {
+                                $('#StoreId').append($('<option>', {
+                                    value: store.id,
+                                    text: store.name
+                                }));
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error fetching stores by merchant:', error);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
 
 
 }

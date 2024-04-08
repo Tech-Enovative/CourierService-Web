@@ -2834,8 +2834,30 @@ namespace CourierService_Web.Controllers
 
             ViewBag.Merchants = _context.Merchants.ToList();
             ViewBag.Stores = _context.Stores.ToList();
+
+            //selected merchant id from dropdown
+
+
+
+
             return View();
         }
+
+        //get merchant info by id
+        public JsonResult GetMerchantInfo(string merchantId)
+        {
+            var merchant = _context.Merchants.Find(merchantId);
+            return Json(merchant);
+        }
+
+        //GetStoresByMerchant
+        public JsonResult GetStoresByMerchant(string merchantId)
+        {
+            var stores = _context.Stores.Where(s => s.MerchantId == merchantId).ToList();
+            return Json(stores);
+        }
+
+
         [HttpPost]
         public IActionResult AddParcel(Parcel parcel)
         {
