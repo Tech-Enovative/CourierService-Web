@@ -34,6 +34,7 @@
                                         <th>Email</th>
                                         <th>Contact No</th>
                                         <th>Onboard</th>
+                                        <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -48,7 +49,47 @@
                                             <td>@item.Email</td>
                                             <td>@item.ContactNumber</td>
                                             <td>@(item.CreatedAt.ToString("M/d/yyyy"))</td>
+                                            <td>@item.Status</td>
                                             <td>
+                                                @if(item.Status == "Requested")
+                                                {
+                                                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#merchantModal">
+                                                        Accept
+                                                    </button>
+
+                                                    <!-- Modal structure for setting a password for a specific merchant -->
+                                                    <div class="modal fade" id="merchantModal" tabindex="-1" role="dialog" aria-labelledby="merchantModalLabel" aria-hidden="true">
+                                                        <div class="modal-dialog modal-lg" role="document">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="merchantModalLabel">Set Password</h5>
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <form id="setPasswordForm">
+                                                                        <div class="form-group">
+                                                                            <label for="modalPassword">New Password</label>
+                                                                            <input type="password" id="modalPassword" class="form-control" required>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label for="modalConfirmPassword">Confirm Password</label>
+                                                                            <input type="password" id="modalConfirmPassword" class="form-control" required>
+                                                                        </div>
+                                                                        <input type="hidden" id="merchantId" value="@item.Id"> <!-- Assuming Id is the merchant's unique identifier -->
+                                                                    </form>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                    <!-- Update the onclick event to call the function setMerchantPassword() -->
+                                                                    <button type="button" class="btn btn-primary" onclick="setMerchantPassword()">Set Password</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                
                                                 <a asp-action="EditMerchant" asp-route-id="@item.Id" asp-controller="Admin" class="btn btn-primary">
                                                     <i class="fas fa-edit"></i>
                                                     Edit
@@ -101,3 +142,42 @@
         </div>
     </div>
 </div>
+@section Scripts{
+    <script>
+        // JavaScript function to set the password for the merchant
+        function setMerchantPassword() {
+            var newPassword = document.getElementById('modalPassword').value;
+            var confirmPassword = document.getElementById('modalConfirmPassword').value;
+            var merchantId = document.getElementById('merchantId').value;
+
+            // Check if passwords match
+            if (newPassword !== confirmPassword) {
+                alert('Passwords do not match.');
+                return;
+            }
+
+            // Send an AJAX request to set the password for the merchant
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("SetMerchantPassword", "Admin")',
+                data: {
+                    merchantId: merchantId,
+                    newPassword: newPassword
+                },
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message);
+                        $('#merchantModal').modal('hide'); // Close the modal
+                        location.reload();
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function () {
+                    alert('An error occurred while setting the password.');
+                }
+            });
+        }
+    </script>
+}
+

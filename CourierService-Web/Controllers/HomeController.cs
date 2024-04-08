@@ -90,11 +90,7 @@ namespace CourierService_Web.Controllers
                 .Count();
             ViewBag.TodayReturned = todayReturned;
 
-            //all parcel list for today
-            var todayParcelList = _context.Parcels
-                .Where(p => p.PickupRequestDate >= todayStart && p.PickupRequestDate < tomorrowStart).Include(u => u.Merchant).Include(u => u.Rider)
-                .ToList();
-            ViewBag.TodayParcelList = todayParcelList;
+            
 
             //parcel status based on parcel id
 
@@ -158,7 +154,7 @@ namespace CourierService_Web.Controllers
 
             var admin = _context.Admins.FirstOrDefault(a => a.Email == email && a.Password == password);
             var rider = _context.Riders.FirstOrDefault(a => a.Email == email && a.Password == password);
-            var merchant = _context.Merchants.FirstOrDefault(a => a.Email == email && a.Password == password);
+            var merchant = _context.Merchants.FirstOrDefault(a => a.Email == email && a.Password == password && a.Status =="Approved");
             CookieOptions options = new CookieOptions();
 
             if (admin != null)

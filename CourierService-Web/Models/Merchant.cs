@@ -48,7 +48,7 @@ namespace CourierService_Web.Models
         [RegularExpression(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$", ErrorMessage = "Please enter a valid email address.")]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "Password is required.")]
+
         public string? Password { get; set; }
         
         [Required(ErrorMessage = "Confirm Password is required.")]
@@ -100,41 +100,8 @@ namespace CourierService_Web.Models
 
         public int ExtraWeightCharge { get; set; } = 15;    
 
-        // Method to calculate delivery fee based on delivery type and product weight
-        public decimal CalculateDeliveryFee(string deliveryType, decimal productWeight)
-        {
-            decimal deliveryCharge = 0;
-
-            switch (deliveryType)
-            {
-                case "InsideDhaka":
-                    deliveryCharge = InsideDhakaDeliveryCharge + (productWeight > 1 ? (productWeight - 1) * 15 : 0);
-                    break;
-                case "SubDhaka":
-                    deliveryCharge = SubDhakaDeliveryCharge + (productWeight > 1 ? (productWeight - 1) * 15 : 0);
-                    break;
-                case "OutsideDhaka":
-                    deliveryCharge = OutsideDhakaDeliveryCharge + (productWeight > 1 ? (productWeight - 1) * 15 : 0);
-                    break;
-                case "InDhakaEmergency":
-                    deliveryCharge = InDhakaEmergencyDeliveryCharge + (productWeight > 1 ? (productWeight - 1) * 15 : 0);
-                    break;
-                case "P2P":
-                    deliveryCharge = P2PDeliveryCharge + (productWeight > 1 ? (productWeight - 1) * 15 : 0);
-                    break;
-                default:
-                    break;
-            }
-
-            return deliveryCharge;
-        }
-
-        // Method to calculate COD fee based on product price (1%)
-        public decimal CalculateCodFee(decimal productPrice)
-        {
-            return Math.Round(productPrice * 0.01m); // 1% of product price
-        }
-
+        public string? Status { get; set; } = "Requested";
+       
 
     }
 }

@@ -1367,6 +1367,33 @@ namespace CourierService_Web.Controllers
         }
 
         [HttpPost]
+        public IActionResult SetMerchantPassword(string merchantId, string newPassword)
+        {
+            try
+            {
+                
+                var merchant = _context.Merchants.Find(merchantId);
+                if (merchant != null)
+                {
+                    merchant.Password = newPassword;
+                    merchant.Status = "Approved";
+                    _context.Merchants.Update(merchant);
+                    _context.SaveChanges();
+                    return Json(new { success = true, message = "Password set successfully." });
+                    
+                }
+                return Json(new { success = false, message = "Merchant not found." });
+
+               
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as needed
+                return Json(new { success = false, message = "An error occurred while setting the password." });
+            }
+        }
+
+        [HttpPost]
         public IActionResult EditMerchant(Merchant merchant, IFormFile? file)
         {
 
@@ -1381,6 +1408,7 @@ namespace CourierService_Web.Controllers
             }
             if (ModelState.IsValid)
             {
+
                 //handle image
                 string wwwRootPath = _webHostEnvironment.WebRootPath;
                 if (file != null)
@@ -1424,12 +1452,13 @@ namespace CourierService_Web.Controllers
                     //after upload delete from local storage
                     System.IO.File.Delete(MerchantPath + "\\" + fileName);
                     merchant.ImageUrl = "https://courierbuckets3.s3.amazonaws.com/Merchant/" + fileName;
+                    
                 }
 
-
+                merchant.Status = "Approved";
                 _context.Merchants.Update(merchant);
                 _context.SaveChanges();
-                TempData["success"] = "Merchant Updated Successfully";
+                TempData["success"] = "Successful";
                 return RedirectToAction("Merchant");
             }
             else
