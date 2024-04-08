@@ -4,6 +4,7 @@ using CourierService_Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CourierService_Web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240408062010_MerchantPriceType")]
+    partial class MerchantPriceType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -343,9 +346,6 @@ namespace CourierService_Web.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ExtraWeightCharge")
-                        .HasColumnType("int");
-
                     b.Property<string>("FacebookUrl")
                         .HasColumnType("nvarchar(max)");
 
@@ -364,9 +364,6 @@ namespace CourierService_Web.Migrations
 
                     b.Property<int>("InsideDhakaDeliveryCharge")
                         .HasColumnType("int");
-
-                    b.Property<decimal>("MaxiumWeight")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("NID")
                         .HasColumnType("nvarchar(max)");

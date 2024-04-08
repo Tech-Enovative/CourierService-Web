@@ -4,6 +4,7 @@ using CourierService_Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CourierService_Web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240408061808_MerchantNew")]
+    partial class MerchantNew
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -343,9 +346,6 @@ namespace CourierService_Web.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ExtraWeightCharge")
-                        .HasColumnType("int");
-
                     b.Property<string>("FacebookUrl")
                         .HasColumnType("nvarchar(max)");
 
@@ -359,13 +359,10 @@ namespace CourierService_Web.Migrations
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("InDhakaEmergencyDeliveryCharge")
-                        .HasColumnType("int");
+                    b.Property<decimal>("InDhakaEmergencyDeliveryCharge")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("InsideDhakaDeliveryCharge")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("MaxiumWeight")
+                    b.Property<decimal>("InsideDhakaDeliveryCharge")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("NID")
@@ -375,18 +372,18 @@ namespace CourierService_Web.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("OutsideDhakaDeliveryCharge")
-                        .HasColumnType("int");
+                    b.Property<decimal>("OutsideDhakaDeliveryCharge")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("P2PDeliveryCharge")
-                        .HasColumnType("int");
+                    b.Property<decimal>("P2PDeliveryCharge")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("SubDhakaDeliveryCharge")
-                        .HasColumnType("int");
+                    b.Property<decimal>("SubDhakaDeliveryCharge")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Tin")
                         .HasColumnType("nvarchar(max)");

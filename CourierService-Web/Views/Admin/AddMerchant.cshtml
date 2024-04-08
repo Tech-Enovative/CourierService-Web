@@ -177,6 +177,56 @@
                                        placeholder="Enter TIN" class="form-control" id="Tin">
                                 <span asp-validation-for="Tin" class="text-danger"></span>
                             </div>
+                            <div class="form-group">
+                                <label asp-for="InsideDhakaDeliveryCharge">Inside Dhaka Delivery Charge<span class="text-danger"></span></label>
+                                <input asp-for="InsideDhakaDeliveryCharge" type="number" name="InsideDhakaDeliveryCharge" parsley-trigger="change"
+                                       placeholder="Enter Inside Dhaka Delivery Charge" class="form-control" id="InsideDhakaDeliveryCharge">
+                                <span asp-validation-for="InsideDhakaDeliveryCharge" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="SubDhakaDeliveryCharge">Sub Dhaka Delivery Charge<span class="text-danger"></span></label>
+                                <input asp-for="SubDhakaDeliveryCharge" type="number" name="SubDhakaDeliveryCharge" parsley-trigger="change"
+                                       placeholder="Enter Sub Dhaka Delivery Charge" class="form-control" id="SubDhakaDeliveryCharge">
+                                <span asp-validation-for="SubDhakaDeliveryCharge" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="OutsideDhakaDeliveryCharge">Outside Dhaka Delivery Charge<span class="text-danger"></span></label>
+                                <input asp-for="OutsideDhakaDeliveryCharge" type="number" name="OutsideDhakaDeliveryCharge" parsley-trigger="change"
+                                       placeholder="Enter Outside DhakaDelivery Charge" class="form-control" id="OutsideDhakaDeliveryCharge">
+                                <span asp-validation-for="OutsideDhakaDeliveryCharge" class="text-danger"></span>
+                            </div>
+
+                            
+                            <div class="form-group">
+                                <label asp-for="InDhakaEmergencyDeliveryCharge">InDhaka Emergency Delivery Charge<span class="text-danger"></span></label>
+                                <input asp-for="InDhakaEmergencyDeliveryCharge" type="number" name="InDhakaEmergencyDeliveryCharge" parsley-trigger="change"
+                                       placeholder="Enter In Dhaka Emergency DeliveryCharge" class="form-control" id="InDhakaEmergencyDeliveryCharge">
+                                <span asp-validation-for="InDhakaEmergencyDeliveryCharge" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="P2PDeliveryCharge">P2P Delivery Charge<span class="text-danger"></span></label>
+                                <input asp-for="P2PDeliveryCharge" type="number" name="P2PDeliveryCharge" parsley-trigger="change"
+                                       placeholder="Enter P2P Delivery Charge" class="form-control" id="P2PDeliveryCharge">
+                                <span asp-validation-for="P2PDeliveryCharge" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="MaxiumWeight">Max Weight<span class="text-danger"></span></label>
+                                <input asp-for="MaxiumWeight" type="number" name="MaxiumWeight" parsley-trigger="change"
+                                       placeholder="Enter Maxium Weight" class="form-control" id="MaxiumWeight">
+                                <span asp-validation-for="MaxiumWeight" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="ExtraWeightCharge">Extra Weight Charge<span class="text-danger"></span></label>
+                                <input asp-for="ExtraWeightCharge" type="number" name="ExtraWeightCharge" parsley-trigger="change"
+                                       placeholder="Enter Extra Weight Charge" class="form-control" id="ExtraWeightCharge">
+                                <span asp-validation-for="P2PDeliveryCharge" class="text-danger"></span>
+                            </div>
+                            
                             <div class="form-group text-right mb-0">
                                 <button asp-controller="Admin" asp-action="AddMerchant" class="btn btn-primary waves-effect waves-light mr-1" type="submit">
                                     Submit

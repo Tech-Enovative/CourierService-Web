@@ -247,55 +247,54 @@
 </div>
 
 
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         var deliveryFeeSpan = document.getElementById("deliveryFee");
         var codFeeSpan = document.getElementById("codFee");
         var totalCostSpan = document.getElementById("totalCost");
 
-        function calculateDeliveryFee() {
-            var productWeight = parseFloat(document.getElementById("ProductWeight").value);
-            var deliveryType = document.getElementById("DeliveryType").value;
+        // Get delivery charges from ViewBag
+        var merchantInsideDhakaDeliveryCharge = parseFloat(@Html.Raw(Json.Serialize(ViewBag.InsideDhakaDeliveryCharge)));
+        var merchantSubDhakaDeliveryCharge = parseFloat(@Html.Raw(Json.Serialize(ViewBag.SubDhakaDeliveryCharge)));
+        var merchantOutsideDhakaDeliveryCharge = parseFloat(@Html.Raw(Json.Serialize(ViewBag.OutsideDhakaDeliveryCharge)));
+        var merchantInDhakaEmergencyDeliveryCharge = parseFloat(@Html.Raw(Json.Serialize(ViewBag.InDhakaEmergencyDeliveryCharge)));
+        var merchantP2PDeliveryCharge = parseFloat(@Html.Raw(Json.Serialize(ViewBag.P2PDeliveryCharge)));
+        var maximumWeight = @Html.Raw(Json.Serialize(ViewBag.MaxiumWeight));
+        var extraWeightCharge = @Html.Raw(Json.Serialize(ViewBag.ExtraWeightCharge));
+
+        function calculateDeliveryFee(productWeight, deliveryType) {
             var deliveryFee = 0;
 
             // Calculate delivery fee based on product weight and delivery type
-            if (deliveryType === "InsideDhaka") {
-                if (productWeight <= 1) {
-                    deliveryFee = 70;
-                } else {
-                    deliveryFee = 70 + (productWeight - 1) * 10;
-                }
-            } else if (deliveryType === "SubDhaka") {
-                if (productWeight <= 1) {
-                    deliveryFee = 90;
-                } else {
-                    deliveryFee = 90 + (productWeight - 1) * 10;
-                }
-            } else if (deliveryType === "OutsideDhaka") {
-                if (productWeight <= 1) {
-                    deliveryFee = 120;
-                } else {
-                    deliveryFee = 120 + (productWeight - 1) * 10;
-                }
-            } else if (deliveryType === "InDhakaEmergency") {
-                if (productWeight <= 1) {
-                    deliveryFee = 100;
-                } else {
-                    deliveryFee = 100 + (productWeight - 1) * 10;
-                }
-            } else if (deliveryType === "P2P") {
-                if (productWeight <= 1) {
-                    deliveryFee = 200;
-                } else {
-                    deliveryFee = 200 + (productWeight - 1) * 10;
-                }
+            switch (deliveryType) {
+                case "InsideDhaka":
+                    deliveryFee = merchantInsideDhakaDeliveryCharge + (productWeight > maximumWeight ? (productWeight - maximumWeight) * extraWeightCharge : 0);
+                    break;
+                case "SubDhaka":
+                    deliveryFee = merchantSubDhakaDeliveryCharge + (productWeight > maximumWeight ? (productWeight - maximumWeight) * extraWeightCharge : 0);
+                    break;
+
+                case "OutsideDhaka":
+                    deliveryFee = merchantOutsideDhakaDeliveryCharge + (productWeight > maximumWeight ? (productWeight - maximumWeight) * extraWeightCharge : 0);
+                    break;
+
+                case "InDhakaEmergency":
+                    deliveryFee = merchantInDhakaEmergencyDeliveryCharge + (productWeight > maximumWeight ? (productWeight - maximumWeight) * extraWeightCharge : 0);
+                    break;
+
+                case "P2P":
+                    deliveryFee = merchantP2PDeliveryCharge + (productWeight > maximumWeight ? (productWeight - maximumWeight) * extraWeightCharge : 0);
+                    break;
+                // Add cases for other delivery types if needed
+                default:
+                    break;
             }
 
             return deliveryFee;
         }
 
-        function calculateCODFee() {
-            var productPrice = parseFloat(document.getElementById("ProductPrice").value);
+        function calculateCODFee(productPrice) {
             if (isNaN(productPrice)) {
                 return 0; // If product price is not a valid number, return 0 for COD fee
             }
@@ -303,20 +302,21 @@
             return codFee;
         }
 
-        function calculateTotalCost() {
-            var deliveryFee = calculateDeliveryFee();
-            var codFee = calculateCODFee();
-            if (isNaN(deliveryFee) || isNaN(codFee)) {
-                return 0; // If either delivery fee or COD fee is not a valid number, return 0 for total cost
-            }
+        function calculateTotalCost(productWeight, deliveryType, productPrice) {
+            var deliveryFee = calculateDeliveryFee(productWeight, deliveryType);
+            var codFee = calculateCODFee(productPrice);
             var totalCost = deliveryFee + codFee;
             return totalCost;
         }
 
         function updateCostDetails() {
-            var deliveryFee = calculateDeliveryFee();
-            var codFee = calculateCODFee();
-            var totalCost = calculateTotalCost();
+            var productWeight = parseFloat(document.getElementById("ProductWeight").value);
+            var deliveryType = document.getElementById("DeliveryType").value;
+            var productPrice = parseFloat(document.getElementById("ProductPrice").value);
+
+            var deliveryFee = calculateDeliveryFee(productWeight, deliveryType);
+            var codFee = calculateCODFee(productPrice);
+            var totalCost = calculateTotalCost(productWeight, deliveryType, productPrice);
 
             // Update spans with the calculated values
             deliveryFeeSpan.textContent = '৳ ' + deliveryFee.toFixed(2);
@@ -334,6 +334,7 @@
     });
 </script>
 
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         var productWeightSelect = document.getElementById("ProductWeight");
@@ -344,42 +345,32 @@
         var codInput = document.getElementById("COD");
         var totalPriceInput = document.getElementById("TotalPrice");
 
+        // Assume merchant data is available in the view via ViewBag
+        var merchantInsideDhakaDeliveryCharge = @Html.Raw(Json.Serialize(ViewBag.InsideDhakaDeliveryCharge));
+        var merchantSubDhakaDeliveryCharge = @Html.Raw(Json.Serialize(ViewBag.SubDhakaDeliveryCharge));
+        var merchantOutsideDhakaDeliveryCharge = @Html.Raw(Json.Serialize(ViewBag.OutsideDhakaDeliveryCharge));
+        var merchantInDhakaEmergencyDeliveryCharge = @Html.Raw(Json.Serialize(ViewBag.InDhakaEmergencyDeliveryCharge));
+        var merchantP2PDeliveryCharge = @Html.Raw(Json.Serialize(ViewBag.P2PDeliveryCharge));
+        var maximumWeight = @Html.Raw(Json.Serialize(ViewBag.MaxiumWeight));
+        var extraWeightCharge = @Html.Raw(Json.Serialize(ViewBag.ExtraWeightCharge));
+
+
         function calculateDeliveryCharge() {
             var productWeight = parseInt(productWeightSelect.value);
             var deliveryType = deliveryTypeSelect.value;
             var deliveryCharge = 0;
 
-            // Calculate delivery charge based on product weight and delivery type
+            // Calculate delivery charge based on product weight and delivery type using merchant's data
             if (deliveryType === "InsideDhaka") {
-                if (productWeight <= 1) {
-                    deliveryCharge = 70;
-                } else {
-                    deliveryCharge = 70 + (productWeight - 1) * 15;
-                }
+                deliveryCharge = merchantInsideDhakaDeliveryCharge + (productWeight > maximumWeight ? (productWeight - maximumWeight) * extraWeightCharge : 0);
             } else if (deliveryType === "SubDhaka") {
-                if (productWeight <= 1) {
-                    deliveryCharge = 90;
-                } else {
-                    deliveryCharge = 90 + (productWeight - 1) * 15;
-                }
+                deliveryCharge = merchantSubDhakaDeliveryCharge + (productWeight > maximumWeight ? (productWeight - maximumWeight) * extraWeightCharge : 0);
             } else if (deliveryType === "OutsideDhaka") {
-                if (productWeight <= 1) {
-                    deliveryCharge = 120;
-                } else {
-                    deliveryCharge = 120 + (productWeight - 1) * 15;
-                }
+                deliveryCharge = merchantOutsideDhakaDeliveryCharge + (productWeight > maximumWeight ? (productWeight - maximumWeight) * extraWeightCharge : 0);
             } else if (deliveryType === "InDhakaEmergency") {
-                if (productWeight <= 1) {
-                    deliveryCharge = 100;
-                } else {
-                    deliveryCharge = 100 + (productWeight - 1) * 15;
-                }
+                deliveryCharge = merchantInDhakaEmergencyDeliveryCharge + (productWeight > maximumWeight ? (productWeight - maximumWeight) * extraWeightCharge : 0);
             } else if (deliveryType === "P2P") {
-                if (productWeight <= 1) {
-                    deliveryCharge = 200;
-                } else {
-                    deliveryCharge = 200 + (productWeight - 1) * 15;
-                }
+                deliveryCharge = merchantP2PDeliveryCharge + (productWeight > maximumWeight ? (productWeight - maximumWeight) * extraWeightCharge : 0);
             }
 
             return deliveryCharge;

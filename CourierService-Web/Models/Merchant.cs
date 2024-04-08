@@ -89,6 +89,51 @@ namespace CourierService_Web.Models
         public List<MerchantPayment>? MerchantPayments { get; set; }
 
         public List<Store>? Stores { get; set; }
+        // Specific delivery charge for each delivery type
+        public int InsideDhakaDeliveryCharge { get; set; } = 70;
+        public int SubDhakaDeliveryCharge { get; set; } = 90;
+        public int OutsideDhakaDeliveryCharge { get; set; } = 120;
+        public int InDhakaEmergencyDeliveryCharge { get; set; } = 100;
+        public int P2PDeliveryCharge { get; set; } = 200;
+
+        public decimal MaxiumWeight { get; set; } = 1;
+
+        public int ExtraWeightCharge { get; set; } = 15;    
+
+        // Method to calculate delivery fee based on delivery type and product weight
+        public decimal CalculateDeliveryFee(string deliveryType, decimal productWeight)
+        {
+            decimal deliveryCharge = 0;
+
+            switch (deliveryType)
+            {
+                case "InsideDhaka":
+                    deliveryCharge = InsideDhakaDeliveryCharge + (productWeight > 1 ? (productWeight - 1) * 15 : 0);
+                    break;
+                case "SubDhaka":
+                    deliveryCharge = SubDhakaDeliveryCharge + (productWeight > 1 ? (productWeight - 1) * 15 : 0);
+                    break;
+                case "OutsideDhaka":
+                    deliveryCharge = OutsideDhakaDeliveryCharge + (productWeight > 1 ? (productWeight - 1) * 15 : 0);
+                    break;
+                case "InDhakaEmergency":
+                    deliveryCharge = InDhakaEmergencyDeliveryCharge + (productWeight > 1 ? (productWeight - 1) * 15 : 0);
+                    break;
+                case "P2P":
+                    deliveryCharge = P2PDeliveryCharge + (productWeight > 1 ? (productWeight - 1) * 15 : 0);
+                    break;
+                default:
+                    break;
+            }
+
+            return deliveryCharge;
+        }
+
+        // Method to calculate COD fee based on product price (1%)
+        public decimal CalculateCodFee(decimal productPrice)
+        {
+            return Math.Round(productPrice * 0.01m); // 1% of product price
+        }
 
 
     }

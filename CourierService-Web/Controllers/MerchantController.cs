@@ -533,6 +533,14 @@ namespace CourierService_Web.Controllers
             ViewBag.Zones = _context.Zone.ToList();
             ViewBag.Area = _context.Areas.ToList();
 
+            ViewBag.InsideDhakaDeliveryCharge = merchant.InsideDhakaDeliveryCharge;
+            ViewBag.SubDhakaDeliveryCharge = merchant.SubDhakaDeliveryCharge;
+            ViewBag.OutsideDhakaDeliveryCharge = merchant.OutsideDhakaDeliveryCharge;
+            ViewBag.InDhakaEmergencyDeliveryCharge = merchant.InDhakaEmergencyDeliveryCharge;
+            ViewBag.P2PDeliveryCharge = merchant.P2PDeliveryCharge;
+            ViewBag.MaxiumWeight = merchant.MaxiumWeight;
+            ViewBag.ExtraWeightCharge = merchant.ExtraWeightCharge;
+
             //find stores of the merchant
             ViewBag.Stores = _context.Stores.Where(x => x.MerchantId == merchantId).ToList();
 
