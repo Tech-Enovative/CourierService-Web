@@ -1459,20 +1459,32 @@ namespace CourierService_Web.Controllers
 
         public IActionResult DeleteStore(string id)
         {
-            if(!IsMerchantLoggedIn())
+            if (!IsMerchantLoggedIn())
             {
                 return RedirectToAction("Login", "Home");
             }
+
             var store = _context.Stores.Find(id);
-            if(store == null)
+            if (store == null)
             {
                 return NotFound();
             }
+
+            // Retrieve related parcels
+            var relatedParcels = _context.Parcels.Where(p => p.StoreId == id).ToList();
+
+            // Delete related parcels first
+            _context.Parcels.RemoveRange(relatedParcels);
+            _context.SaveChanges();
+
+            // Now delete the store
             _context.Stores.Remove(store);
             _context.SaveChanges();
+
             TempData["success"] = "Store Deleted Successfully";
             return RedirectToAction("StoreList");
         }
+
 
     }
 }

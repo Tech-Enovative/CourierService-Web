@@ -959,7 +959,7 @@
                         id: parcelId,
                         merchant: parcelRow.find('td:nth-child(3)').text().trim(), // Adjust the index based on your table structure
                         rider: parcelRow.find('td:nth-child(5)').text().trim(), // Adjust the index based on your table structure
-                        // Add more parcel information fields as needed
+                        status: parcelRow.find('td:nth-child(10)').text().trim(),
                     };
                     selectedParcels.push(parcelInfo);
                 });
@@ -971,7 +971,7 @@
                     html += '<div><strong>Parcel ID:</strong> ' + parcel.id + '</div>';
 
                     //check if rider is not assigned..if there is rider information then disable button
-                    if (parcel.rider.id != null) {
+                    if (parcel.rider.id != null && parcel.status !="Pickup Requested" ) {
                         $('#bulkAssignBtnModal').prop('disabled', true);
                     }
                     else {
@@ -1091,7 +1091,7 @@
                         id: parcelId,
                         merchant: parcelRow.find('td:nth-child(3)').text().trim(),
                         rider: parcelRow.find('td:nth-child(5)').text().trim(),
-                        status: parcelRow.find('td:nth-child(9)').text().trim(),
+                        status: parcelRow.find('td:nth-child(10)').text().trim(),
                     };
                     selectedParcels.push(parcelInfo);
                 });

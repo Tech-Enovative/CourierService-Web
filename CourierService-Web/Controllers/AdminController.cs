@@ -1058,7 +1058,7 @@ namespace CourierService_Web.Controllers
                 {
                     merchant.ImageUrl = "";
                 }
-
+                merchant.Status = "Approved";
                 _context.Merchants.Add(merchant);
                 _context.SaveChanges();
                 TempData["success"] = "Merchant Added Successfully";
