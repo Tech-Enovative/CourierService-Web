@@ -1957,18 +1957,69 @@ namespace CourierService_Web.Controllers
             {
                 return NotFound();
             }
+
             var district = _context.District.Find(id);
             if (district == null)
             {
                 return NotFound();
             }
+
+            // Fetch all zones related to the district
             var zonesToRemove = _context.Zone.Where(z => z.DistrictId == id).ToList();
+
+            foreach (var zone in zonesToRemove)
+            {
+                // Fetch all parcels related to the current zone
+                var parcelsToRemove = _context.Parcels.Where(p => p.ZoneId == zone.Id).ToList();
+
+                // Update parcels to remove references to the zone and district
+                foreach (var parcel in parcelsToRemove)
+                {
+                    parcel.ZoneId = null; // Or update to a default zone if needed
+                }
+
+                // Remove the related areas
+                var areasToRemove = _context.Areas.Where(a => a.ZoneId == zone.Id).ToList();
+                _context.Areas.RemoveRange(areasToRemove);
+            }
+
+            // Remove zones after handling related entities
             _context.Zone.RemoveRange(zonesToRemove);
-            _context.District.Remove(district);
+
+            // Remove areas related to the district
+            var areasInDistrict = _context.Areas.Where(a => a.DistrictId == id).ToList();
+            _context.Areas.RemoveRange(areasInDistrict);
+
+            // Remove stores related to the district
+            var storesInDistrict = _context.Stores.Where(s => s.DistrictId == id).ToList();
+            _context.Stores.RemoveRange(storesInDistrict);
+
+            // Remove hubs related to the district
+            var hubsInDistrict = _context.Hubs.Where(h => h.DistrictId == id).ToList();
+            _context.Hubs.RemoveRange(hubsInDistrict);
+
+            // Save changes to the database
             _context.SaveChanges();
-            TempData["error"] = "District Deleted Successfully";
+
+            // Remove the district
+            _context.District.Remove(district);
+
+            // Save changes to the database
+            _context.SaveChanges();
+
+            TempData["error"] = "District and related entities deleted successfully";
             return RedirectToAction("District");
         }
+
+
+
+
+
+
+
+
+
+
 
         //zone
         public IActionResult Zone()

@@ -23,35 +23,30 @@
 
                             <div class="form-group">
                                 <label for="DistrictId">Select District<span class="text-danger">*</span></label>
-                                <select name="DistrictId" class="form-control">
+                                <select name="DistrictId" id="districtId" class="form-control">
+                                    <option value="" selected>Select District</option>
                                     @foreach (var district in ViewBag.Districts)
                                     {
                                         <option value="@district.Id">@district.Name</option>
                                     }
                                 </select>
                             </div>
-                            <br />
 
                             <div class="form-group">
                                 <label for="ZoneId">Select Zone<span class="text-danger">*</span></label>
-                                <select name="ZoneId" class="form-control">
-                                    @foreach (var zone in ViewBag.Zones)
-                                    {
-                                        <option value="@zone.Id">@zone.Name</option>
-                                    }
+                                <select name="ZoneId" id="zoneId" class="form-control">
+                                    <option value="">Select Zone</option>
                                 </select>
                             </div>
 
                             <div class="form-group">
-                                <label asp-for="HubId" for="HubId">Hub</label>
-                                <select asp-for="HubId" class="form-control">
-                                    @foreach (var hub in ViewBag.Hubs)
-                                    {
-                                        <option value="@hub.Id">@hub.Name</option>
-                                    }
+                                <label for="HubId">Hub</label>
+                                <select name="HubId" id="hubId" class="form-control">
+                                    <option value="">Select Hub</option>
                                 </select>
-                                <span asp-validation-for="HubId" class="text-danger"></span>
+                                <span id="hubIdValidation" class="text-danger"></span>
                             </div>
+
 
                             
 
@@ -77,36 +72,32 @@
                             
 
                             <div class="form-group">
-                                <label for="DistrictId">Select District<span class="text-danger">*</span></label>
-                                <select name="DistrictId" class="form-control">
+                                <label for="DistrictIdBulk">Select District<span class="text-danger">*</span></label>
+                                <select name="DistrictId" id="districtIdBulk" class="form-control">
+                                    <option value="" selected>Select District</option>
                                     @foreach (var district in ViewBag.Districts)
                                     {
                                         <option value="@district.Id">@district.Name</option>
                                     }
                                 </select>
                             </div>
-                            <br />
 
                             <div class="form-group">
-                                <label for="ZoneId">Select Zone<span class="text-danger">*</span></label>
-                                <select name="ZoneId" class="form-control">
-                                    @foreach (var zone in ViewBag.Zones)
-                                    {
-                                        <option value="@zone.Id">@zone.Name</option>
-                                    }
+                                <label for="ZoneIdBulk">Select Zone<span class="text-danger">*</span></label>
+                                <select name="ZoneId" id="zoneIdBulk" class="form-control">
+                                    <option value="">Select Zone</option>
                                 </select>
                             </div>
 
+
                             <div class="form-group">
-                                <label asp-for="HubId" for="HubId">Hub</label>
-                                <select asp-for="HubId" class="form-control">
-                                    @foreach (var hub in ViewBag.Hubs)
-                                    {
-                                        <option value="@hub.Id">@hub.Name</option>
-                                    }
+                                <label for="HubId">Hub</label>
+                                <select name="HubId" id="hubIdBulk" class="form-control">
+                                    <option value="">Select Hub</option>
                                 </select>
-                                <span asp-validation-for="HubId" class="text-danger"></span>
+                                <span id="hubIdBulkValidation" class="text-danger"></span>
                             </div>
+
 
                             <div class="form-group">
                                 <label for="CsvFile">Upload CSV File<span class="text-danger">*</span></label>
@@ -136,7 +127,118 @@
 </div>
 
 @section Scripts {
-    @* @{
-        <partial name="_ValidationScriptsPartial" />
-    } *@
+    <script>
+        $(document).ready(function () {
+            $('#districtId').change(function () {
+                var districtId = $(this).val();
+                if (districtId) {
+                    $.ajax({
+                        url: '@Url.Action("GetZonesByDistrict", "Merchant")',
+                        type: 'GET',
+                        data: { districtId: districtId },
+                        success: function (data) {
+                            $('#zoneId').empty().append('<option value="">Select Zone</option>');
+                            $.each(data, function (index, zone) {
+                                $('#zoneId').append($('<option>', {
+                                    value: zone.id, // Ensure that zone.id is correct
+                                    text: zone.name
+                                }));
+                            });
+                        }
+                    });
+
+                    // Fetch hubs based on the selected district
+                    $.ajax({
+                        url: '@Url.Action("GetHubsByDistrict", "Merchant")',
+                        type: 'GET',
+                        data: { districtId: districtId },
+                        success: function (data) {
+                            $('#hubId').empty().append('<option value="">Select Hub</option>');
+                            $.each(data, function (index, hub) {
+                                $('#hubId').append($('<option>', {
+                                    value: hub.id, // Ensure that hub.id is correct
+                                    text: hub.name
+                                }));
+                            });
+                        }
+                    });
+                } else {
+                    $('#zoneId').empty().append('<option value="">Select Zone</option>');
+                    $('#areaId').empty().append('<option value="">Select Area</option>');
+                    $('#hubId').empty().append('<option value="">Select Hub</option>');
+                }
+            });
+
+            $('#zoneId').change(function () {
+                var zoneId = $(this).val();
+                if (zoneId) {
+                    $.ajax({
+                        url: '@Url.Action("GetAreasByZone", "Merchant")',
+                        type: 'GET',
+                        data: { zoneId: zoneId },
+                        success: function (data) {
+                            $('#areaId').empty().append('<option value="">Select Area</option>');
+                            $.each(data, function (index, area) {
+                                $('#areaId').append($('<option>', {
+                                    value: area.id, // Ensure that area.id is correct
+                                    text: area.name
+                                }));
+                            });
+                        }
+                    });
+                } else {
+                    $('#areaId').empty().append('<option value="">Select Area</option>');
+                }
+            });
+        });
+    </script>
+
+
+    <script>
+        $(document).ready(function () {
+            $('#districtIdBulk').change(function () {
+                var districtId = $(this).val();
+                if (districtId) {
+                    // Fetch zones based on the selected district
+                    $.ajax({
+                        url: '@Url.Action("GetZonesByDistrict", "Merchant")',
+                        type: 'GET',
+                        data: { districtId: districtId },
+                        success: function (data) {
+                            $('#zoneIdBulk').empty().append('<option value="">Select Zone</option>');
+                            $.each(data, function (index, zone) {
+                                $('#zoneIdBulk').append($('<option>', {
+                                    value: zone.id, // Ensure that zone.id is correct
+                                    text: zone.name
+                                }));
+                            });
+                        }
+                    });
+
+                    // Fetch hubs based on the selected district
+                    $.ajax({
+                        url: '@Url.Action("GetHubsByDistrict", "Merchant")',
+                        type: 'GET',
+                        data: { districtId: districtId },
+                        success: function (data) {
+                            $('#hubIdBulk').empty().append('<option value="">Select Hub</option>');
+                            $.each(data, function (index, hub) {
+                                $('#hubIdBulk').append($('<option>', {
+                                    value: hub.id, // Ensure that hub.id is correct
+                                    text: hub.name
+                                }));
+                            });
+                        }
+                    });
+                } else {
+                    $('#zoneIdBulk').empty().append('<option value="">Select Zone</option>');
+                    $('#hubIdBulk').empty().append('<option value="">Select Hub</option>');
+                }
+            });
+        });
+    </script>
+
+
+
+
 }

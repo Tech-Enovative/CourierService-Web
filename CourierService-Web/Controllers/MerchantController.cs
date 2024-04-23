@@ -564,6 +564,14 @@ namespace CourierService_Web.Controllers
             return Json(areas);
         }
 
+        //GetHubsByDistrict
+        [HttpGet]
+        public IActionResult GetHubsByDistrict(string districtId)
+        {
+            var hubs = _context.Hubs.Where(h => h.DistrictId == districtId).ToList();
+            return Json(hubs);
+        }
+
         [HttpGet]
         public IActionResult GetParcelDeliveryCounts(string receiverContactNumber)
         {
@@ -724,7 +732,19 @@ namespace CourierService_Web.Controllers
         {
             // CSV content with headers and sample data
             var csvContent = "Store,ReceiverName,ReceiverAddress,ReceiverContactNumber,District,Zone,Area,ProductName,ProductWeight,ProductPrice,ProductQuantity\n";
+            //show dropdown list of stores of the merchant which can be selected
+            var merchantId = HttpContext.Request.Cookies["MerchantId"];
+            var stores = _context.Stores.Where(x => x.MerchantId == merchantId).ToList();
+            foreach (var store in stores)
+            {
+                csvContent += $"{store.Name},John Doe,123 Main St,1234567890,Dhaka,Mirpur,Mirpur,Example Product,2,100,1\n";
+            }
+
             csvContent += "NewStore,John Doe,123 Main St,1234567890,Dhaka,Mirpur,Mirpur,Example Product,2,100,1\n";
+
+           
+
+
             
 
             // Create a byte array from the CSV content

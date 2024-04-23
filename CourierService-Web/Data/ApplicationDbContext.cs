@@ -271,31 +271,12 @@ namespace CourierService_Web.Data
                 .WithOne(ac => ac.AccessGroup)
                 .HasForeignKey(ac => ac.AccessGroupId);
 
-           
 
-            modelBuilder.Entity<Area>()
-         .HasOne(a => a.Hub)
-         .WithMany(h => h.Areas)
-         .HasForeignKey(a => a.HubId)
-         .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Area>()
-                .HasOne(a => a.District)
-                .WithMany(d => d.Areas)
-                .HasForeignKey(a => a.DistrictId)
-                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Zone>()
-                .HasOne(d => d.District)
-                .WithMany(z => z.Zones)
-                .HasForeignKey(d => d.DistrictId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Zone>()
-                .HasMany(z => z.Areas)
-                .WithOne(a => a.Zone)
-                .HasForeignKey(a => a.ZoneId)
-                .OnDelete(DeleteBehavior.Restrict);
+        .HasMany(z => z.Areas)
+        .WithOne(a => a.Zone)
+        .OnDelete(DeleteBehavior.Cascade);
 
 
             //seed district data
