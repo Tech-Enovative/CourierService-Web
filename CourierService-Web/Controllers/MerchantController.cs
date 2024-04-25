@@ -10,6 +10,7 @@ using System.Formats.Asn1;
 using CsvHelper;
 using System.Linq;
 using Hangfire;
+using OfficeOpenXml;
 
 namespace CourierService_Web.Controllers
 {
@@ -732,27 +733,82 @@ namespace CourierService_Web.Controllers
         {
             // CSV content with headers and sample data
             var csvContent = "Store,ReceiverName,ReceiverAddress,ReceiverContactNumber,District,Zone,Area,ProductName,ProductWeight,ProductPrice,ProductQuantity\n";
-            //show dropdown list of stores of the merchant which can be selected
-            var merchantId = HttpContext.Request.Cookies["MerchantId"];
-            var stores = _context.Stores.Where(x => x.MerchantId == merchantId).ToList();
-            foreach (var store in stores)
-            {
-                csvContent += $"{store.Name},John Doe,123 Main St,1234567890,Dhaka,Mirpur,Mirpur,Example Product,2,100,1\n";
-            }
-
             csvContent += "NewStore,John Doe,123 Main St,1234567890,Dhaka,Mirpur,Mirpur,Example Product,2,100,1\n";
-
-           
-
-
-            
-
             // Create a byte array from the CSV content
             var bytes = Encoding.UTF8.GetBytes(csvContent);
 
             // Return the CSV file as a downloadable file
             return File(bytes, "text/csv", "parcel_template.csv");
         }
+
+        //public IActionResult DownloadTemplate()
+        //{
+        //    using (var package = new ExcelPackage())
+        //    {
+        //        var worksheet = package.Workbook.Worksheets.Add("Parcels");
+
+        //        // Set headers
+        //        worksheet.Cells["A1"].Value = "Store";
+        //        worksheet.Cells["B1"].Value = "ReceiverName";
+        //        worksheet.Cells["C1"].Value = "ReceiverAddress";
+        //        worksheet.Cells["D1"].Value = "ReceiverContactNumber";
+        //        worksheet.Cells["E1"].Value = "District"; // Dropdown list will be set for this column
+        //        worksheet.Cells["F1"].Value = "Zone"; // Dropdown list will be set for this column
+        //        worksheet.Cells["G1"].Value = "Area"; // Dropdown list will be set for this column
+        //        worksheet.Cells["H1"].Value = "ProductName";
+        //        worksheet.Cells["I1"].Value = "ProductWeight";
+        //        worksheet.Cells["J1"].Value = "ProductPrice";
+        //        worksheet.Cells["K1"].Value = "ProductQuantity";
+
+        //        // Fetch district and zone data from the database
+        //        var districts = _context.District.ToList();
+        //        var zones = _context.Zone.ToList();
+
+        //        // Define data validation ranges
+        //        var districtRange = worksheet.DataValidations.AddListValidation("E2:E1048576"); // Apply to entire District column
+        //        var zoneRange = worksheet.DataValidations.AddListValidation("F2:F1048576"); // Apply to entire Zone column
+
+        //        // Populate district dropdown
+        //        foreach (var district in districts)
+        //        {
+        //            districtRange.Formula.Values.Add(district.Name);
+        //        }
+
+        //        // Define event handler for when a district is selected
+        //        districtRange.Formula.ExcelFormula = "IF(E2=\"\", \"\", INDIRECT(TEXTJOIN(\"\", TRUE, \"'\", E2, \"'!$A$2:$A$\", COUNTIF(E2:E1048576, E2))))";
+
+        //        // Populate zone dropdown
+        //        foreach (var zone in zones)
+        //        {
+        //            zoneRange.Formula.Values.Add(zone.Name);
+        //        }
+
+        //        // Define event handler for when a zone is selected
+        //        zoneRange.Formula.ExcelFormula = "IF(F2=\"\", \"\", INDIRECT(TEXTJOIN(\"\", TRUE, \"'\", F2, \"'!$A$2:$A$\", COUNTIF(F2:F1048576, F2))))";
+
+        //        // Sample data
+        //        worksheet.Cells["A2"].Value = "NewStore";
+        //        worksheet.Cells["B2"].Value = "John Doe";
+        //        worksheet.Cells["C2"].Value = "123 Main St";
+        //        worksheet.Cells["D2"].Value = "1234567890";
+        //        worksheet.Cells["H2"].Value = "Example Product";
+        //        worksheet.Cells["I2"].Value = 2;
+        //        worksheet.Cells["J2"].Value = 100;
+        //        worksheet.Cells["K2"].Value = 1;
+
+        //        // Convert the Excel package to a byte array
+        //        var bytes = package.GetAsByteArray();
+
+        //        // Return the Excel file as a downloadable file
+        //        return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "parcel_template.xlsx");
+        //    }
+        //}
+
+
+
+
+
+
 
 
 
@@ -1010,6 +1066,25 @@ namespace CourierService_Web.Controllers
             var deliveryType = "";
             // Calculate delivery charge (assuming a default delivery type of "InsideDhaka")
             var deliveryCharge = CalculateDeliveryCharge(parcel.ProductWeight, "InsideDhaka");
+
+                    //check store name is valid or not
+                    if (_context.Stores.FirstOrDefault(x => x.Name == parcel.Store) == null)
+                    {
+                        TempData["Error"] = "Store name is not valid";
+                        return RedirectToAction("AddBulkParcels");
+                    }
+                    //check district, zone and area name is valid or not
+                    if (_context.District.FirstOrDefault(x => x.Name == parcel.District) == null)
+                    {
+                        TempData["Error"] = "District name is not valid";
+                        return RedirectToAction("AddBulkParcels");
+                    }
+                    //if zone and area name is not found in the database
+                    if (_context.Zone.FirstOrDefault(x => x.Name == parcel.Zone) == null || _context.Areas.FirstOrDefault(x => x.Name == parcel.Area) == null)
+                    {
+                        TempData["Error"] = "Zone or Area name is not valid";
+                        return RedirectToAction("AddBulkParcels");
+                    }
             if (parcel.District != "Dhaka")
             {
                 deliveryCharge = CalculateDeliveryCharge(parcel.ProductWeight, "OutsideDhaka");
