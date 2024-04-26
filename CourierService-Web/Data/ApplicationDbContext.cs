@@ -47,6 +47,10 @@ namespace CourierService_Web.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
+            {
+                relationship.DeleteBehavior = DeleteBehavior.Restrict;
+            }
 
 
             //relationship between parcel and delivered parcel
@@ -277,6 +281,9 @@ namespace CourierService_Web.Data
         .HasMany(z => z.Areas)
         .WithOne(a => a.Zone)
         .OnDelete(DeleteBehavior.Cascade);
+
+            
+
 
 
             //seed district data

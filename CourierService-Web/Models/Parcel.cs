@@ -94,7 +94,8 @@ namespace CourierService_Web.Models
 
         [ForeignKey("HubId")]
         public string? HubId { get; set; }
-
+        
+        public string? DestinationHubId { get; set; }
         public Hub? Hub { get; set; }
 
         [ForeignKey("ReturnId")]
@@ -139,7 +140,5 @@ namespace CourierService_Web.Models
         public Area? Area { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
-
-
     }
 }

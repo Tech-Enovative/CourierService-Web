@@ -627,6 +627,10 @@ namespace CourierService_Web.Controllers
 
             parcel.PickupRequestDate = DateTime.Now;
 
+            //find destination hub id and set
+            var destinationHub = _context.Hubs.Find(parcel.DestinationHubId);
+            parcel.DestinationHubId = destinationHub.Id;
+
 
             if (!ModelState.IsValid)
             {
@@ -673,6 +677,8 @@ namespace CourierService_Web.Controllers
             ViewBag.Districts = _context.District.ToList();
             ViewBag.Zones = _context.Zone.ToList();
             ViewBag.Area = _context.Areas.ToList();
+            //destination hub
+            ViewBag.DestinationHubs = _context.Hubs.ToList();
 
             //find stores of the merchant
             ViewBag.Stores = _context.Stores.Where(x => x.MerchantId == merchantId).ToList();
@@ -713,9 +719,13 @@ namespace CourierService_Web.Controllers
             var district = _context.District.Find(parcel.DistrictId);
             parcel.DistrictId = district.Id;
 
+            //destination hub
+            var destinationHub = _context.Hubs.Find(parcel.DestinationHubId);
+            parcel.DestinationHubId = destinationHub?.Id;
+
             parcel.UpdatedAt = DateTime.Now;
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return RedirectToAction("EditParcel", new { id = parcel.Id });
             }
@@ -732,8 +742,8 @@ namespace CourierService_Web.Controllers
         public IActionResult DownloadTemplate()
         {
             // CSV content with headers and sample data
-            var csvContent = "Store,ReceiverName,ReceiverAddress,ReceiverContactNumber,District,Zone,Area,ProductName,ProductWeight,ProductPrice,ProductQuantity\n";
-            csvContent += "NewStore,John Doe,123 Main St,1234567890,Dhaka,Mirpur,Mirpur,Example Product,2,100,1\n";
+            var csvContent = "Store,ReceiverName,ReceiverAddress,ReceiverContactNumber,District,Zone,Area,ProductName,ProductWeight,ProductPrice,ProductQuantity,Hub\n";
+            csvContent += "NewStore,John Doe,123 Main St,1234567890,Dhaka,Mirpur,Mirpur,Example Product,2,100,1,Mirpur\n";
             // Create a byte array from the CSV content
             var bytes = Encoding.UTF8.GetBytes(csvContent);
 
@@ -1056,16 +1066,18 @@ namespace CourierService_Web.Controllers
                 ProductName = values[7],
                 ProductWeight = decimal.Parse(values[8]),
                 ProductPrice = int.Parse(values[9]),
-                ProductQuantity = string.IsNullOrEmpty(values[10]) ? null : (int?)int.Parse(values[10])
+                ProductQuantity = string.IsNullOrEmpty(values[10]) ? null : (int?)int.Parse(values[10]),
+                Hub = values[11]
+                
             });
         }
 
         // Save parcels to the database asynchronously
         foreach (var parcel in parcels)
         {
-            var deliveryType = "";
-            // Calculate delivery charge (assuming a default delivery type of "InsideDhaka")
-            var deliveryCharge = CalculateDeliveryCharge(parcel.ProductWeight, "InsideDhaka");
+                    var deliveryType = "InsideDhaka";
+                    // Calculate delivery charge (assuming a default delivery type of "InsideDhaka")
+                    var deliveryCharge = CalculateDeliveryCharge(parcel.ProductWeight, "InsideDhaka");
 
                     //check store name is valid or not
                     if (_context.Stores.FirstOrDefault(x => x.Name == parcel.Store) == null)
@@ -1093,9 +1105,17 @@ namespace CourierService_Web.Controllers
                         TempData["Error"] = $"{parcel.Area} Is Not Valid Area Name";
                         return RedirectToAction("AddBulkParcels");
                     }
+
+                    //check hub name is not valid or not
+                    if (_context.Hubs.FirstOrDefault(x => x.Name == parcel.Hub) == null)
+                    {
+                        TempData["Error"] = $"{parcel.Hub} Is Not Valid Hub Name";
+                        return RedirectToAction("AddBulkParcels");
+                    }
                     
             if (parcel.District != "Dhaka")
             {
+                       
                 deliveryCharge = CalculateDeliveryCharge(parcel.ProductWeight, "OutsideDhaka");
                 deliveryType = "OutsideDhaka";
             }
@@ -1109,6 +1129,10 @@ namespace CourierService_Web.Controllers
             // Find hub according to store id
             var store = await _context.Stores.FirstOrDefaultAsync(x => x.Name == parcel.Store);
             var hubId = store.HubId;
+
+            //find hub id according to hub name
+            var hub = await _context.Hubs.FirstOrDefaultAsync(x => x.Name == parcel.Hub);
+            var destinationHubId = hub.Id;
 
             // Add parcel to the database asynchronously
             _context.Parcels.Add(new Parcel
@@ -1130,7 +1154,8 @@ namespace CourierService_Web.Controllers
                 COD = (int)codCharge,
                 TotalPrice = (int)totalPrice,
                 PickupRequestDate = DateTime.Now,
-                HubId = hubId
+                HubId = hubId,
+                DestinationHubId = destinationHubId,
             });
         }
 
@@ -1228,6 +1253,14 @@ namespace CourierService_Web.Controllers
 
 
             var parcels = parcelsQuery.ToList();
+
+            //find destination hub name
+            foreach (var parcel in parcels)
+            {
+                ViewBag.Destination = _context.Hubs.Find(parcel.DestinationHubId);
+            }
+
+
 
             // Pass selected date range to the ViewBag
             ViewBag.StartDate = startDate ?? DateTime.Today;

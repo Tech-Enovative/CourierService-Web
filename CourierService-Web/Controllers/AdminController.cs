@@ -2203,6 +2203,14 @@ namespace CourierService_Web.Controllers
             }
         }
 
+        //GetHubsByDistrict
+        [HttpGet]
+        public IActionResult GetHubsByDistrict(string districtId)
+        {
+            var hubs = _context.Hubs.Where(h => h.DistrictId == districtId).ToList();
+            return Json(hubs);
+        }
+
 
 
         public IActionResult DownloadAreaCsv()

@@ -120,6 +120,13 @@
                                 </select>
                             </div>
 
+                            <div class="form-group">
+                                <label asp-for="DestinationHubId">Hub</label>
+                                <select asp-for="DestinationHubId" name="DestinationHubId" id="hubId" class="form-control">
+                                    <option value="">Select Hub</option>
+                                </select>
+
+                            </div>
 
 
 
@@ -481,7 +488,7 @@
     </script>
 
     
-<script>
+    <script>
         $(document).ready(function () {
             $('#districtId').change(function () {
                 var districtId = $(this).val();
@@ -523,12 +530,36 @@
                             });
                         }
                     });
-                } else {
+                }
+                else {
                     $('#areaId').empty().append('<option value="">Select Area</option>');
                 }
             });
+
+            //get hubs by district
+            $('#districtId').change(function () {
+                var districtId = $(this).val();
+                if (districtId) {
+                    $.ajax({
+                        url: '@Url.Action("GetHubsByDistrict", "Merchant")',
+                        type: 'GET',
+                        data: { districtId: districtId },
+                        success: function (data) {
+                            $('#hubId').empty().append('<option value="">Select Hub</option>');
+                            $.each(data, function (index, hub) {
+                                $('#hubId').append($('<option>', {
+                                    value: hub.id, // Ensure that hub.id is correct
+                                    text: hub.name
+                                }));
+                            });
+                        }
+                    });
+                } else {
+                    $('#hubId').empty().append('<option value="">Select Hub</option>');
+                }
+            });
         });
-</script>
+    </script>
 
 
 }
