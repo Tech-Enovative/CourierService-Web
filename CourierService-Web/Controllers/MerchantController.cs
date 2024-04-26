@@ -1070,21 +1070,30 @@ namespace CourierService_Web.Controllers
                     //check store name is valid or not
                     if (_context.Stores.FirstOrDefault(x => x.Name == parcel.Store) == null)
                     {
-                        TempData["Error"] = "Store name is not valid";
+                        TempData["Error"] = $"{parcel.Store} Is Not Valid Store Name";
                         return RedirectToAction("AddBulkParcels");
                     }
                     //check district, zone and area name is valid or not
                     if (_context.District.FirstOrDefault(x => x.Name == parcel.District) == null)
                     {
-                        TempData["Error"] = "District name is not valid";
+                        TempData["Error"] = $"{parcel.District} Is Not Valid District Name";
                         return RedirectToAction("AddBulkParcels");
                     }
-                    //if zone and area name is not found in the database
-                    if (_context.Zone.FirstOrDefault(x => x.Name == parcel.Zone) == null || _context.Areas.FirstOrDefault(x => x.Name == parcel.Area) == null)
+
+                    //check zone name is not valid or not
+                    if (_context.Zone.FirstOrDefault(x => x.Name == parcel.Zone) == null)
                     {
-                        TempData["Error"] = "Zone or Area name is not valid";
+                        TempData["Error"] = $"{parcel.Zone} Is Not Valid Zone Name";
                         return RedirectToAction("AddBulkParcels");
                     }
+
+                    //check area name is not valid or not
+                    if (_context.Areas.FirstOrDefault(x => x.Name == parcel.Area) == null)
+                    {
+                        TempData["Error"] = $"{parcel.Area} Is Not Valid Area Name";
+                        return RedirectToAction("AddBulkParcels");
+                    }
+                    
             if (parcel.District != "Dhaka")
             {
                 deliveryCharge = CalculateDeliveryCharge(parcel.ProductWeight, "OutsideDhaka");
