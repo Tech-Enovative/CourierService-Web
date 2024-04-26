@@ -2131,7 +2131,7 @@ namespace CourierService_Web.Controllers
             var name = _context.Areas.FirstOrDefault(a => a.Name == area.Name);
             if (name != null)
             {
-                TempData["error"] = "Area Name Already Exists";
+                TempData["error"] = $"{area.Name} Is Already Exists";
                 return View(area);
             }
             if (ModelState.IsValid)
@@ -2173,7 +2173,7 @@ namespace CourierService_Web.Controllers
                         var name = _context.Areas.FirstOrDefault(a => a.Name == values[0]);
                         if (name != null)
                         {
-                            TempData["error"] = "Area Name Already Exists";
+                            TempData["error"] = $"{name} Is Already Exists";
                             return RedirectToAction("CreateArea");
                         }
 
