@@ -9,6 +9,17 @@
 
 <div class="content-page">
     <div class="content">
+        <style>
+            /* Make all <i> tags black */
+            i {
+                text-decoration: none !important;
+                color: black;
+            }
+
+            /* Remove text decoration from all <i> tags */
+            i {
+            }
+        </style>
 
         <!-- Start Content-->
         <div class="container-fluid">
@@ -32,35 +43,90 @@
 
             <div class="row justify-content-center">
                 <div class="col-md-6 col-xl-3">
-                    <div class="card-box tilebox-one bg-warning d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Pending Pickup Requests</h6>
-                            <h3 class="my-3" data-plugin="counterup">@ViewBag.TotalPickupRequest</h3>
+                    <a href="@Url.Action("Parcels", "Merchant")">
+                        <div class="card-box tilebox-one bg-warning d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="text-black font-weight-bold text-uppercase mt-0">Pending Pickup Requests</h6>
+                                <h3 class="my-3" data-plugin="counterup">@ViewBag.TotalPickupRequest</h3>
+                            </div>
+                            <i class="fas fa-truck-loading fa-3x text-black"></i>
                         </div>
-                        <i class="fas fa-truck-loading fa-3x text-black"></i>
-                    </div>
+                    </a>
                 </div>
 
                 <div class="col-md-6 col-xl-3">
-                    <div class="card-box tilebox-one bg-success d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="text-black font-weight-bold text-uppercase mt-0">In Hub</h6>
-                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.ParcelInHub</span></h3>
+                    <a href="@Url.Action("Parcels", "Merchant")">
+                        <div class="card-box tilebox-one bg-success d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="text-black font-weight-bold text-uppercase mt-0">In Hub</h6>
+                                <h3 class="my-3"><span data-plugin="counterup">@ViewBag.ParcelInHub</span></h3>
+                            </div>
+                            <i class="fas fa-warehouse fa-3x text-black"></i>
                         </div>
-                        <i class="fas fa-warehouse fa-3x text-black"></i>
-
-                    </div>
+                    </a>
                 </div>
 
                 <div class="col-md-6 col-xl-3">
-                    <div class="card-box tilebox-one bg-primary d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Delivered Today</h6>
-                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TodayDelivered</span></h3>
+                    <a href="@Url.Action("Parcels", "Merchant")">
+                        <div class="card-box tilebox-one bg-primary d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="text-black font-weight-bold text-uppercase mt-0">Delivered Today</h6>
+                                <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TodayDelivered</span></h3>
+                            </div>
+                            <i class="fas fa-check-circle fa-3x text-black"></i>
                         </div>
-                        <i class="fas fa-check-circle fa-3x text-black"></i>
-                    </div>
+                    </a>
                 </div>
+
+                <div class="col-md-6 col-xl-3">
+                    <a href="@Url.Action("Parcels", "Merchant")">
+                        <div class="card-box tilebox-one bg-success d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="text-black font-weight-bold text-uppercase mt-0">Total Delivered</h6>
+                                <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TotalDelivered</span></h3>
+                            </div>
+                            <i class="fas fa-truck fa-3x text-black"></i>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-6 col-xl-3">
+                    <a href="@Url.Action("Parcels", "Merchant")">
+                        <div class="card-box tilebox-one bg-red d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="text-black font-weight-bold text-uppercase mt-0">Parcel On The Way</h6>
+                                <h3 class="my-3"><span data-plugin="counterup">@ViewBag.ParcelOnTheWay</span></h3>
+                            </div>
+                            <i class="fas fa-shipping-fast fa-3x text-black"></i>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-6 col-xl-3">
+                    <a href="@Url.Action("Parcels", "Merchant")">
+                        <div class="card-box tilebox-one bg-warning d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="text-black font-weight-bold text-uppercase mt-0">Total Returned</h6>
+                                <h3 class="my-3" data-plugin="counterup">@ViewBag.ReturnParcelCount</h3>
+                            </div>
+                            <i class="fas fa-arrow-circle-left fa-3x text-black"></i>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-6 col-xl-3">
+                    <a href="@Url.Action("Parcels", "Merchant")">
+                        <div class="card-box tilebox-one bg-success d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="text-black font-weight-bold text-uppercase mt-0">Parcel Count</h6>
+                                <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TotalParcel</span></h3>
+                            </div>
+                            <i class="fas fa-box fa-3x text-black"></i>
+                        </div>
+                    </a>
+                </div>
+
+                
             </div>
 
 
@@ -69,108 +135,48 @@
             
 
             <div class="row justify-content-center">
-                
-                
 
-                <div class="col-md-6 col-xl-3">
-                    <div class="card-box tilebox-one bg-success d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Total Delivered</h6>
-                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TotalDelivered</span></h3>
-                        </div>
-                        <i class="fas fa-truck fa-3x text-black"></i>
+
+                <div class="card mx-auto" style="max-width: 400px;">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Today's Accounts</h5>
+                        <table class="table">
+                            <tbody>
+
+                                <tr>
+                                    <th scope="row">Total Amount</th>
+                                    <td>@ViewBag.TotalPriceSum BDT</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Amount Received</th>
+                                    <td>@ViewBag.AmountPaid BDT</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Amount Due</th>
+                                    <td>@ViewBag.DueAmount BDT</td>
+                                </tr>
+
+                                @* <tr>
+                                <th scope="row">Now Payable</th>
+                                <td>@ViewBag.TodayPayment BDT</td>
+                                </tr> *@
+                            </tbody>
+                        </table>
                     </div>
-
                 </div>
+                   
 
-                <div class="col-md-6 col-xl-3">
-                    <div class="card-box tilebox-one bg-red d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Parcel On The Way</h6>
-                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.ParcelOnTheWay</span></h3>
-                        </div>
-                        <i class="fas fa-shipping-fast fa-3x text-black"></i>
-
-                    </div>
-
-                </div>
 
 
             </div>
             <!-- end row -->
 
             <div class="row justify-content-center">
-                <div class="col-md-6 col-xl-3">
-
-                    <div class="card-box tilebox-one bg-warning d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Total Returned</h6>
-                            <h3 class="my-3" data-plugin="counterup">@ViewBag.ReturnParcelCount</h3>
-                        </div>
-                        <i class="fas fa-arrow-circle-left fa-3x text-black"></i>
-                    </div>
-
-                    
-                    
-                </div>
-
-                <div class="col-md-6 col-xl-3">
-
-                    <div class="card-box tilebox-one bg-success d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Parcel Count</h6>
-                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TotalParcel</span></h3>
-                        </div>
-                        <i class="fas fa-box fa-3x text-black"></i>
-                    </div>
 
 
-
-                    
-                </div>
-                @* <div class="col-md-6 col-xl-3">
-
-                    <div class="card-box tilebox-one bg-info d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="text-black font-weight-bold text-uppercase mt-0">Parcel Exchange</h6>
-                            <h3 class="my-3"><span data-plugin="counterup">@ViewBag.TotalExchanged</span></h3>
-                        </div>
-                        <i class="fas fa-exchange-alt fa-3x text-black"></i>
-                    </div>
-
-
-
-
-
-                </div> *@
+                   
             </div>
-            <div class="card mx-auto" style="max-width: 400px;">
-                <div class="card-body">
-                    <h5 class="card-title text-center">Today's Accounts</h5>
-                    <table class="table">
-                        <tbody>
-                           
-                            <tr>
-                                <th scope="row">Total Amount</th>
-                                <td>@ViewBag.TotalPriceSum BDT</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Amount Received</th>
-                                <td>@ViewBag.AmountPaid BDT</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Amount Due</th>
-                                <td>@ViewBag.DueAmount BDT</td>
-                            </tr>
-                            
-                            @* <tr>
-                                <th scope="row">Now Payable</th>
-                                <td>@ViewBag.TodayPayment BDT</td>
-                            </tr> *@
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            
 
 
             <!-- end row -->

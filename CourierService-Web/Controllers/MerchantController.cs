@@ -1216,6 +1216,31 @@ namespace CourierService_Web.Controllers
             return RedirectToAction("Index", "Merchant");
         }
 
+        //View all parcels for last 90 days
+        public IActionResult ViewParcel()
+        {
+            if (!IsMerchantLoggedIn())
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            var merchantId = HttpContext.Request.Cookies["MerchantId"];
+            //show all parcels of last 90 days from today
+            var parcels = _context.Parcels
+                .Where(x => x.MerchantId == merchantId && x.PickupRequestDate >= DateTime.Today.AddDays(-90))
+                .Include(u => u.Rider)
+                .Include(h => h.Hub)
+                .ToList();
+
+            //find destination hub name
+            foreach (var parcel in parcels)
+            {
+                ViewBag.Destination = _context.Hubs.Find(parcel.DestinationHubId);
+            }
+
+            return View(parcels);
+        }
+
         public IActionResult Parcels(DateTime? startDate, DateTime? endDate)
         {
             if (!IsMerchantLoggedIn())

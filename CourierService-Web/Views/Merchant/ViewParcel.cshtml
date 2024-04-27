@@ -1,0 +1,644 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@{
+    ViewData["Title"] = "Parcels";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+
+}
+@model IEnumerable<Parcel>
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row justify-content-center">
+                @* @using (Html.BeginForm("Parcels", "Merchant", FormMethod.Get))
+                {
+                    <div class="form-row justify-content-center">
+                        <!-- Date range selector -->
+                        <div class="form-group col-md-5 mt-2">
+                            <label for="startDate">Start Date:</label>
+                            <input type="date" id="startDate" name="startDate" class="form-control form-control-sm" />
+                        </div>
+                        <div class="form-group col-md-5 mt-2">
+                            <label for="endDate">End Date:</label>
+                            <input type="date" id="endDate" name="endDate" class="form-control form-control-sm" />
+                        </div>
+                        <div class="form-group col-md-2 mt-4">
+                            <button type="submit" class="btn btn-success btn-md">Filter</button>
+                        </div>
+                    </div>
+                } *@
+
+                <div class="col-lg-12">
+                    <div class="col-lg-3">
+                        <label for="statusFilter">Parcel Status:</label>
+                        <select id="statusFilter" class="form-control">
+                            <option value="">All</option>
+                            <option value="Pending">Pending</option>
+                            <option value="At The Sorting Hub">At Sorting Hub</option>
+                            <option value="Assigned A Delivery Rider">Assigned For Delivery</option>
+                            <option value="Received At Last Mile Hub">Last Mile Hub</option>
+                            <option value="Parcel On The Way">On The Way</option>
+
+                            <!-- Add more options as needed -->
+                        </select>
+                    </div>
+                    <div class="d-flex justify-content-end mb-2">
+                        <a href="@Url.Action("DownloadCsv", "Merchant", new { startDate = ViewBag.StartDate, endDate = ViewBag.EndDate })" class="btn btn-info btn-md">
+                            <i class="fas fa-download mr-1"></i>
+                            Download CSV
+                        </a>
+                    </div>
+                    <div class="card-box">
+                        <h4 class="header-title text-primary">Total Parcel : @Model.Count()</h4>
+
+                        <div class="row">
+                            <div class="col-lg-9"></div>
+                            <div class="col-lg-3">
+                                <input type="text" id="searchInput" class="form-control mb-2" placeholder="Search...">
+                            </div>
+                        </div>
+
+                        <div class="table-responsive" id="parcelTable" style="overflow-x: auto;">
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr>
+
+                                        <th>SL</th>
+                                        <th>Updated On</th>
+                                        <th>ID</th>
+                                        <th></th>
+                                        <th>Hub</th>
+                                        <th>Rider</th>
+                                        @* <th>Pickup Location</th> *@
+                                        @* <th>Pickup Request Date</th> *@
+                                        <th>Receiver Information</th>
+                                        @* <th>Product</th> *@
+                                        @* <th>Delivery</th> *@
+                                        <th>Total Price</th>
+                                        <th>Status</th>
+                                        <th>Payment</th>
+                                       @*  <th>View</th>
+                                        <th>Action</th> *@
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int sl = 1;
+                                    }
+
+                                    @foreach (var parcel in Model.OrderByDescending(u => u.PickupRequestDate))
+                                    {
+
+                                        <tr>
+                                            <td>@sl</td>
+                                            @* <td>
+                                        <!-- Barcode placeholder -->
+                                        <svg class="barcode" data-id="@parcel.Id"></svg>
+                                        </td> *@
+                                            <td>
+                                                @(GetTimeAgo(parcel.PickupRequestDate))
+                                                <br />
+                                                Created : @(parcel.PickupRequestDate.HasValue ? parcel.PickupRequestDate.Value.ToString("g") : "N/A")
+                                            </td>
+
+
+                                            <td>@parcel.Id</td>
+                                            <td>
+                                                <i class="fas fa-copy" onclick="copyToClipboard('@parcel.Id')" style="cursor: pointer;"></i>
+                                            </td>
+
+
+
+
+                                            @if (parcel.HubId == null)
+                                            {
+                                                <td><span class="badge badge-danger text-medium">Not Assigned</span></td>
+                                            }
+                                            else
+                                            {
+
+                                                <td>
+                                                    <strong>Pickup Hub :</strong> @parcel.Hub?.Name <br />
+                                                    <strong>Delivery Hub: </strong> @ViewBag.Destination?.Name <br />
+
+                                                </td>
+                                            }
+                                            @if (parcel.RiderId == null)
+                                            {
+                                                <td><span class="badge badge-danger text-medium">Not Assigned</span></td>
+                                            }
+                                            else
+                                            {
+
+                                                <td>
+                                                    <strong>Name:</strong> @parcel.Rider?.Name <br />
+                                                    <strong>Phone:</strong> @parcel.Rider?.ContactNumber
+                                                </td>
+                                            }
+                                            @* <td>@parcel.PickupLocation</td> *@
+                                            @* <td>@(parcel.PickupRequestDate?.ToString("M/d/yyyy, h:mm tt"))</td> *@
+                                            <td>
+                                                <strong>Name:</strong> @parcel.ReceiverName<br>
+                                                <strong>Address:</strong> @parcel.ReceiverAddress<br>
+                                                <strong>Contact:</strong> @parcel.ReceiverContactNumber
+                                            </td>
+
+                                            @* <td>
+                                        <strong>Name:</strong> @parcel.ProductName <br />
+                                        <strong>Weight:</strong> @parcel.ProductWeight KG <br />
+                                        <strong>Price:</strong> @parcel.ProductPrice TK <br />
+                                        <strong>Quantity:</strong> @parcel.ProductQuantity <br />
+                                        </td> *@
+
+                                            @* <td>
+                                        <strong>Type:</strong> @parcel.DeliveryType <br />
+                                        <strong>Charge:</strong> @parcel.DeliveryCharge TK <br />
+                                        </td> *@
+                                            <td>
+                                                @parcel.TotalPrice TK
+                                                <br />
+                                                <br />
+                                                <button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#breakdownModal_@parcel.Id">
+                                                    Breakdown
+                                                </button>
+
+                                                <!-- Breakdown Modal -->
+                                                <div class="modal fade" id="breakdownModal_@parcel.Id" tabindex="-1" role="dialog" aria-labelledby="breakdownModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="breakdownModalLabel">Details</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p><strong>Product Price:</strong> @parcel.ProductPrice TK</p>
+                                                                <p><strong>Delivery Charge:</strong> @parcel.DeliveryCharge TK</p>
+                                                                <p><strong>COD Amount:</strong> @parcel.COD TK</p>
+                                                                <p><strong>Total:</strong> @parcel.TotalPrice TK</p>
+                                                                <!-- Add more details as needed -->
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+
+                                            @if (parcel.Status == "Pickup Request")
+                                            {
+                                                <td><span class="badge badge-success font-weight-bold">@parcel.Status</span></td>
+                                            }
+                                            else if (parcel.Status == "Dispatched")
+                                            {
+                                                <td><span class="badge badge-warning font-weight-bold">@parcel.Status</span></td>
+                                            }
+                                            else if (parcel.Status == "Transit")
+                                            {
+                                                <td><span class="badge badge-info text-medium">@parcel.Status</span></td>
+                                            }
+                                            else if (parcel.Status == "Delivered")
+                                            {
+                                                <td><span class="badge badge-success text-medium">@parcel.Status</span></td>
+                                            }
+                                            else if (parcel.Status == "Parcel Returned To Merchant")
+                                            {
+                                                <td><span class="badge badge-info text-medium">Return Parcel Arrived</span></td>
+                                            }
+                                            else if (parcel.Status == "Return Received By Merchant")
+                                            {
+                                                <td><span class="badge badge-success text-medium">Return Parcel Received</span></td>
+                                            }
+                                            else
+                                            {
+                                                <td><span class="badge badge-info text-medium">@parcel.Status</span></td>
+                                            }
+
+                                            @if (parcel.PaymentStatus == "Paid To Merchant")
+                                            {
+                                                <td><span class="badge badge-success text-medium">Payment Received</span></td>
+                                            }
+
+                                            else
+                                            {
+                                                <td><span class="badge badge-info text-medium">@parcel.PaymentStatus</span></td>
+                                            }
+
+                                           @*  <td>
+                                                <!-- Button trigger modal -->
+                                                <button class="btn btn-sm btn-primary waves-effect waves-light" data-toggle="modal" data-target="#viewModal_@parcel.Id">
+                                                    <i class="fas fa-eye"></i>
+                                                    View
+                                                </button>
+
+
+
+
+                                                <!-- Modal -->
+                                                <div id="viewModal_@parcel.Id" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="viewModalLabel"><i class="fas fa-box"></i> View Parcel Details</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <!-- Display parcel details here -->
+                                                                <h5 class="font-16"><i class="fas fa-barcode"></i> Parcel ID: @parcel.Id</h5>
+                                                              
+
+                                                                <p><strong><i class="fas fa-box-open"></i> Product:</strong> @parcel.ProductName</p>
+                                                                <p><strong><i class="far fa-calendar-alt"></i> Parcel Created At:</strong> @(parcel.PickupRequestDate.HasValue ? parcel.PickupRequestDate.Value.ToString("g") : "N/A")</p>
+                                                                @if (parcel.UpdatedAt != null)
+                                                                {
+                                                                    <p><strong><i class="far fa-calendar-alt"></i> Parcel Updated At:</strong> @(parcel.UpdatedAt.HasValue ? parcel.UpdatedAt.Value.ToString("g") : "N/A")</p>
+                                                                }
+                                                                @if (parcel.DispatchDate != null)
+                                                                {
+                                                                    <p><strong><i class="fas fa-motorcycle"></i> Rider Assigned:</strong> @(parcel.DispatchDate.HasValue ? parcel.DispatchDate.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if (parcel.PickedUpAt != null)
+                                                                {
+                                                                    <p><strong><i class="fas fa-truck-loading"></i> Rider Pickedup:</strong> @(parcel.PickedUpAt.HasValue ? parcel.PickedUpAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+                                                                @if (parcel.PickupFailedAt != null)
+                                                                {
+                                                                    <p><strong><i class="fas fa-truck-loading"></i> Pickup Failed:</strong> @(parcel.PickupFailedAt.HasValue ? parcel.PickupFailedAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+                                                                @if (parcel.PickupCancelledAt != null)
+                                                                {
+                                                                    <p><strong><i class="fas fa-truck-loading"></i> Pickup Cancelled:</strong> @(parcel.PickupCancelledAt.HasValue ? parcel.PickupCancelledAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+                                                                @if (parcel.PickupOnHoldAt != null)
+                                                                {
+                                                                    <p><strong><i class="fas fa-truck-loading"></i> Pickup On Hold:</strong> @(parcel.PickupOnHoldAt.HasValue ? parcel.PickupOnHoldAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if (parcel.ParcelAtTheHubReceivedAt != null)
+                                                                {
+                                                                    <p><strong><i class="fas fa-warehouse"></i> Parcel At The Hub:</strong> @(parcel.ParcelAtTheHubReceivedAt.HasValue ? parcel.ParcelAtTheHubReceivedAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+                                                                @if (parcel.OnTheWayToSortingHubAt != null)
+                                                                {
+                                                                    <p><strong><i class="fas fa-warehouse"></i> On The Way To Sorting Hub:</strong> @(parcel.OnTheWayToSortingHubAt.HasValue ? parcel.OnTheWayToSortingHubAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if (parcel.AtTheSortingHubAt != null)
+                                                                {
+                                                                    <p><strong><i class="fas fa-warehouse"></i> At The Sorting Hub:</strong> @(parcel.AtTheSortingHubAt.HasValue ? parcel.AtTheSortingHubAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if (parcel.OnTheWayToLastMileHubAt != null)
+                                                                {
+
+                                                                    <p><strong><i class="fas fa-warehouse"></i> On The Way To Last Mile Hub:</strong> @(parcel.OnTheWayToLastMileHubAt.HasValue ? parcel.OnTheWayToLastMileHubAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if (parcel.ReceivedAtLastMileHubAt != null)
+                                                                {
+
+                                                                    <p><strong><i class="fas fa-warehouse"></i> Received At Last Mile Hub:</strong> @(parcel.ReceivedAtLastMileHubAt.HasValue ? parcel.ReceivedAtLastMileHubAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if (parcel.DeliveryRiderAssignedAt != null)
+                                                                {
+                                                                    <p><strong><i class="fas fa-user-tag"></i> Delivery Rider Assigned:</strong> @(parcel.DeliveryRiderAssignedAt.HasValue ? parcel.DeliveryRiderAssignedAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if (parcel.OnTheWayAt != null)
+                                                                {
+                                                                    <p><strong><i class="fas fa-shipping-fast"></i> On The Way:</strong> @(parcel.OnTheWayAt.HasValue ? parcel.OnTheWayAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if (parcel.DeliveryDate != null)
+                                                                {
+                                                                    <p><strong><i class="fas fa-truck"></i> Delivery:</strong> @(parcel.DeliveryDate.Value.ToString("t"))</p>
+                                                                }
+
+                                                                @if (parcel.DeliveryFailedAt != null)
+                                                                {
+
+                                                                    <p><strong><i class="fas fa-truck"></i> Delivery Failed:</strong> @(parcel.DeliveryFailedAt.HasValue ? parcel.DeliveryFailedAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if (parcel.PartialDeliveryAt != null)
+                                                                {
+
+                                                                    <p><strong><i class="fas fa-truck"></i> Partial Delivery:</strong> @(parcel.PartialDeliveryAt.HasValue ? parcel.PartialDeliveryAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if (parcel.DamagedAt != null)
+                                                                {
+
+                                                                    <p><strong><i class="fas fa-truck"></i> Damaged:</strong> @(parcel.DamagedAt.HasValue ? parcel.DamagedAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if (parcel.DeliveryOnHoldAt != null)
+                                                                {
+
+                                                                    <p><strong><i class="fas fa-truck"></i> Delivery On Hold:</strong> @(parcel.DeliveryOnHoldAt.HasValue ? parcel.DeliveryOnHoldAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+
+                                                                @if (parcel.ReturnParcel != null && parcel.ReturnParcel.ReturnDate != null)
+                                                                {
+                                                                    <p><strong><i class="fas fa-undo"></i> Return:</strong> @(parcel.ReturnParcel.ReturnDate.ToString("t"))</p>
+                                                                }
+
+                                                                @if (parcel.ReturnCreateFirstMileHubAt != null)
+                                                                {
+
+                                                                    <p><strong><i class="fas fa-undo"></i> Return Parcel Created:</strong> @(parcel.ReturnCreateFirstMileHubAt.HasValue ? parcel.ReturnCreateFirstMileHubAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if (parcel.ReturnOnTheWayToSortingHubAt != null)
+                                                                {
+
+                                                                    <p><strong><i class="fas fa-undo"></i> Return On The Way To Sorting Hub:</strong> @(parcel.ReturnOnTheWayToSortingHubAt.HasValue ? parcel.ReturnOnTheWayToSortingHubAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if (parcel.ReturnReceivedByFirstMileHubAt != null)
+                                                                {
+
+                                                                    <p><strong><i class="fas fa-undo"></i> Return Received By First Mile Hub:</strong> @(parcel.ReturnReceivedByFirstMileHubAt.HasValue ? parcel.ReturnReceivedByFirstMileHubAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if (parcel.ReturnedAssignedPickupAgentAt != null)
+                                                                {
+
+                                                                    <p><strong><i class="fas fa-undo"></i> Return Assigned Pickup Agent:</strong> @(parcel.ReturnedAssignedPickupAgentAt.HasValue ? parcel.ReturnedAssignedPickupAgentAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if (parcel.ReturnOnTheWayToMerchantAt != null)
+                                                                {
+
+                                                                    <p><strong><i class="fas fa-undo"></i> Return On The Way To Merchant:</strong> @(parcel.ReturnOnTheWayToMerchantAt.HasValue ? parcel.ReturnOnTheWayToMerchantAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+
+                                                                @if (parcel.ReturnReceivedByMerchantAt != null)
+                                                                {
+
+                                                                    <p><strong><i class="fas fa-undo"></i> Return Received By Merchant:</strong> @(parcel.ReturnReceivedByMerchantAt.HasValue ? parcel.ReturnReceivedByMerchantAt.Value.ToString("t") : "N/A")</p>
+                                                                }
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </td> *@
+
+                                            @* <td>
+                                                @if (parcel.Status == "Return On The Way To Merchant")
+                                                {
+                                                    <a asp-route-id="@parcel.Id" asp-controller="Merchant" asp-action="ReturnReceivedByMerchant" class="btn btn-sm btn-success">
+                                                        <i class="fas fa-check"></i> Return Parcel Received
+                                                    </a>
+                                                }
+                                                else if (parcel.Status == "Exchanged Parcel Returned Merchant")
+                                                {
+                                                    <a asp-route-id="@parcel.Id" asp-controller="Merchant" asp-action="ExchangeParcelReceived" class="btn btn-sm btn-success">
+                                                        <i class="fas fa-check"></i> Exchange Parcel Received
+                                                    </a>
+                                                }
+
+                                                @if (parcel.Status == "Pending" || parcel.Status == "Pickup Requested" || parcel.Status == "Assigned A Rider For Pickup")
+                                                {
+                                                    <a asp-action="EditParcel" asp-route-id="@parcel.Id" asp-controller="Merchant" class="btn btn-primary">
+                                                        <i class="fas fa-edit"></i>
+                                                        Edit
+                                                    </a>
+                                                }
+
+                                            </td> *@
+
+                                            @* <td>
+                                                @if (parcel.Status == "Picked Up")
+                                                {
+                                                    <a asp-route-id="@parcel.Id" asp-controller="Merchant" asp-action="CancelPickupRequest" class="btn btn-sm btn-danger">
+                                                        <i class="fas fa-times-circle"></i> Cancel Pickup
+                                                    </a>
+
+                                                }
+                                            </td> *@
+
+
+
+                                        </tr>
+                                        sl++;
+                                        <!-- sample modal content -->
+                                        <!-- /.modal -->
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    public string GetTimeAgo(DateTime? updatedAt)
+    {
+        if (updatedAt.HasValue)
+        {
+            TimeSpan timeDifference = DateTime.Now - updatedAt.Value;
+            if (timeDifference.TotalMinutes < 1)
+            {
+                return "Just now";
+            }
+            else if (timeDifference.TotalMinutes < 60)
+            {
+                return $"{(int)timeDifference.TotalMinutes} min ago";
+            }
+            else if (timeDifference.TotalHours < 24)
+            {
+                return $"{(int)timeDifference.TotalHours} hr ago";
+            }
+            else
+            {
+                return updatedAt.Value.ToString("g");
+            }
+        }
+        else
+        {
+            return "N/A";
+        }
+    }
+}
+
+@section Scripts {
+    <script>
+        // Wait for the document to be ready
+        document.addEventListener("DOMContentLoaded", function () {
+            // Get the input element
+            var datepicker = document.getElementById('datepicker');
+
+            // Get the query parameter value from the URL
+            var urlParams = new URLSearchParams(window.location.search);
+            var selectedDate = urlParams.get('selectedDate');
+
+            // If selectedDate is not null, set the value of the input field
+            if (selectedDate) {
+                datepicker.value = selectedDate;
+            }
+        });
+    </script>
+
+    <script>
+        // JavaScript function to filter table rows based on search input
+        document.addEventListener("DOMContentLoaded", function () {
+            // Get the input element
+            var searchInput = document.getElementById('searchInput');
+            // Get the table rows
+            var rows = document.querySelectorAll("#parcelTable tbody tr");
+
+            // Add event listener for input event
+            searchInput.addEventListener('input', function () {
+                var searchText = searchInput.value.toLowerCase();
+
+                // Loop through all table rows
+                rows.forEach(function (row) {
+                    var shouldDisplay = false;
+                    // Loop through all columns in each row
+                    row.querySelectorAll('td').forEach(function (cell) {
+                        if (cell.textContent.toLowerCase().indexOf(searchText) !== -1) {
+                            shouldDisplay = true;
+                        }
+                    });
+                    // Display or hide row based on search text
+                    if (shouldDisplay) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        // JavaScript function to filter table rows based on search input and status filter
+        document.addEventListener("DOMContentLoaded", function () {
+            // Get the input element
+            var searchInput = document.getElementById('searchInput');
+            // Get the select element for status filter
+            var statusFilter = document.getElementById('statusFilter');
+            // Get the table rows
+            var rows = document.querySelectorAll("#parcelTable tbody tr");
+
+            // Add event listener for input event on search input
+            searchInput.addEventListener('input', filterRows);
+            // Add event listener for change event on status filter
+            statusFilter.addEventListener('change', filterRows);
+
+            // Function to filter rows based on search input and status filter
+            function filterRows() {
+                var searchText = searchInput.value.toLowerCase();
+                var selectedStatus = statusFilter.value.toLowerCase();
+
+                // Loop through all table rows
+                rows.forEach(function (row) {
+                    var shouldDisplay = false;
+                    // Loop through all columns in each row
+                    row.querySelectorAll('td').forEach(function (cell) {
+                        // Check if the cell text contains search text and matches selected status
+                        if ((cell.textContent.toLowerCase().indexOf(searchText) !== -1) &&
+                            (selectedStatus === '' || cell.textContent.toLowerCase().includes(selectedStatus))) {
+                            shouldDisplay = true;
+                        }
+                    });
+                    // Display or hide row based on search text and selected status
+                    if (shouldDisplay) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+        });
+    </script>
+
+
+    <script>
+        function copyToClipboard(text) {
+            // Create a temporary input element
+            var tempInput = document.createElement("input");
+            tempInput.style = "position: absolute; left: -1000px; top: -1000px";
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+
+            // Select the text in the input element
+            tempInput.select();
+            tempInput.setSelectionRange(0, 99999); /* For mobile devices */
+
+            // Copy the selected text
+            document.execCommand("copy");
+
+            // Remove the temporary input element
+            document.body.removeChild(tempInput);
+
+            // Optionally, provide some visual feedback
+            alert("Copied to clipboard: " + text);
+        }
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#searchInput').on('input', function () {
+                var searchText = $(this).val().toLowerCase();
+                $('#parcelTable tbody tr').each(function () {
+                    var rowId = $(this).attr('id');
+                    var rowData = $('#' + rowId).text().toLowerCase();
+                    if (rowData.indexOf(searchText) === -1) {
+                        $('#' + rowId).hide();
+                    } else {
+                        $('#' + rowId).show();
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        // Function to generate barcode for each parcel
+        function generateBarcodes() {
+            // Select all SVG elements with class 'barcode'
+            const barcodes = document.querySelectorAll('.barcode');
+
+            // Loop through each SVG element
+            barcodes.forEach(barcode => {
+                // Get the parcel ID from the 'data-id' attribute
+                const parcelId = barcode.getAttribute('data-id');
+
+                // Generate the barcode using JsBarcode library
+                JsBarcode(barcode, parcelId, {
+                    format: 'CODE128', // Barcode format
+                    displayValue: false, // Hide the text below the barcode
+                    width: 2, // Width of the barcode lines
+                    height: 50 // Height of the barcode
+                });
+            });
+        }
+
+        // Call the generateBarcodes function after the table is rendered
+        document.addEventListener('DOMContentLoaded', function () {
+            // Call generateBarcodes after a slight delay to ensure table rendering
+            setTimeout(generateBarcodes, 100);
+        });
+    </script>
+
+
+}
