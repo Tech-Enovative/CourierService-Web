@@ -330,15 +330,15 @@ namespace CourierService_Web.Data
 
 
             //seed admin data
-            //modelBuilder.Entity<Admin>().HasData(
-            //                   new Admin
-            //                   {
-            //                       Id = "A-123",
-            //                       Name = "Admin",
-            //                       Email = "flyerbd@gmail.com",
-            //                       Password = "1111"
+            modelBuilder.Entity<Admin>().HasData(
+                               new Admin
+                               {
+                                   Id = "A-123",
+                                   Name = "Admin",
+                                   Email = "flyerbd@gmail.com",
+                                   Password = "1111"
 
-            //                   });
+                               });
 
             //seed merchant data
             //modelBuilder.Entity<Merchant>().HasData(
@@ -354,7 +354,7 @@ namespace CourierService_Web.Data
             //                       FullAddress = "Dhaka, Bangladesh",
             //                       Area = "Mirpur"
 
-                                   
+
 
 
             //                   });

@@ -1072,7 +1072,7 @@ namespace CourierService_Web.Controllers
             });
         }
 
-        // Save parcels to the database asynchronously
+        
         foreach (var parcel in parcels)
         {
                     var deliveryType = "InsideDhaka";
@@ -1143,8 +1143,8 @@ namespace CourierService_Web.Controllers
                 ReceiverAddress = parcel.ReceiverAddress,
                 ReceiverContactNumber = parcel.ReceiverContactNumber,
                 DistrictId = (await _context.District.FirstOrDefaultAsync(d => d.Name == parcel.District))?.Id,
-                ZoneId = (await _context.Zone.FirstOrDefaultAsync(z => z.Name == parcel.Zone))?.Id,
-                AreaId = (await _context.Areas.FirstOrDefaultAsync(a => a.Name == parcel.Area))?.Id,
+                ZoneId = (await _context.Zone.FirstOrDefaultAsync(z => z.Name == parcel.Hub))?.Id,
+                AreaId = (await _context.Areas.FirstOrDefaultAsync(a => a.Name == parcel.Hub))?.Id,
                 ProductName = parcel.ProductName,
                 ProductWeight = parcel.ProductWeight,
                 ProductPrice = parcel.ProductPrice,
