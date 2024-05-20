@@ -12,7 +12,6 @@ using ZXing.Common;
 using SkiaSharp;
 using System.IO.Compression;
 using Xceed.Document.NET;
-using Newtonsoft.Json;
 
 namespace CourierService_Web.Controllers
 {
@@ -2989,41 +2988,7 @@ namespace CourierService_Web.Controllers
 
         // Make an HTTP GET request to fetch parcel information
         #region
-        public async Task<IActionResult> GetParcelInfo(string trackingId)
-        {
-            if (!IsAdminLoggedIn())
-            {
-                return RedirectToAction("Login", "Home");
-            }
-
-            // Create a new HttpClient instance
-            using (var client = new HttpClient())
-            {
-                // Set the base address for the HTTP client
-                client.BaseAddress = new Uri("https://api.example.com");
-
-                // Send an HTTP GET request to the API endpoint
-                var response = await client.GetAsync($"/parcels/{trackingId}");
-
-                // Check if the response is successful
-                if (response.IsSuccessStatusCode)
-                {
-                    // Read the response content as a string
-                    var content = await response.Content.ReadAsStringAsync();
-
-                    // Deserialize the JSON response content to a Parcel object
-                    var parcel = JsonConvert.DeserializeObject<Parcel>(content);
-
-                    // Pass the parcel object to the view
-                    return View(parcel);
-                }
-                else
-                {
-                    // Handle the error response
-                    return View("Error");
-                }
-            }
-        }
+        
         #endregion
 
 

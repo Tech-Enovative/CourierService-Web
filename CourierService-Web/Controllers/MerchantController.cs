@@ -9,7 +9,7 @@ using System.Text;
 using System.Formats.Asn1;
 using CsvHelper;
 using System.Linq;
-using Hangfire;
+
 using OfficeOpenXml;
 
 namespace CourierService_Web.Controllers
@@ -742,8 +742,8 @@ namespace CourierService_Web.Controllers
         public IActionResult DownloadTemplate()
         {
             // CSV content with headers and sample data
-            var csvContent = "Store,ReceiverName,ReceiverAddress,ReceiverContactNumber,District,Zone,Area,ProductName,ProductWeight,ProductPrice,ProductQuantity,Hub\n";
-            csvContent += "NewStore,John Doe,123 Main St,1234567890,Dhaka,Mirpur,Mirpur,Example Product,2,100,1,Mirpur\n";
+            var csvContent = "Store,ReceiverName,ReceiverAddress,ReceiverContactNumber,District,ProductName,ProductWeight,ProductPrice,ProductQuantity,Hub\n";
+            csvContent += "NewStore,John Doe,123 Main St,1234567890,Dhaka,Example Product,2,100,1,Mirpur\n";
             // Create a byte array from the CSV content
             var bytes = Encoding.UTF8.GetBytes(csvContent);
 
@@ -940,20 +940,7 @@ namespace CourierService_Web.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult ScheduleBackgroundJob()
-        {
-            // Schedule the PickupFailed method to run every 3 minutes
-            RecurringJob.AddOrUpdate("CheckForFailedPickups", () => PickupFailed(), Cron.MinuteInterval(1));
-
-           return RedirectToAction("Parcels");
-        }
-
-        //trigger schedule background job
-        public IActionResult TriggerBackgroundJob()
-        {
-            BackgroundJob.Enqueue(() => ScheduleBackgroundJob());
-            return RedirectToAction("Parcels");
-        }
+       
 
         //cancel pickup 
         public IActionResult CancelPickupRequest(string id)
@@ -1029,7 +1016,7 @@ namespace CourierService_Web.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Upload(IFormFile file)
-{
+        {
     if (file == null || file.Length == 0)
     {
         ModelState.AddModelError("File", "Please select a file");
@@ -1061,18 +1048,18 @@ namespace CourierService_Web.Controllers
                 ReceiverAddress = values[2],
                 ReceiverContactNumber = values[3],
                 District = values[4],
-                Zone = values[5],
-                Area = values[6],
-                ProductName = values[7],
-                ProductWeight = decimal.Parse(values[8]),
-                ProductPrice = int.Parse(values[9]),
-                ProductQuantity = string.IsNullOrEmpty(values[10]) ? null : (int?)int.Parse(values[10]),
-                Hub = values[11]
+               // Zone = values[5],
+                //Area = values[6],
+                ProductName = values[5],
+                ProductWeight = decimal.Parse(values[6]),
+                ProductPrice = int.Parse(values[7]),
+                ProductQuantity = string.IsNullOrEmpty(values[8]) ? null : (int?)int.Parse(values[8]),
+                Hub = values[9]
                 
             });
         }
 
-        
+        // Save parcels to the database asynchronously
         foreach (var parcel in parcels)
         {
                     var deliveryType = "InsideDhaka";
@@ -1093,18 +1080,18 @@ namespace CourierService_Web.Controllers
                     }
 
                     //check zone name is not valid or not
-                    if (_context.Zone.FirstOrDefault(x => x.Name == parcel.Zone) == null)
-                    {
-                        TempData["Error"] = $"{parcel.Zone} Is Not Valid Zone Name";
-                        return RedirectToAction("AddBulkParcels");
-                    }
+                    //if (_context.Zone.FirstOrDefault(x => x.Name == parcel.Zone) == null)
+                    //{
+                    //    TempData["Error"] = $"{parcel.Zone} Is Not Valid Zone Name";
+                    //    return RedirectToAction("AddBulkParcels");
+                    //}
 
                     //check area name is not valid or not
-                    if (_context.Areas.FirstOrDefault(x => x.Name == parcel.Area) == null)
-                    {
-                        TempData["Error"] = $"{parcel.Area} Is Not Valid Area Name";
-                        return RedirectToAction("AddBulkParcels");
-                    }
+                    //if (_context.Areas.FirstOrDefault(x => x.Name == parcel.Area) == null)
+                    //{
+                    //    TempData["Error"] = $"{parcel.Area} Is Not Valid Area Name";
+                    //    return RedirectToAction("AddBulkParcels");
+                    //}
 
                     //check hub name is not valid or not
                     if (_context.Hubs.FirstOrDefault(x => x.Name == parcel.Hub) == null)
@@ -1132,7 +1119,11 @@ namespace CourierService_Web.Controllers
 
             //find hub id according to hub name
             var hub = await _context.Hubs.FirstOrDefaultAsync(x => x.Name == parcel.Hub);
+                   
             var destinationHubId = hub.Id;
+            var AreaId = hub.Areas?.FirstOrDefault(x => x.HubId == destinationHubId)?.Id;
+            var ZoneId = hub.Zones?.FirstOrDefault(x => x.HubId == destinationHubId)?.Id;
+           
 
             // Add parcel to the database asynchronously
             _context.Parcels.Add(new Parcel
@@ -1143,8 +1134,10 @@ namespace CourierService_Web.Controllers
                 ReceiverAddress = parcel.ReceiverAddress,
                 ReceiverContactNumber = parcel.ReceiverContactNumber,
                 DistrictId = (await _context.District.FirstOrDefaultAsync(d => d.Name == parcel.District))?.Id,
-                ZoneId = (await _context.Zone.FirstOrDefaultAsync(z => z.Name == parcel.Hub))?.Id,
-                AreaId = (await _context.Areas.FirstOrDefaultAsync(a => a.Name == parcel.Hub))?.Id,
+                //AreaId = AreaId,
+                //ZoneId = ZoneId,
+                ZoneId = (await _context.Zone.FirstOrDefaultAsync(z => z.Hub.Name == parcel.Hub))?.Id,
+                AreaId = (await _context.Areas.FirstOrDefaultAsync(a => a.Hub.Name == parcel.Hub))?.Id,
                 ProductName = parcel.ProductName,
                 ProductWeight = parcel.ProductWeight,
                 ProductPrice = parcel.ProductPrice,
@@ -1290,7 +1283,7 @@ namespace CourierService_Web.Controllers
             // Pass selected date range to the ViewBag
             ViewBag.StartDate = startDate ?? DateTime.Today;
             ViewBag.EndDate = endDate ?? DateTime.Today;
-            ScheduleBackgroundJob();
+           
             return View(parcels);
         }
 

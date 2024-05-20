@@ -1,5 +1,4 @@
 using CourierService_Web.Data;
-using Hangfire;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -13,13 +12,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddHangfire((sp, config) =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    config.UseSqlServerStorage(connectionString);
-});
 
-builder.Services.AddHangfireServer();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

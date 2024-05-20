@@ -379,22 +379,22 @@ namespace CourierService_Web.Data
             //                                  });
 
             //seed rider data
-            //modelBuilder.Entity<Rider>().HasData(
-            //                                                 new Rider
-            //                                                 {
-            //                                                     Id = "R-123",
-            //                                                     Name = "Rider",
-            //                                                     Email = "rider@gmail.com",
-            //                                                     Password = "1111",
-            //                                                     ContactNumber = "01837730317",
-            //                                                     Area = "Dhaka",
-            //                                                     Salary = 10000,
-            //                                                     NID = "0123456789",
-            //                                                     District = "Dhaka",
-            //                                                     FullAddress = "Dhaka, Bangladesh",
-            //                                                     HubId = "H-123"
+            modelBuilder.Entity<Rider>().HasData(
+                                                             new Rider
+                                                             {
+                                                                 Id = "R-123",
+                                                                 Name = "Rider",
+                                                                 Email = "rider@gmail.com",
+                                                                 Password = "1111",
+                                                                 ContactNumber = "01837730317",
+                                                                 Area = "Dhaka",
+                                                                 Salary = 10000,
+                                                                 NID = "0123456789",
+                                                                 District = "Dhaka",
+                                                                 FullAddress = "Dhaka, Bangladesh",
+                                                                 HubId = "H-123"
 
-            //                                                 });
+                                                             });
 
         }
 
