@@ -224,10 +224,6 @@
                                                         <a asp-route-id="@parcel.Id" asp-controller="Rider" asp-action="PickedUp" class="btn btn-sm btn-success">
                                                             <i class="fas fa-truck"></i> Picked Up
                                                         </a>
-                                                    }
-
-                                                    @if (parcel.Status == "Picked Up")
-                                                    {
                                                         <div class="mt-3">
                                                             <a asp-route-id="@parcel.Id" asp-controller="Rider" asp-action="PickupOnHold" class="btn btn-sm btn-warning">
                                                                 <i class="fas fa-truck"></i> &nbsp; Pickup On Hold
@@ -237,6 +233,11 @@
                                                                 <i class="fas fa-truck"></i> &nbsp; Pickup Failed
                                                             </a>
                                                         </div>
+                                                    }
+
+                                                    @if (parcel.Status == "Picked Up")
+                                                    {
+                                                        
                                                     }
                                                     @if (parcel.Status == "Assigned For Delivery")
                                                     {

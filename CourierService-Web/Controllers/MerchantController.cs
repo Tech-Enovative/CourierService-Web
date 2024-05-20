@@ -573,6 +573,15 @@ namespace CourierService_Web.Controllers
             return Json(hubs);
         }
 
+        //gethubsbyArea
+        [HttpGet]
+        public IActionResult GetHubsByArea(string areaId)
+        {
+            
+            var hubs = _context.Hubs.Any(h => h.Areas.Any(a => a.Id == areaId));
+            return Json(hubs);
+        }
+
         [HttpGet]
         public IActionResult GetParcelDeliveryCounts(string receiverContactNumber)
         {
